@@ -6,11 +6,13 @@ const cors = require('cors');
 
 const { NotFoundError } = require("./ExpressError");
 const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 app.use(cors());
 app.use(express.json());
 
 app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
 
 /** Handle 404 errors -- this matches everything */
 app.use((req, res, next) => {
