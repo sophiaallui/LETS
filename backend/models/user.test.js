@@ -98,28 +98,50 @@ describe("register", () => {
 describe("findAll", () => {
   test("works", async () => {
     const users = await User.findAll();
+    console.log(users)
     expect(users).toEqual([
       {
-        username: "test1Admin",
-        email: "test1Admin@test.com",
-        firstName: "testFirstName",
-        lastName: "testLastName",
-        isAdmin: true,
+        username: 'test11',
+        email: 'test11@test.com',
+        firstName: 'test11F',
+        lastName: 'test11L',
+        isAdmin: true
       },
       {
-        username: "test2",
-        email: "test2@test.com",
-        firstName: "test2FN",
-        lastName: "test2LN",
-        isAdmin: false,
+        username: 'test1Admin',
+        email: 'test1Admin@test.com',
+        firstName: 'testFirstName',
+        lastName: 'testLastName',
+        isAdmin: true
       },
       {
-        username: "test3",
-        email: "test3@test.com",
-        firstName: "test3FN",
-        lastName: "test3LN",
-        isAdmin: false,
+        username: 'test2',
+        email: 'test2@test.com',
+        firstName: 'test2FN',
+        lastName: 'test2LN',
+        isAdmin: false
       },
+      {
+        username: 'test22',
+        email: 'test22@test.com',
+        firstName: 'test22F',
+        lastName: 'test22L',
+        isAdmin: false
+      },
+      {
+        username: 'test3',
+        email: 'test3@test.com',
+        firstName: 'test3FN',
+        lastName: 'test3LN',
+        isAdmin: false
+      },
+      {
+        username: 'test33',
+        email: 'test33@test.com',
+        firstName: 'test33F',
+        lastName: 'test33L',
+        isAdmin: false
+      }
     ]);
   });
 });

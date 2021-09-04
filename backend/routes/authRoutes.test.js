@@ -86,6 +86,7 @@ describe("POST /auth/register", () => {
       lastName: "last",
       password: "password",
       email: "not-an-email"
-    })
+    });
+    expect(res.statusCode).toEqual(400);
   })
 })
