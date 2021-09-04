@@ -3,8 +3,6 @@
 const db = require("../db");
 const {
   NotFoundError,
-  BadRequestError,
-  UnauthorizedError
 } = require("../ExpressError");
 
 class Message {
@@ -38,7 +36,29 @@ class Message {
     return message;
   };
 
-  
+  /** Delete message from the db based on the messageId
+   *  NotFoundError if the message doesn't exist.
+   *  Authorization required : admin or same-user-as:username
+   */
+   static async delete(messageId) {
+     const results = await db.query(
+       `DELETE FROM messages
+       WHERE id = $1
+       RETURNING id`,
+       [messageId]
+     );
+     const message = results.rows[0];
+     if(!message) {
+       throw new NotFoundError()
+     }
+   }
+
+   /** Get all messages from the db ordered by creation time.
+    */
+   static async getAll() {
+     const results = await db.query(`SELECT * FROM messages ORDER BY created_at`);
+     return results.rows;
+   }
 };
 
 module.exports = Message;

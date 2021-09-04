@@ -1,14 +1,14 @@
 "use strict";
 
 /** Routes for users. */
-const jsonschema  = require("jsonschema");
+const jsonschema = require("jsonschema");
 
 const express = require("express");
 const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../ExpressError");
 
 const User = require("../models/user");
-const Message = require("../models/messages");
+
 const { createToken } = require("../helpers/tokens");
 const userNewSchema = require("../schemas/userRegisterSchema.json");
 const userUpdateSchema = require("../schemas/userUpdate.json");
@@ -99,31 +99,12 @@ router.delete("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => 
   }
 });
 
-/** POST /[username]/messages/[toUsername] 
- *  Authorization required : admin or same-user-as:username
- *  Returns { message : { sentBy, sentTo, text, createdAt } }
- */ 
-router.post("/:username/messages/:toUsername", ensureCorrectUserOrAdmin, async (req, res, next) => {
-  try {
-    const { username, toUsername } = req.params;
-    const message = await Message.send(username, toUsername, req.body.text);
-    return res.json({ message })
-  } catch(e) {
-    return next(e);
-  }
-});
 
-/** DELETE /[username]/messages/[messageId] => { deleted : messageId }
- *  Authorization required : admin or same-user-as:username
- */
-router.delete("/:username/messages/:messageId", ensureCorrectUserOrAdmin, async (req, res, next) => {
-  try {
-    const { username, messageId } = req.params;
-    
-  } catch(e) {
-    return next(e);
-  }
-})
+
+//////////////////////////////////////////////////////////////////////////
+////////////////////////// USER MEASUREMENT ROUTES ///////////////////////
+//////////////////////////////////////////////////////////////////////////
+
 
 
 module.exports = router;

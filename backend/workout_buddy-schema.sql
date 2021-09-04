@@ -21,3 +21,14 @@ CREATE TABLE messages (
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE users_measurements (
+  id SERIAL PRIMARY KEY,
+  created_by VARCHAR(25) REFERENCES users (username)
+    ON DELETE CASCADE,
+  height_in_inches FLOAT,
+  weight_in_pounds FLOAT,
+  arms_in_inches FLOAT,
+  legs_in_inches FLOAT,
+  waist_in_inches FLOAT,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
