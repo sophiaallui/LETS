@@ -12,7 +12,7 @@ const {
   commonAfterEach,
   commonAfterAll,
 } = require("../routes/_testCommon");
-const { request } = require("express");
+
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
@@ -98,7 +98,6 @@ describe("register", () => {
 describe("findAll", () => {
   test("works", async () => {
     const users = await User.findAll();
-    console.log(users)
     expect(users).toEqual([
       {
         username: 'test11',
@@ -239,5 +238,20 @@ describe("remove", () => {
     } catch(e) {
       expect(e instanceof NotFoundError).toBeTruthy();
     }
+  });
+});
+
+const measurementsData = {
+  createdBy : 'test22',
+  heightInInches : 68.5,
+  weightInPounds : 151.5,
+  armsInInches : 99.0,
+}
+/** User Measurements Tests  */
+describe("postMeasurements", () => {
+
+  test("works", async () => {
+    const res = await User.postMeasurements("test22", measurementsData);
+    console.log(res);
   })
 })

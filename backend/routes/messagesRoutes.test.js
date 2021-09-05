@@ -9,6 +9,7 @@ const {
   commonAfterAll,
   adminToken,
   test2Token,
+  test3Token,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -37,6 +38,13 @@ describe("GET /messages", () => {
           sent_to: "test33",
           text: "regular user sending message",
           created_at: expect.any(String),
+        },
+        {
+          created_at: expect.any(String),
+          id: expect.any(Number),
+          sent_by: "test33",
+          sent_to: "test22",
+          text: "testMsg",
         },
       ],
     });
@@ -127,7 +135,7 @@ describe("Delete /messages/:username/delete/:messageId", () => {
       .set("authorization", `Bearer ${adminToken}`);
     expect(res.body).toEqual({ deletedMessage: String(message.id) });
   });
-  
+
   test("works for correct users", async () => {
     const msgResults = await db.query(`INSERT INTO messages 
     (sent_by, sent_to, text) 
@@ -138,6 +146,18 @@ describe("Delete /messages/:username/delete/:messageId", () => {
     const res = await request(app)
       .delete(`/messages/test22/delete/${message.id}`)
       .set("authorization", `Bearer ${test2Token}`);
-    expect(res.body).toEqual({ deletedMessage : String(message.id) });
+    expect(res.body).toEqual({ deletedMessage: String(message.id) });
   });
+
+  test("unauth for non-correct users", async () => {
+    const res = await request(app)
+      .delete("/messages/test22/delete/3")
+      .set("authorization", `Bearer ${test3Token}`);
+    expect(res.statusCode).toEqual(401);
+  });
+
+  test("unauth for anons", async () => {
+    const res = await request(app).delete("/messages/test22/delete/3");
+    expect(res.statusCode).toEqual(401)
+  })
 });

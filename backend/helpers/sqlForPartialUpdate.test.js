@@ -1,5 +1,5 @@
 
-const { sqlForPartialUpdate } = require("./sqlForPartialUpdate");
+const { sqlForPartialUpdate, sqlForInsert } = require("./sqlForPartialUpdate");
 
 
 describe("sqlForPartialUpdate", function () {
@@ -25,3 +25,22 @@ describe("sqlForPartialUpdate", function () {
     });
   });
 });
+
+describe("sqlForInsert", () => {
+  test("works", () => {
+    const res = sqlForInsert(
+      {
+        createdBy : 'Jae Cho',
+        heightInInches : '98498',
+        weightInPounds : 'sdf',
+      }, {
+        createdBy : 'created_by',
+        heightInInches : 'height_in_inches',
+        weightInPounds : 'weight_in_pounds',
+        armsInInches : 'arms_in_inches',
+        legsInInches : 'legs_in_inches',
+        waistInInches : 'waist_in_inches'
+      }, 'users_measurements')
+      console.log(res)
+  })
+})

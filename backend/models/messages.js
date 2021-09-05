@@ -2,12 +2,12 @@
 
 const db = require("../db");
 const {
-  NotFoundError,
+  NotFoundError, BadRequestError,
 } = require("../ExpressError");
 
 class Message {
 
-  static async send(sent_by, sent_to, message) {
+  static async send(sent_by, sent_to, msg) {
     /**
      * 
      * @param {String from req.params.username} sent_by 
@@ -16,6 +16,11 @@ class Message {
      * @returns { sentBy, sentTo, text, createdAt }
      */
     // the id, and created_at is auto-generated for us.
+    const checkIfExists = await db.query(`SELECT username FROM users WHERE username = $1`, [sent_to]);
+    if(!checkIfExists.rows[0]) {
+      throw new NotFoundError(`User : ${sent_to} does not exist`)
+    }
+    if(!msg || msg.length < 0) throw new BadRequestError();
     const results = await db.query(
       `INSERT INTO messages
         (sent_by, sent_to, text)
@@ -27,12 +32,9 @@ class Message {
           sent_to AS "sentTo",
           text,
           created_at AS "createdAt"
-      `, [sent_by, sent_to, message]
+      `, [sent_by, sent_to, msg]
     );
     const message = results.rows[0];
-    if (!message) {
-      throw new NotFoundError(`Username ${sent_by} or ${sent_to} not found`)
-    }
     return message;
   };
 
@@ -49,7 +51,7 @@ class Message {
      );
      const message = results.rows[0];
      if(!message) {
-       throw new NotFoundError()
+       throw new NotFoundError();
      }
    }
 

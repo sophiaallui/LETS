@@ -54,10 +54,11 @@ async function commonBeforeAll() {
   // SETUP Messages for testing.
   await db.query(
     `INSERT INTO messages
-      (sent_by, sent_to, text) 
+      (id, sent_by, sent_to, text) 
       VALUES
-      ('test11', 'test22', 'admin sending non-admin message'),
-      ('test22', 'test33', 'regular user sending message')`
+      (1, 'test11', 'test22', 'admin sending non-admin message'),
+      (2, 'test22', 'test33', 'regular user sending message'),
+      (3, 'test33', 'test22', 'testMsg')`
   );
 }
 
