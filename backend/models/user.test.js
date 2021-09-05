@@ -241,17 +241,33 @@ describe("remove", () => {
   });
 });
 
-const measurementsData = {
-  createdBy : 'test22',
-  heightInInches : 68.5,
-  weightInPounds : 151.5,
-  armsInInches : 99.0,
-}
+
 /** User Measurements Tests  */
 describe("postMeasurements", () => {
-
+  const measurementsData = {
+    createdBy : 'test22',
+    heightInInches : 68.5,
+    weightInPounds : 151.5,
+    armsInInches : 99.0,
+  }
   test("works", async () => {
     const res = await User.postMeasurements("test22", measurementsData);
-    console.log(res);
-  })
-})
+    expect(res).toEqual({ 
+      id: expect.any(Number),
+      createdBy: 'test22',
+      heightInInches: 68.5,
+      weightInPounds: 151.5,
+      armsInInches: 99,
+      legsInInches: null,
+      createdAt: expect.any(Date)
+    })
+  });
+  test("Not found error if username does not exist", async () => {
+    try {
+      await User.postMeasurements("I DONT EXIST", measurementsData);
+      fail();
+    } catch(e) {
+      expect(e instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});

@@ -164,10 +164,16 @@ class User {
       throw new NotFoundError(`User: ${username} not found`);
     }
     const { baseQuery, values } = sqlForInsert(data, userMeasurementsJsToSql, 'users_measurements');
-    console.log(baseQuery, values)
+    // console.log(baseQuery, values)
     const measurementsResults = await db.query(
       `${baseQuery} RETURNING
-       *
+       id,
+       created_by AS "createdBy",
+       height_in_inches AS "heightInInches",
+       weight_in_pounds AS "weightInPounds",
+       arms_in_inches AS "armsInInches",
+       legs_in_inches AS "legsInInches",
+       created_at AS "createdAt"
       `, values
     );
     const userMeasurements = measurementsResults.rows[0];
@@ -175,11 +181,4 @@ class User {
   }
 }  
 
-// created_by AS 'createdBy',
-// height_in_inches AS 'heightInInches',
-// weight_in_pounds AS 'weightInPounds',
-// arms_in_inches AS 'armsInInches',
-// legs_in_inches AS 'legsInInches',
-// waist_in_inches AS 'waistInInches',
-// created_at AS 'createdAt'
 module.exports = User;
