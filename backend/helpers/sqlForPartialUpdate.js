@@ -45,12 +45,13 @@ function sqlForInsert(dataToInsert, jsToSql, tableName) {
   const valuesArray = Object.values(dataToInsert).map((ele, idx) => `$${idx + 1}`);
   const valuesQueryString = valuesArray.join(", ");
 
-  const returningArray = keys.map((colName) => `${jsToSql[colName]} || ${colName} AS ${colName}`);
-  const 
+  const returningArray = keys.map((colName) => `${jsToSql[colName] || colName} AS ${colName}`);
+  const returningQuery = returningArray.join(", ")
   baseQuery = baseQuery + "(" + valuesQueryString + ")"
   return {
     baseQuery,
-    values : Object.values(dataToInsert)
+    values : Object.values(dataToInsert),
+    returningQuery
   }
 }
 
