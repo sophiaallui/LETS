@@ -8,10 +8,47 @@ CREATE TABLE users (
   is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
+  -- If you want to see all friends that are pending test1's acceptance, you'd search for:
+  -- any records from the friends table where user_from = 'test1'
+  -- AND confirmed = 0 ... which means it hasn't been accepted yet.
+
+
+-- If you want to see all friends a user had requested but which haven't been accepted you'd look for:
+
+--   any records from the friends table where user_to = the user you're looking for
+--   AND confirmed = 0 ... which means it hasn't been accepted yet.
+
 CREATE TABLE users_friends (
-  user_being_followed_id VARCHAR(25) REFERENCES users ON DELETE CASCADE,
-  user_following_id VARCHAR(25) REFERENCES users ON DELETE CASCADE
+  user_from PRIMARY KEY VARCHAR(25) REFERENCES users ON DELETE CASCADE,
+  user_to PRIMARY KEY VARCHAR(25) REFERENCES users ON DELETE CASCADE,
+  request_time TIMESTAMP,
+  confirmed INT NOT NULL DEFAULT 0,
 );
+
+CREATE TABLE posts (
+  post_id SERIAL PRIMARY KEY,
+  posted_by VARCHAR(25) NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+);
+
+CREATE TABLE posts_comments (
+  comment_id SERIAL PRIMARY KEY,
+  post_id INT REFERENCES posts (post_id) ON DELETE CASCADE,
+  posted_by VARCHAR(25) NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE posts_comments_comments (
+  comments_comment_id SERIAL PRIMARY KEY,
+  
+  post_id INT REFERENCES posts(post_id) ON DELETE CASCADE,
+  post_comments_id INT REFERENCES posts_comments(comment_id) ON DELETE CASCADE,
+  posted_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  created_at TIMESTAMP,
+)
 
 CREATE TABLE messages (
   id SERIAL PRIMARY KEY,

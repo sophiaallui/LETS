@@ -9,6 +9,6 @@
     }
   },
   "additionalProperties": false,
-  "required": []
+  "required": ["text"]
 }
 

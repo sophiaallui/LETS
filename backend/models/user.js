@@ -149,7 +149,6 @@ class User {
   /** Post measurements from `data`
    *  It's fine if data doesn't contain all the fields; this only changes the provided ones.
    *  Data can include : {
-   *     createdBy,
    *     heightInInches,
    *     weightInPounds,
    *     armsInInches,
@@ -178,6 +177,82 @@ class User {
     );
     const userMeasurements = measurementsResults.rows[0];
     return userMeasurements;
+  };
+
+  static async deleteMeasurements(username, measurementId) {
+    const results = await db.query(
+      `DELETE FROM user_measurements
+        WHERE created_by = $1 AND id = $2
+        RETURNING id
+      `, [username, measurementId]);
+    const deleted = results.rows[0];
+    if(!deleted) {
+      throw new NotFoundError()
+    }
+  }
+
+  static async getMeasurements(username) {
+    const results = await db.query(
+      `SELECT 
+        id,
+        created_by AS "createdBy",
+        height_in_inches AS "heightInInches",
+        weight_in_pounds AS "weightInPounds",
+        arms_in_inches AS "armsInInches",
+        legs_in_inches AS "legsInInches",
+        waist_in_inches AS "waistInInches"
+        WHERE created_by = $1`, [username]
+    );
+    const measurements = results.rows;
+    if(measurements.length <= 0) {
+      throw new NotFoundError(`User ${username} has no measurements`);
+    }
+    return measurements
+  }
+
+  static async getMeasurement(username, measurementId) {
+    const results = await db.query(
+      `SELECT 
+        id,
+        created_by AS "createdBy",
+        height_in_inches AS "heightInInches",
+        weight_in_pounds AS "weightInPounds",
+        arms_in_inches AS "armsInInches",
+        legs_in_inches AS "legsInInches",
+        waist_in_inches AS "waistInInches"
+        WHERE created_by = $1
+        AND id = $2`, [username, measurementId]
+    );
+    const measurement = results.rows[0];
+    if(!measurement) {
+      throw new NotFoundError(`id: ${measurementId} not found`)
+    }
+    return measurement;
+  }
+  
+  static async updateMeasurement(username, data, measurementId) {
+    const { setCols, values } = sqlForPartialUpdate(data, userMeasurementsJsToSql);
+    const usernameVarIdx = `$${values.length + 1}`;
+    const measurementIdIdx = `$${values.length + 2}`;
+    const querySQL = `
+      UPDATE users_measurements
+            SET ${setCols}
+            WHERE created_by = ${usernameVarIdx} AND
+            id = ${measurementIdIdx}
+            RETURNING 
+                id,
+                created_by AS "createdBy",
+                height_in_inches AS "heightInInches",
+                weight_in_pounds AS "weightInPounds",
+                arms_in_inches AS "armsInInches",
+                legs_in_inches AS "legsInInches",
+                waist_in_inches AS "waistInInches"`
+    const results = await db.query(querySQL, [...values, username, measurementId]);
+    const updatedMeasurement = results.rows[0];
+    if(!updatedMeasurement) {
+      throw new NotFoundError(`No measurement : ${measurementId}`)
+    };
+    return updatedMeasurement;
   }
 }  
 
