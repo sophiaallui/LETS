@@ -11,7 +11,7 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM users");
   await db.query("DELETE FROM messages");
   await db.query("DELETE FROM users_friends");
-
+  await db.query("DELETE FROM messages");
 
   await db.query(
     `INSERT INTO users (username, email, password, first_name, last_name, is_admin)
@@ -50,6 +50,15 @@ async function commonBeforeAll() {
     lastName : "test33L",
     isAdmin : false
   });
+
+  // SETUP Messages for testing.
+  await db.query(
+    `INSERT INTO messages
+      (sent_by, sent_to, text) 
+      VALUES
+      ('test11', 'test22', 'admin sending non-admin message'),
+      ('test22', 'test33', 'regular user sending message')`
+  );
 }
 
 async function commonBeforeEach() {

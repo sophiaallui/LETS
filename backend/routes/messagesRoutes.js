@@ -23,12 +23,12 @@ router.get("/", ensureAdmin, async (req, res, next) => {
  *  Authorization required : admin or same-user-as:username
  *  NotFoundError if the toUsername doesn't exist.
  *  BadRequestError if the input is not valid.
- *  Returns { message : { sentBy, sentTo, text, createdAt } }
+ *  Returns { message : { id, sentBy, sentTo, text, createdAt } }
  */ 
  router.post("/:username/to/:toUsername", ensureCorrectUserOrAdmin, async (req, res, next) => {
   try { 
     const { username, toUsername } = req.params;
-    if(!req.body.text || !req.body.text.length) throw new BadRequestError();
+    if(!req.body.text || typeof req.body.text !== "string" ||!req.body.text.length) throw new BadRequestError();
     const message = await Message.send(username, toUsername, req.body.text);
     return res.json({ message })
   } 
@@ -40,7 +40,7 @@ router.get("/", ensureAdmin, async (req, res, next) => {
 /** DELETE /[username]/messages/[messageId] => { deleted : messageId }
  *  Authorization required : admin or same-user-as:username
  */
-router.delete("/:username/messages/:messageId", ensureCorrectUserOrAdmin, async (req, res, next) => {
+router.delete("/:username/delete/:messageId", ensureCorrectUserOrAdmin, async (req, res, next) => {
   try {
     const { messageId } = req.params;
     await Message.delete(messageId);
@@ -49,3 +49,5 @@ router.delete("/:username/messages/:messageId", ensureCorrectUserOrAdmin, async 
     return next(e);
   }
 });
+
+module.exports = router;
