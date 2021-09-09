@@ -3,7 +3,7 @@
 const express = require("express");
 const router = express.Router();
 const { ensureCorrectUserOrAdmin, ensureAdmin} = require("../middleware/auth")
-const Message = require("../models/messages");
+const Message = require("../models/message");
 const { BadRequestError } = require("../ExpressError");
 
 /** GET / =>  { messages : [{ id, sent_by, sent_to, text, created_at }] }

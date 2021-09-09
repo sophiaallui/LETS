@@ -5,7 +5,7 @@ const {
   commonAfterEach,
   commonAfterAll,
 } = require("../routes/_testCommon");
-const Message = require("./messages");
+const Message = require("./message");
 const db = require("../db");
 const { NotFoundError, BadRequestError } = require("../ExpressError");
 beforeAll(commonBeforeAll);
@@ -85,19 +85,27 @@ describe("getAll", () => {
     const allMessagesResults = await Message.getAll();
     expect(allMessagesResults).toEqual([
       {
-        id: expect.any(Number),
-        sent_by: "test11",
-        sent_to: "test22",
-        text: "admin sending non-admin message",
-        created_at: expect.any(Date),
+        id: 1,
+        sent_by: 'test11',
+        sent_to: 'test22',
+        text: 'admin sending non-admin message',
+        created_at: expect.any(Date)
       },
       {
-        id: expect.any(Number),
-        sent_by: "test22",
-        sent_to: "test33",
-        text: "regular user sending message",
-        created_at: expect.any(Date),
+        id: 2,
+        sent_by: 'test22',
+        sent_to: 'test33',
+        text: 'regular user sending message',
+        created_at: expect.any(Date)
       },
-    ]);
+      {
+        id: 3,
+        sent_by: 'test33',
+        sent_to: 'test22',
+        text: 'testMsg',
+        created_at: expect.any(Date)
+      }
+    ]
+    );
   });
 });

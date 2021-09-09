@@ -2,7 +2,11 @@
 
 const db = require("../db");
 const bcrypt = require("bcrypt");
-const { sqlForPartialUpdate, sqlForInsert, userMeasurementsJsToSql } = require("../helpers/sqlForPartialUpdate");
+const {
+  sqlForPartialUpdate,
+  sqlForInsert,
+  userMeasurementsJsToSql,
+} = require("../helpers/sqlForPartialUpdate");
 const {
   NotFoundError,
   BadRequestError,
@@ -157,12 +161,19 @@ class User {
    *  }
    */
   static async postMeasurements(username, data) {
-    const userCheck = await db.query(`SELECT username FROM users WHERE username=$1`, [username]);
+    const userCheck = await db.query(
+      `SELECT username FROM users WHERE username=$1`,
+      [username]
+    );
     const user = userCheck.rows[0];
-    if(!user) {
+    if (!user) {
       throw new NotFoundError(`User: ${username} not found`);
     }
-    const { baseQuery, values } = sqlForInsert(data, userMeasurementsJsToSql, 'users_measurements');
+    const { baseQuery, values } = sqlForInsert(
+      data,
+      userMeasurementsJsToSql,
+      "users_measurements"
+    );
     // console.log(baseQuery, values)
     const measurementsResults = await db.query(
       `${baseQuery} RETURNING
@@ -173,21 +184,24 @@ class User {
        arms_in_inches AS "armsInInches",
        legs_in_inches AS "legsInInches",
        created_at AS "createdAt"
-      `, values
+      `,
+      values
     );
     const userMeasurements = measurementsResults.rows[0];
     return userMeasurements;
-  };
+  }
 
   static async deleteMeasurements(username, measurementId) {
     const results = await db.query(
       `DELETE FROM user_measurements
         WHERE created_by = $1 AND id = $2
         RETURNING id
-      `, [username, measurementId]);
+      `,
+      [username, measurementId]
+    );
     const deleted = results.rows[0];
-    if(!deleted) {
-      throw new NotFoundError()
+    if (!deleted) {
+      throw new NotFoundError();
     }
   }
 
@@ -201,13 +215,14 @@ class User {
         arms_in_inches AS "armsInInches",
         legs_in_inches AS "legsInInches",
         waist_in_inches AS "waistInInches"
-        WHERE created_by = $1`, [username]
+        WHERE created_by = $1`,
+      [username]
     );
     const measurements = results.rows;
-    if(measurements.length <= 0) {
+    if (measurements.length <= 0) {
       throw new NotFoundError(`User ${username} has no measurements`);
     }
-    return measurements
+    return measurements;
   }
 
   static async getMeasurement(username, measurementId) {
@@ -221,17 +236,21 @@ class User {
         legs_in_inches AS "legsInInches",
         waist_in_inches AS "waistInInches"
         WHERE created_by = $1
-        AND id = $2`, [username, measurementId]
+        AND id = $2`,
+      [username, measurementId]
     );
     const measurement = results.rows[0];
-    if(!measurement) {
-      throw new NotFoundError(`id: ${measurementId} not found`)
+    if (!measurement) {
+      throw new NotFoundError(`id: ${measurementId} not found`);
     }
     return measurement;
   }
-  
+
   static async updateMeasurement(username, data, measurementId) {
-    const { setCols, values } = sqlForPartialUpdate(data, userMeasurementsJsToSql);
+    const { setCols, values } = sqlForPartialUpdate(
+      data,
+      userMeasurementsJsToSql
+    );
     const usernameVarIdx = `$${values.length + 1}`;
     const measurementIdIdx = `$${values.length + 2}`;
     const querySQL = `
@@ -246,20 +265,27 @@ class User {
                 weight_in_pounds AS "weightInPounds",
                 arms_in_inches AS "armsInInches",
                 legs_in_inches AS "legsInInches",
-                waist_in_inches AS "waistInInches"`
-    const results = await db.query(querySQL, [...values, username, measurementId]);
+                waist_in_inches AS "waistInInches"`;
+    const results = await db.query(querySQL, [
+      ...values,
+      username,
+      measurementId,
+    ]);
     const updatedMeasurement = results.rows[0];
-    if(!updatedMeasurement) {
-      throw new NotFoundError(`No measurement : ${measurementId}`)
-    };
+    if (!updatedMeasurement) {
+      throw new NotFoundError(`No measurement : ${measurementId}`);
+    }
     return updatedMeasurement;
   }
 
   // Adding a friend (sending a friend request)
   static async sendFriendRequest(userFrom, userTo) {
-    const preCheck = await db.query(`SELECT username FROM users WHERE username = $1 OR username = $2`, [userFrom, userTo]);
-    if(preCheck.rows.length !== 2) {
-      throw new NotFoundError()
+    const preCheck = await db.query(
+      `SELECT username FROM users WHERE username = $1 OR username = $2`,
+      [userFrom, userTo]
+    );
+    if (preCheck.rows.length !== 2) {
+      throw new NotFoundError();
     }
     const results = await db.query(
       `INSERT INTO users_friends 
@@ -269,14 +295,15 @@ class User {
         user_from AS "userFrom",
         user_to AS "userTo",
         request_time AS "requestTime",
-        confirmed`
-    ), [userFrom, userTo];
+        confirmed`,
+      [userFrom, userTo]
+    );
     const userFriendRequest = results.rows[0];
-    if(!userFriendRequest) {
+    if (!userFriendRequest) {
       throw new BadRequestError();
     }
     return userFriendRequest;
   }
-}  
+}
 
 module.exports = User;

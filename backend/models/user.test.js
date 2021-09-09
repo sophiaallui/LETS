@@ -258,7 +258,7 @@ describe("postMeasurements", () => {
       heightInInches: 68.5,
       weightInPounds: 151.5,
       armsInInches: 99,
-      legsInInches: null,
+      legsInInches: 0,
       createdAt: expect.any(Date)
     })
   });

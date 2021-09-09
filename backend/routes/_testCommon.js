@@ -50,7 +50,22 @@ async function commonBeforeAll() {
     lastName : "test33L",
     isAdmin : false
   });
-
+  
+  // SETUP Measurements for testing
+  await db.query(
+    `INSERT INTO users_measurements
+    ( id, 
+      created_by, 
+      height_in_inches, 
+      weight_in_pounds, 
+      arms_in_inches, 
+      legs_in_inches, 
+      waist_in_inches)
+    VALUES
+    (1, 'test22', 68.0, 150.0, 15.0, 27.0, 30.0),
+    (2, 'test22', 69.0, 151.0, 16.0, 28.0, 31.0)`
+  )
+  
   // SETUP Messages for testing.
   await db.query(
     `INSERT INTO messages
@@ -60,6 +75,30 @@ async function commonBeforeAll() {
       (2, 'test22', 'test33', 'regular user sending message'),
       (3, 'test33', 'test22', 'testMsg')`
   );
+
+  // Setup Friends for testing.
+  await db.query(
+    `INSERT INTO users_friends 
+    (user_from, user_to)
+    VALUES
+    ('test11', 'test22')`
+  );
+  
+  // SETUP Posts and Comments and Post Comments Comments for testing
+  await db.query(
+    `INSERT INTO posts 
+    (id, posted_by, content) VALUES
+    (1, 'test22', 'testContent1'),
+    (2, 'test33', 'testContent2')`
+  );
+  await db.query(
+    `INSERT INTO posts_comments
+    (id, post_id, posted_by, content) VALUES
+    (1, 1, 'test33', 'this post sucks'),
+    (2, 2, 'test22', 'yours suck too'),
+    (3, 2, 'test22', 'testingComment')`
+  );
+  
 }
 
 async function commonBeforeEach() {

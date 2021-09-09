@@ -10,6 +10,8 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const messageRoutes = require("./routes/messagesRoutes");
 const friendsRoutes = require("./routes/friendsRoutes");
+const postCommentRoutes = require("./routes/postsCommentRoute");
+const postRoutes = require("./routes/postRoutes");
 
 app.use(cors());
 app.use(express.json());
@@ -19,7 +21,8 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/messages", messageRoutes);
 app.use("/friends", friendsRoutes);
-
+app.use("/comments", postCommentRoutes);
+app.use("/posts", postRoutes);
 /** Handle 404 errors -- this matches everything */
 app.use((req, res, next) => {
   return next(new NotFoundError());
