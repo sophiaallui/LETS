@@ -4,11 +4,11 @@ const multer = require("multer");
 const path = require("path");
 const db = require("../knexDb");
 const { NotFoundError } = require("../ExpressError");
-
+const { ensureLoggedIn } = require("../middleware/auth");
 const imageUpload = multer({ dest : "images" })
 
 
-router.post("/", imageUpload.single("image"), async (req, res, next) => {
+router.post("/", ensureLoggedIn, imageUpload.single("image"), async (req, res, next) => {
    try {
       const { filename, mimetype, size } = req.file;
       const filepath = req.file.path;

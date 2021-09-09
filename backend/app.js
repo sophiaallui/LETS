@@ -4,7 +4,6 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const morgan = require("morgan");
-const multer = require("multer");
 
 const { NotFoundError } = require("./ExpressError");
 const { authenticateJWT } = require("./middleware/auth");
