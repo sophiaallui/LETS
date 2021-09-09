@@ -77,3 +77,13 @@ CREATE TABLE users_friends (
   confirmed INT NOT NULL DEFAULT 0,
   PRIMARY KEY (user_from, user_to)
 );
+
+CREATE TABLE image_files (
+  id SERIAL PRIMARY KEY,
+  post_id INT REFERENCES posts (id) ON DELETE CASCADE,
+  username VARCHAR(25) REFERENCES users (username) ON DELETE CASCADE,
+  filename TEXT NOT NULL,
+  filepath TEXT NOT NULL,
+  mimetype TEXT NOT NULL,
+  size BIGINT NOT NULL
+);

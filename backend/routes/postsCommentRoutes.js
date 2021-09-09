@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
-const PostComment = require("../models/RECENTpostsComment");
+const PostComment = require("../models/postComment");
 const jsonshema = require("jsonschema");
-const newCommentSchema = require("../schemas/RECENTpostsCommentNew.json");
+const newCommentSchema = require("../schemas/postsCommentNew.json");
 const { BadRequestError } = require("../ExpressError");
 // GET /comments
 // Returns all comments
