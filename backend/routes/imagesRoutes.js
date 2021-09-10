@@ -11,12 +11,15 @@ const imageUpload = multer({ dest : "images" })
 router.post("/", ensureLoggedIn, imageUpload.single("image"), async (req, res, next) => {
    try {
       const { filename, mimetype, size } = req.file;
+      const { username, post_id } = req.headers;
       const filepath = req.file.path;
       db.insert({
         filename,
         filepath,
         mimetype,
-        size
+        size,
+        username,
+        post_id
       })
       .into("image_files")
       .then(() => res.json({ success : true, filename }))
@@ -31,7 +34,7 @@ router.post("/", ensureLoggedIn, imageUpload.single("image"), async (req, res, n
    }
 });
 
-router.get("/:filename", async (req, res, next) => {
+router.get("/:filename", ensureLoggedIn, async (req, res, next) => {
   try {
     const { filename } = req.params;
     db.select("*")

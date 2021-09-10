@@ -66,8 +66,4 @@ router.delete("/:username/:postId", ensureCorrectUserOrAdmin, async (req, res, n
   }
 });
 
-
-
-
-
 module.exports = router;
