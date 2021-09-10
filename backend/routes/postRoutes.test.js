@@ -1,7 +1,8 @@
 "use strict";
 const request = require("supertest");
 const app = require("../app");
-const { send } = require("../models/message");
+const db = require("../db");
+
 const {
   commonBeforeAll,
   commonBeforeEach,
@@ -168,17 +169,17 @@ describe("POST /posts/:username", () => {
   });
 
   test("unauth for invalid users", async () => {
-    const res = await request(app).post("/posts/test11");
-    send({
-      content: "newPostLMAO",
-    })
-    .set("authorization", `Bearer ${test2Token}`);
+    const res = await request(app)
+      .post("/posts/test11")
+      .send({
+        content: "newPostLMAO",
+      })
+      .set("authorization", `Bearer ${test2Token}`);
     expect(res.statusCode).toEqual(401);
   });
 
   test("unauth for anons", async () => {
-    const res = await request(app).post("/posts/test11")
-    send({
+    const res = await request(app).post("/posts/test11").send({
       content: "newPostLMAO",
     });
     expect(res.statusCode).toEqual(401);
@@ -203,4 +204,74 @@ describe("PATCH /posts/:username/:postId", () => {
       },
     });
   });
+
+  test("works for same-as-:username", async () => {
+    const res = await request(app)
+      .patch("/posts/test22/1")
+      .send({
+        content: "should update to this",
+      })
+      .set("authorization", `Bearer ${test2Token}`);
+    expect(res.body).toEqual({
+      post: {
+        id: 1,
+        postedBy: "test22",
+        content: "should update to this",
+        createdAt: expect.any(String),
+      },
+    });
+  });
+
+  test("unauth for invalid users", async () => {
+    const res = await request(app)
+      .patch("/posts/test22/1")
+      .send({
+        content: "should update to this",
+      })
+      .set("authorization", `Bearer ${test3Token}`);
+    expect(res.statusCode).toEqual(401);
+  });
+
+  test("unauth for anons", async () => {
+    const res = await request(app).patch("/posts/test22/1").send({
+      content: "should update to this",
+    });
+    expect(res.statusCode).toEqual(401);
+  });
 });
+
+// DELETE /posts/:username/:postId
+describe("DELETE /posts/:username/:postId", () => {
+  test("works for admin", async () => {
+    const res = await request(app)
+      .delete("/posts/test33/2")
+      .set("authorization", `Bearer ${adminToken}`);
+    expect(res.body).toEqual({ deleted: "2" });
+    const doubleCheck = await db.query(`SELECT id FROM posts WHERE id = 2`);
+    expect(doubleCheck.rows.length).toEqual(0);
+  });
+
+  test("works for same-as-:username that owns the post", async () => {
+    const res = await request(app)
+      .delete("/posts/test33/2")
+      .set("authorization", `Bearer ${test3Token}`);
+    expect(res.body).toEqual({ deleted: "2" });
+    const doubleCheck = await db.query(`SELECT id FROM posts WHERE id = 2`);
+    expect(doubleCheck.rows.length).toEqual(0);
+  });
+
+  test("unauth for invalid user", async () => {
+    const res = await request(app)
+    .delete("/posts/test33/2")
+    .set("authorization", `Bearer ${test2Token}`);
+    expect(res.statusCode).toEqual(401)
+  });
+
+  test("unauth for anons", async () => {
+    const res = await request(app)
+    .delete("/posts/test33/2")
+    expect(res.statusCode).toEqual(401)
+  });
+});
+
+
