@@ -8,11 +8,16 @@ const { createToken } = require("../helpers/tokens");
 
 
 async function commonBeforeAll() {
-  await db.query("DELETE FROM users");
+  await db.query("DELETE FROM posts_comments_comments")
+  await db.query("DELETE FROM posts_comments");
+  await db.query("DELETE FROM posts");
   await db.query("DELETE FROM messages");
   await db.query("DELETE FROM users_friends");
+  await db.query("DELETE FROM image_files");
   await db.query("DELETE FROM messages");
-
+  await db.query("DELETE FROM users");
+ 
+  
   await db.query(
     `INSERT INTO users (username, email, password, first_name, last_name, is_admin)
     VALUES ('test1Admin', 'test1Admin@test.com', $1, 'testFirstName', 'testLastName', true),

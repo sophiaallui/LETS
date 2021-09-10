@@ -1,7 +1,6 @@
 "use strict";
 const request = require("supertest");
 const app = require("../app");
-const db = require("../db");
 const {
   commonBeforeAll,
   commonBeforeEach,
@@ -68,7 +67,6 @@ describe("/GET /posts", () => {
       ],
     });
   });
-
   test("unauth for anons", async () => {
     const res = await request(app).get("/posts");
     expect(res.statusCode).toEqual(401);
@@ -78,7 +76,52 @@ describe("/GET /posts", () => {
 // GET /posts/:postId
 describe("/GET /posts/:postId", () => {
   test("works for admin", async () => {
-    const res = await request(app).get("posts/1").set("authorization", `Bearer ${adminToken}`);
-    console.log(res.body)
-  })
-})
+    const res = await request(app)
+      .get("/posts/1")
+      .set("authorization", `Bearer ${adminToken}`);
+    expect(res.body).toEqual({
+      post: {
+        id: 1,
+        postedBy: "test22",
+        content: "testContent1",
+        createdAt: expect.any(String),
+        comments: [
+          {
+            comments: [],
+            content: "this post sucks",
+            createdAt: expect.any(String),
+            id: 1,
+            postId: 1,
+            postedBy: "test33",
+          },
+        ],
+      },
+    });
+  });
+
+  test("works for signed-in users", async () => {
+    const res = await request(app)
+      .get("/posts/1")
+      .set("authorization", `Bearer ${adminToken}`);
+    expect(res.body).toEqual({
+      post: {
+        id: 1,
+        postedBy: "test22",
+        content: "testContent1",
+        createdAt: expect.any(String),
+        comments: [
+          {
+            comments: [],
+            content: "this post sucks",
+            createdAt: expect.any(String),
+            id: 1,
+            postId: 1,
+            postedBy: "test33",
+          },
+        ],
+      },
+    });
+  });
+
+  
+});

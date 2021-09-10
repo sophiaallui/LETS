@@ -139,7 +139,7 @@ describe("Post.update", () => {
 
   test("BadRequesterror for invalid inputs", async () => {
     try {
-      await Post.update("test11", 1, { someNotExistingCol: "something" });
+      await Post.update("test11", 1, {});
       fail();
     } catch (e) {
       console.log(e)
