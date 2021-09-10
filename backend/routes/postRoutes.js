@@ -40,10 +40,6 @@ router.post("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
   }
 });
 
-
-
-
-
 // PATCH /posts/:username/:postId
 // returns => { post : { ...updatedValues } };
 // authorization required : admin or same-as-:username

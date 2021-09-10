@@ -1,6 +1,7 @@
 "use strict";
 const request = require("supertest");
 const app = require("../app");
+const { send } = require("../models/message");
 const {
   commonBeforeAll,
   commonBeforeEach,
@@ -67,6 +68,7 @@ describe("/GET /posts", () => {
       ],
     });
   });
+
   test("unauth for anons", async () => {
     const res = await request(app).get("/posts");
     expect(res.statusCode).toEqual(401);
@@ -123,5 +125,82 @@ describe("/GET /posts/:postId", () => {
     });
   });
 
-  
+  test("unauthorized for anons", async () => {
+    const res = await request(app).get("/posts/1");
+    expect(res.statusCode).toEqual(401);
+  });
+});
+
+// POST /posts/:username
+describe("POST /posts/:username", () => {
+  test("works for admin", async () => {
+    const res = await request(app)
+      .post("/posts/test22")
+      .send({
+        content: "newPostLMAO",
+      })
+      .set("authorization", `Bearer ${adminToken}`);
+    expect(res.body).toEqual({
+      post: {
+        id: expect.any(Number),
+        postedBy: "test22",
+        content: "newPostLMAO",
+        createdAt: expect.any(String),
+      },
+    });
+  });
+
+  test("works for same-as-:username", async () => {
+    const res = await request(app)
+      .post("/posts/test22")
+      .send({
+        content: "newPostLMAO",
+      })
+      .set("authorization", `Bearer ${test2Token}`);
+    expect(res.body).toEqual({
+      post: {
+        id: expect.any(Number),
+        postedBy: "test22",
+        content: "newPostLMAO",
+        createdAt: expect.any(String),
+      },
+    });
+  });
+
+  test("unauth for invalid users", async () => {
+    const res = await request(app).post("/posts/test11");
+    send({
+      content: "newPostLMAO",
+    })
+    .set("authorization", `Bearer ${test2Token}`);
+    expect(res.statusCode).toEqual(401);
+  });
+
+  test("unauth for anons", async () => {
+    const res = await request(app).post("/posts/test11")
+    send({
+      content: "newPostLMAO",
+    });
+    expect(res.statusCode).toEqual(401);
+  });
+});
+
+// PATCH /posts/:username/:postId
+describe("PATCH /posts/:username/:postId", () => {
+  test("works for admin", async () => {
+    const res = await request(app)
+      .patch("/posts/test22/1")
+      .send({
+        content: "should update to this",
+      })
+      .set("authorization", `Bearer ${adminToken}`);
+    expect(res.body).toEqual({
+      post: {
+        id: 1,
+        postedBy: "test22",
+        content: "should update to this",
+        createdAt: expect.any(String),
+      },
+    });
+  });
 });
