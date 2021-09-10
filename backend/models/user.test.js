@@ -13,7 +13,6 @@ const {
   commonAfterAll,
 } = require("../routes/_testCommon");
 
-
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
@@ -100,47 +99,47 @@ describe("findAll", () => {
     const users = await User.findAll();
     expect(users).toEqual([
       {
-        username: 'test11',
-        email: 'test11@test.com',
-        firstName: 'test11F',
-        lastName: 'test11L',
-        isAdmin: true
+        username: "test11",
+        email: "test11@test.com",
+        firstName: "test11F",
+        lastName: "test11L",
+        isAdmin: true,
       },
       {
-        username: 'test1Admin',
-        email: 'test1Admin@test.com',
-        firstName: 'testFirstName',
-        lastName: 'testLastName',
-        isAdmin: true
+        username: "test1Admin",
+        email: "test1Admin@test.com",
+        firstName: "testFirstName",
+        lastName: "testLastName",
+        isAdmin: true,
       },
       {
-        username: 'test2',
-        email: 'test2@test.com',
-        firstName: 'test2FN',
-        lastName: 'test2LN',
-        isAdmin: false
+        username: "test2",
+        email: "test2@test.com",
+        firstName: "test2FN",
+        lastName: "test2LN",
+        isAdmin: false,
       },
       {
-        username: 'test22',
-        email: 'test22@test.com',
-        firstName: 'test22F',
-        lastName: 'test22L',
-        isAdmin: false
+        username: "test22",
+        email: "test22@test.com",
+        firstName: "test22F",
+        lastName: "test22L",
+        isAdmin: false,
       },
       {
-        username: 'test3',
-        email: 'test3@test.com',
-        firstName: 'test3FN',
-        lastName: 'test3LN',
-        isAdmin: false
+        username: "test3",
+        email: "test3@test.com",
+        firstName: "test3FN",
+        lastName: "test3LN",
+        isAdmin: false,
       },
       {
-        username: 'test33',
-        email: 'test33@test.com',
-        firstName: 'test33F',
-        lastName: 'test33L',
-        isAdmin: false
-      }
+        username: "test33",
+        email: "test33@test.com",
+        firstName: "test33F",
+        lastName: "test33L",
+        isAdmin: false,
+      },
     ]);
   });
 });
@@ -233,43 +232,149 @@ describe("remove", () => {
 
   test("not found if no such user", async () => {
     try {
-      await User.remove('ASLDKFHASDLK');
+      await User.remove("ASLDKFHASDLK");
       fail();
-    } catch(e) {
+    } catch (e) {
       expect(e instanceof NotFoundError).toBeTruthy();
     }
   });
 });
 
-
 /** User Measurements Tests  */
 describe("postMeasurements", () => {
   const measurementsData = {
-    createdBy : 'test22',
-    heightInInches : 68.5,
-    weightInPounds : 151.5,
-    armsInInches : 99.0,
-  }
+    createdBy: "test22",
+    heightInInches: 68.5,
+    weightInPounds: 151.5,
+    armsInInches: 99.0,
+  };
   test("works", async () => {
     const res = await User.postMeasurements("test22", measurementsData);
-    expect(res).toEqual({ 
+    expect(res).toEqual({
       id: expect.any(Number),
-      createdBy: 'test22',
+      createdBy: "test22",
       heightInInches: 68.5,
       weightInPounds: 151.5,
       armsInInches: 99,
       legsInInches: 0,
-      createdAt: expect.any(Date)
-    })
+      createdAt: expect.any(Date),
+    });
   });
   test("Not found error if username does not exist", async () => {
     try {
       await User.postMeasurements("I DONT EXIST", measurementsData);
       fail();
-    } catch(e) {
+    } catch (e) {
       expect(e instanceof NotFoundError).toBeTruthy();
     }
   });
 });
 
-describe("getMeasurements")
+describe("getMeasurements", () => {
+  test("works if that user has posted measurements", async () => {
+    const res = await User.getMeasurements("test22");
+    expect(res).toEqual([
+      {
+        id: expect.any(Number),
+        createdBy: "test22",
+        heightInInches: 68,
+        weightInPounds: 150,
+        armsInInches: 15,
+        legsInInches: 27,
+        waistInInches: 30,
+      },
+      {
+        id: expect.any(Number),
+        createdBy: "test22",
+        heightInInches: 69,
+        weightInPounds: 151,
+        armsInInches: 16,
+        legsInInches: 28,
+        waistInInches: 31,
+      },
+    ]);
+  });
+
+  test("Notfound error if none found for username", async () => {
+    try {
+      await User.getMeasurements("I DONT EXIST");
+      fail();
+    } catch (e) {
+      expect(e instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
+
+describe("getMeasurement", () => {
+  test("works:", async () => {
+    const res = await User.getMeasurement("test22", 1);
+    expect(res).toEqual({
+      id: 1,
+      createdBy: "test22",
+      heightInInches: 68,
+      weightInPounds: 150,
+      armsInInches: 15,
+      legsInInches: 27,
+      waistInInches: 30,
+    });
+  });
+
+  test("NotFoundError if no measurement", async () => {
+    try {
+      await User.getMeasurement("test22", 9999);
+      fail();
+    } catch (e) {
+      expect(e instanceof NotFoundError).toBeTruthy();
+    }
+  });
+
+  test("NotfoundError if no user does not exist", async () => {
+    try {
+      await User.getMeasurement("I DONT EXIST", 1);
+      fail();
+    } catch (e) {
+      expect(e instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
+
+describe("User.updateMeasurement", () => {
+  test("works: ", async () => {
+    const res = await User.updateMeasurement(
+      "test22",
+      { armsInInches: "15.5", legsInInches: "27.0" },
+      1
+    );
+    expect(res).toEqual({
+      id: 1,
+      createdBy: "test22",
+      heightInInches: 68,
+      weightInPounds: 150,
+      armsInInches: 15.5,
+      legsInInches: 27,
+      waistInInches: 30,
+    });
+  });
+
+  test("NotFoundError for invalid measurementId", async () => {
+    try {
+      await User.updateMeasurement("test22", { armsInInches: "15.7" }, 9999);
+      fail();
+    } catch (e) {
+      expect(e instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
+
+describe("User.sendFriendRequest", () => {
+  test("works", async () => {
+    const res = await User.sendFriendRequest("test11", "test22");
+    expect(res).toEqual({
+      userFrom: "test11",
+      userTo: "test22",
+      requestTime: expect.any(Date),
+      confirmed: 0,
+    });
+  });
+  
+});

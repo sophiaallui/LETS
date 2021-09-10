@@ -26,14 +26,6 @@ CREATE TABLE posts (
   created_at TIMESTAMP NOT NULL DEFAULT NOW() 
 );
 
-CREATE TABLE messages (
-  id SERIAL PRIMARY KEY,
-  sent_by VARCHAR(25) NOT NULL REFERENCES users(username) ON DELETE CASCADE,
-  sent_to VARCHAR(25) NOT NULL REFERENCES users(username) ON DELETE CASCADE,
-  text TEXT NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
 CREATE TABLE posts_comments (
   id SERIAL PRIMARY KEY,
   post_id INT REFERENCES posts(id) ON DELETE CASCADE,
@@ -48,6 +40,14 @@ CREATE TABLE posts_comments_comments (
   post_comments_id INT REFERENCES posts_comments (id) ON DELETE CASCADE,
   posted_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE,
   content TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE messages (
+  id SERIAL PRIMARY KEY,
+  sent_by VARCHAR(25) NOT NULL REFERENCES users(username) ON DELETE CASCADE,
+  sent_to VARCHAR(25) NOT NULL REFERENCES users(username) ON DELETE CASCADE,
+  text TEXT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -73,7 +73,7 @@ CREATE TABLE users_measurements (
 CREATE TABLE users_friends (
   user_from  VARCHAR(25) REFERENCES users ON DELETE CASCADE,
   user_to VARCHAR(25) REFERENCES users ON DELETE CASCADE,
-  request_time TIMESTAMP,
+  request_time TIMESTAMP NOT NULL DEFAULT NOW(),
   confirmed INT NOT NULL DEFAULT 0,
   PRIMARY KEY (user_from, user_to)
 );

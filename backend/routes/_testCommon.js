@@ -82,24 +82,19 @@ async function commonBeforeAll() {
       (4, 'test22', 'test33', 'something')`
   );
 
-  // Setup Friends for testing.
-  await db.query(
-    `INSERT INTO users_friends 
-    (user_from, user_to)
-    VALUES
-    ('test11', 'test22')`
-  );
   
   // SETUP Posts and Comments and Post Comments Comments for testing
   await db.query(
     `INSERT INTO posts 
-    (id, posted_by, content) VALUES
+    (id, posted_by, content) 
+    VALUES
     (1, 'test22', 'testContent1'),
     (2, 'test33', 'testContent2')`
   );
   await db.query(
     `INSERT INTO posts_comments
-    (id, post_id, posted_by, content) VALUES
+    (id, post_id, posted_by, content) 
+    VALUES
     (1, 1, 'test33', 'this post sucks'),
     (2, 2, 'test22', 'yours suck too'),
     (3, 2, 'test22', 'testingComment')`

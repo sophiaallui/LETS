@@ -30,7 +30,6 @@ app.use("/comments", postCommentRoutes);
 app.use("/posts", postRoutes);
 app.use("/images", imageRoutes);
 
-
 /** Handle 404 errors -- this matches everything */
 app.use((req, res, next) => {
   return next(new NotFoundError());

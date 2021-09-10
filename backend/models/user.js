@@ -174,7 +174,7 @@ class User {
       userMeasurementsJsToSql,
       "users_measurements"
     );
-    // console.log(baseQuery, values)
+    console.log(baseQuery, values)
     const measurementsResults = await db.query(
       `${baseQuery} RETURNING
        id,
@@ -215,6 +215,7 @@ class User {
         arms_in_inches AS "armsInInches",
         legs_in_inches AS "legsInInches",
         waist_in_inches AS "waistInInches"
+        FROM users_measurements
         WHERE created_by = $1`,
       [username]
     );
@@ -226,6 +227,8 @@ class User {
   }
 
   static async getMeasurement(username, measurementId) {
+    const userCheck = await db.query(`SELECT username FROM users WHERE username = $1`, [username]);
+    if(!userCheck.rows.length) throw new NotFoundError(`User ${username} does not exist`);
     const results = await db.query(
       `SELECT 
         id,
@@ -235,6 +238,7 @@ class User {
         arms_in_inches AS "armsInInches",
         legs_in_inches AS "legsInInches",
         waist_in_inches AS "waistInInches"
+        FROM users_measurements
         WHERE created_by = $1
         AND id = $2`,
       [username, measurementId]

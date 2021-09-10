@@ -26,7 +26,7 @@ describe("send", () => {
       createdAt: expect.any(Date),
     });
   });
-
+  
   test("not found if no such user", async () => {
     try {
       await Message.send("test11", "non-existing-user", "test");

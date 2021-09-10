@@ -59,10 +59,15 @@ describe("PostComment.getAllComments", () => {
 
 describe("PostComment.createComment", () => {
   test("works", async () => {
-    const res = await PostComment.createComment("test22", "1", "testinggg");
+    const newPost = await db.query(
+      `INSERT INTO posts 
+      (id, posted_by, content) VALUES 
+      (99, 'test22', 'testingPost') RETURNING *` );
+    const newPostId = newPost.rows[0].id
+    const res = await PostComment.createComment("test22", newPostId, "testinggg");
     expect(res).toEqual({
       id: expect.any(Number),
-      postId: 1,
+      postId: newPostId,
       postedBy: "test22",
       content: "testinggg",
       createdAt: expect.any(Date),
