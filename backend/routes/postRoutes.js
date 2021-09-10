@@ -3,34 +3,6 @@ const router = express.Router();
 const Post = require("../models/post");
 const { ensureCorrectUserOrAdmin, ensureLoggedIn } = require("../middleware/auth");
 
-// POST /posts/:username
-// Accepts { content }
-// returns => { id, postedBy, content, createdAt }
-router.post("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
-  try {
-    const newPost = await Post.create(req.params.username, req.body.content);
-    return res.json({ post : newPost });
-  } catch(e) {
-    return next(e);
-  }
-});
-
-// GET /posts/:postId
-/**
- * returns => {
- *  id,
- *  
- * }
- */
-// authorization required : logged in.
-router.get("/:postId", ensureLoggedIn, async (req, res, next) => {
-  try {
-    const post = await Post.getById(req.params.postId);
-    return res.json({ post });
-  } catch(e) {
-    return next(e);
-  }
-});
 
 // GET /posts
 // returns => { posts : [] }
@@ -43,6 +15,34 @@ router.get("/", ensureLoggedIn, async (req, res, next) => {
     return next(e);
   }
 });
+
+// GET /posts/:postId
+// authorization required : logged in.
+router.get("/:postId", ensureLoggedIn, async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+    const post = await Post.getById(postId);
+    return res.json({ post });
+  } catch(e) {
+    return next(e);
+  }
+});
+
+// POST /posts/:username
+// Accepts { content }
+// returns => { id, postedBy, content, createdAt }
+router.post("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
+  try {
+    const newPost = await Post.create(req.params.username, req.body.content);
+    return res.json({ post : newPost });
+  } catch(e) {
+    return next(e);
+  }
+});
+
+
+
+
 
 // PATCH /posts/:username/:postId
 // returns => { post : { ...updatedValues } };

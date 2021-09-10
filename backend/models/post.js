@@ -55,9 +55,7 @@ class Post {
         );
         comment.comments = postCommentsComments.rows;
       }
-    } else{
-      post.comments = [];
-    }
+    } 
     return post;
   };
 
@@ -117,8 +115,7 @@ class Post {
     const preCheck = await db.query(`SELECT id FROM posts WHERE id = $1`, [postId]);
     if(!preCheck.rows[0]) throw new NotFoundError(`Post with id : ${postId} does not exist`);
     
-    await db.query(`DELETE FROM posts WHERE 'posted_by' = $1 AND 'id' = $2 RETURNING id`, [username, postId]);
-    
+    await db.query(`DELETE FROM posts WHERE posted_by = $1 AND id = $2 RETURNING id`, [username, postId]);
   };
 };
 

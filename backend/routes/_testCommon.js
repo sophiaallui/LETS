@@ -73,7 +73,8 @@ async function commonBeforeAll() {
       VALUES
       (1, 'test11', 'test22', 'admin sending non-admin message'),
       (2, 'test22', 'test33', 'regular user sending message'),
-      (3, 'test33', 'test22', 'testMsg')`
+      (3, 'test33', 'test22', 'testMsg'),
+      (4, 'test22', 'test33', 'something')`
   );
 
   // Setup Friends for testing.

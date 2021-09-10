@@ -142,6 +142,7 @@ describe("Post.update", () => {
       await Post.update("test11", 1, { someNotExistingCol: "something" });
       fail();
     } catch (e) {
+      console.log(e)
       expect(e instanceof BadRequestError).toBeTruthy();
     }
   });
@@ -150,7 +151,7 @@ describe("Post.update", () => {
 describe("Post.delete(username, postId)", () => {
   test("works", async () => {
     await Post.delete("test22", 1);
-    const checkIfExists = await db.query(`SELECT id FROM posts WHERE id = 1`);
+    const checkIfExists = await db.query(`SELECT * FROM posts WHERE id = $1`, [1]);
     expect(checkIfExists.rows.length).toEqual(0);
   });
 

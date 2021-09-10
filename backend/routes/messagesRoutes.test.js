@@ -46,6 +46,13 @@ describe("GET /messages", () => {
           sent_to: "test22",
           text: "testMsg",
         },
+        {
+          created_at: expect.any(String),
+          id: expect.any(Number),
+          sent_by: "test22",
+          sent_to: "test33",
+          text: "something",
+        },
       ],
     });
   });
@@ -80,6 +87,7 @@ describe("POST /messages/:username/to/:username", () => {
       },
     });
   });
+
   test("works for :username same as logged in user", async () => {
     const res = await request(app)
       .post("/messages/test22/to/test33")
@@ -97,6 +105,7 @@ describe("POST /messages/:username/to/:username", () => {
       },
     });
   });
+  
   test("unauth for invalid users", async () => {
     const res = await request(app)
       .post("/messages/test33/to/test22")
@@ -158,6 +167,6 @@ describe("Delete /messages/:username/delete/:messageId", () => {
 
   test("unauth for anons", async () => {
     const res = await request(app).delete("/messages/test22/delete/3");
-    expect(res.statusCode).toEqual(401)
-  })
+    expect(res.statusCode).toEqual(401);
+  });
 });

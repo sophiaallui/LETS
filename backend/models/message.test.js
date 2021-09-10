@@ -86,26 +86,32 @@ describe("getAll", () => {
     expect(allMessagesResults).toEqual([
       {
         id: 1,
-        sent_by: 'test11',
-        sent_to: 'test22',
-        text: 'admin sending non-admin message',
-        created_at: expect.any(Date)
+        sent_by: "test11",
+        sent_to: "test22",
+        text: "admin sending non-admin message",
+        created_at: expect.any(Date),
       },
       {
         id: 2,
-        sent_by: 'test22',
-        sent_to: 'test33',
-        text: 'regular user sending message',
-        created_at: expect.any(Date)
+        sent_by: "test22",
+        sent_to: "test33",
+        text: "regular user sending message",
+        created_at: expect.any(Date),
       },
       {
         id: 3,
-        sent_by: 'test33',
-        sent_to: 'test22',
-        text: 'testMsg',
-        created_at: expect.any(Date)
-      }
-    ]
-    );
+        sent_by: "test33",
+        sent_to: "test22",
+        text: "testMsg",
+        created_at: expect.any(Date),
+      },
+      {
+        created_at: expect.any(Date),
+        id: 4,
+        sent_by: "test22",
+        sent_to: "test33",
+        text: "something",
+      },
+    ]);
   });
 });
