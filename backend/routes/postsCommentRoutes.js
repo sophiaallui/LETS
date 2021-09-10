@@ -79,8 +79,8 @@ router.get(
   ensureLoggedIn,
   async (req, res, next) => {
     try {
-      const comments = await SubComment.getAll();
-      return res.json({ comments });
+      const subComments = await SubComment.getAll();
+      return res.json({ subComments });
     } catch (e) {
       return next(e);
     }

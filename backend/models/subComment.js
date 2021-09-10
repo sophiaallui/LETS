@@ -20,7 +20,7 @@ class SubComment {
         post_id AS "postId",
         post_comments_id AS "postCommentsId",
         posted_by AS "postedBy",
-        content
+        content,
         created_at  AS "createdAt"
         FROM posts_comments_comments`
     );
@@ -35,8 +35,8 @@ class SubComment {
       post_id AS "postId",
       post_comments_id AS "postCommentsId",
       posted_by AS "postedBy",
-      content
-      created_at  AS "createdAt"
+      content,
+      created_at AS "createdAt"
       FROM posts_comments_comments
         WHERE id = $1
       `, [subcommentId]
@@ -56,7 +56,7 @@ class SubComment {
         post_id AS "postId",
         post_comments_id AS "postCommentsId",
         posted_by AS "postedBy",
-        content
+        content,
         created_at  AS "createdAt"
       `, [postId, commentId, username, content]
     );
@@ -64,7 +64,7 @@ class SubComment {
     if(!subComment) throw new BadRequestError();
     return subComment;
   }
-  
+
   // DELETE /comments/:postId/:username/:commentId/subcomments/:subcommentId
   // DELETE a subcomment by id
   static async deleteById(id) {
