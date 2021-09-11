@@ -2,7 +2,7 @@
  * Creating a holder just so the website would have a navigation bar
  */
 
-import React from 'react'
+import React, { useContext } from 'react'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
@@ -10,7 +10,7 @@ import Grid from '@material-ui/core/Grid'
 import { BroserRouter as Router, Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core'
 import { Divider } from '@material-ui/core'
-
+import UserContext from '../UserContext'
 
 const useStyles = makeStyles((theme) => ({
 
@@ -38,7 +38,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function NavBar(){
-
+    const { currentUser } = useContext(UserContext);
+    console.debug("NavBar", "currentUser=", currentUser);
     const classes = useStyles(); 
     return(
         <div>

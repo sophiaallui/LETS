@@ -82,7 +82,7 @@ function App() {
       >
         <div>
           <nav>
-            <NavBar />
+            <NavBar logout={logout} />
           </nav>
           <Switch>
             <Route path="/" exact>
