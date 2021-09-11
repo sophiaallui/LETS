@@ -22,7 +22,7 @@ const LoginForm = (props) => {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const res = await this.props.login(formData);
+    const res = await props.login(formData);
     if(res.success) {
       history.push("/")
     } else {

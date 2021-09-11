@@ -70,6 +70,11 @@ function App() {
     }
   };
 
+  const logout = () => {
+    setToken(null);
+    setCurrentUser(null);
+  }
+
   return (
     <Router>
       <UserContext.Provider
@@ -96,7 +101,7 @@ function App() {
             <Route path="/login">
               <Login login={login}/>
             </Route>
-            <Route path="/signup">
+            <Route path="/register">
               <RegisterForm signup={signup} />
             </Route>
           </Switch>
