@@ -68,6 +68,20 @@ export default function NavBar(){
                                 <strong>messageee :3</strong>
                             </Link>
                         </Grid>
+
+                        <Grid className={classes.links}>
+                            <Link className={classes.link} to="/login">
+                                <strong>Login</strong>
+                            </Link>
+                        </Grid>
+
+                        
+                        <Grid className={classes.links}>
+                            <Link className={classes.link} to="/register">
+                                <strong>Register</strong>
+                            </Link>
+                        </Grid>
+
                         <Divider orientation="vertical" flexItem></Divider>
 
                     </Grid>
