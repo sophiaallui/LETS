@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import NavBar from "./components/NavBar";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import "./App.css";
-import Progress from "./pages/Progress";
-import Messenger from "./pages/Messenger";
-import Login from "./pages/Login";
-import RegisterForm from "./components/RegisterForm";
+
+import Routes from "./routes/Routes";
 import Api from "./api/api";
 import jwt from "jsonwebtoken";
 import UserContext from "./UserContext";
@@ -84,27 +82,7 @@ function App() {
           <nav>
             <NavBar logout={logout} />
           </nav>
-          <Switch>
-            <Route path="/" exact>
-              <strong style={{ color: "pink" }}>Welcome Homeeeee ^.^ </strong>
-            </Route>
-            <Route path="/progress">
-              <strong style={{ color: "pink" }}>progresssss~ 💪🏼🥺</strong>
-              <Progress />
-            </Route>
-            <Route path="/messenger">
-              <strong style={{ color: "#ADB4A2" }}>
-                LETS GET THEM GAINZ BOOOIZ~ 💪🏼🥺💪🏼
-              </strong>
-              <Messenger />
-            </Route>
-            <Route path="/login">
-              <Login login={login}/>
-            </Route>
-            <Route path="/register">
-              <RegisterForm signup={signup} />
-            </Route>
-          </Switch>
+          <Routes  login={login} signup={signup} />
         </div>
       </UserContext.Provider>
     </Router>

@@ -99,6 +99,24 @@ class User {
     if (!user) {
       throw new NotFoundError(`No user : ${username}`);
     }
+    const userPosts = await db.query(
+      `SELECT id, posted_by AS "postedBy", content, created_at AS "createdAt" FROM posts WHERE posted_by = $1`, [user.username]
+    );
+    const userMeasurements = await db.query(
+      `SELECT 
+        id,
+        created_by AS "createdBy",
+        height_in_inches AS "heightInInches",
+        weight_in_pounds AS "weightInPounds",
+        arms_in_inches AS "armsInInches",
+        legs_in_inches AS "legsInInches",
+        waist_in_inches AS "waistInInches"
+        FROM users_measurements
+        WHERE created_by = $1`,
+      [user.username]
+    );
+    user.posts = userPosts.rows;
+    user.measurements = userMeasurements.rows;
     return user;
   }
 
