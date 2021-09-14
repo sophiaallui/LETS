@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NavBar from "./components/NavBar";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, useHistory } from "react-router-dom";
 import "./App.css";
 
 import Routes from "./routes/Routes";
@@ -13,6 +13,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [token, setToken] = useState(null);
+  const history = useHistory();
   console.debug(
     "App",
     "infoLoaded=",
@@ -71,6 +72,7 @@ function App() {
   const logout = () => {
     setToken(null);
     setCurrentUser(null);
+    history.push("/");
   }
 
   return (
