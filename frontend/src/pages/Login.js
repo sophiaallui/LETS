@@ -6,7 +6,7 @@ import { Container, Row, Col } from "reactstrap";
 // Core Components
 import LoginCard from "MyComponents/LoginCard";
 
-function LoginPage() {
+function LoginPage(props) {
   React.useEffect(() => {
     document.body.classList.add("login-page");
     window.scrollTo(0, 0);
@@ -42,8 +42,8 @@ function LoginPage() {
       </div>
       <section className="upper">
         <Container>
-          <Col className="mx-auto" lg="5" md="8">
-            <LoginCard />
+          <Col className="mx-auto my-auto" lg="6" md="8">
+            <LoginCard login={props.login} />
           </Col>
         </Container>
       </section>

@@ -5,12 +5,12 @@ import { Badge, Container, Row, Col } from "reactstrap";
 
 import SignupModal from "MyComponents/SignupModal";
 
-function Feature2() {
+function Landing(props) {
   return (
     <>
       <div className="section features-2">
         <Container>
-          <Row className="align-items-center">
+          <Row className="align-items-center justify-content-center">
             <Col className="mr-auto text-left" lg="4" md="8">
               <div className="pr-md-5">
                 <div className="icon icon-lg icon-shape icon-shape-primary shadow rounded-circle mb-5">
@@ -60,7 +60,7 @@ function Feature2() {
                   <li className="py-2">
                     <div className="d-flex align-items-center">
                       <div>
-                        <SignupModal buttonText="Get Started" />
+                        <SignupModal buttonText="Get Started" signup={props.signup} />
                       </div>
                     </div>
                   </li>
@@ -153,4 +153,4 @@ function Feature2() {
   );
 }
 
-export default Feature2;
+export default Landing;

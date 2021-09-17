@@ -1,5 +1,5 @@
-import React from "react";
-
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 // reactstrap components
 import {
   Button,
@@ -16,9 +16,29 @@ import {
 
 // Core Components
 
-function LoginCard() {
+function LoginCard(props) {
   const [emailFocus, setEmailFocus] = React.useState("");
   const [passwordFocus, setPasswordFocus] = React.useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    password: ""
+  });
+  const [errors, setErrors] = useState([]);
+  const history = useHistory();
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setFormData(form => ({ ...form, [name]: value }));
+  }
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const res = await props.login(formData);
+    if(res.success) {
+      history.push("/profile")
+    } else {
+      setErrors(res.errors);
+    }
+  }
+  
   return (
     <>
       <Card className="bg-secondary shadow border-0">
@@ -66,12 +86,15 @@ function LoginCard() {
               <InputGroup className="input-group-alternative">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
-                    <i className="ni ni-email-83"></i>
+                    <i className="ni ni-circle-08"></i>
                   </InputGroupText>
                 </InputGroupAddon>
                 <Input
-                  placeholder="Email"
-                  type="email"
+                  placeholder="Username"
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
                   onFocus={() => setEmailFocus("focused")}
                   onBlur={() => setEmailFocus("")}
                 ></Input>
@@ -87,6 +110,9 @@ function LoginCard() {
                 <Input
                   placeholder="Password"
                   type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                   onFocus={() => setPasswordFocus("focused")}
                   onBlur={() => setPasswordFocus("")}
                 ></Input>

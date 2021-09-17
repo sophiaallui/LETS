@@ -1,5 +1,5 @@
-import React from "react";
-
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 // reactstrap components
 import {
   Button,
@@ -16,12 +16,48 @@ import {
 } from "reactstrap";
 
 // Core Components
+import ErrorModal from "MyComponents/common/ModalNotification";
 
 function ModalSignup(props) {
   const [modalOpen, setModalOpen] = React.useState(false);
-  const [emailFocus, setEmailFocus] = React.useState("");
-  const [passwordFocus, setPasswordFocus] = React.useState("");
-  const [passwordConfirmFocus, setPasswordConfirmFocus] = React.useState("");
+  const [signupNameFocus, setSignupNameFocus] = React.useState("");
+  const [signupEmailFocus, setSignupEmailFocus] = React.useState("");
+  const [signupUsernameFocus, setSignupUsernameFocus] = React.useState("");
+  const [signupPasswordFocus, setSignupPasswordFocus] = React.useState("");
+  const [signupConfirmPasswordFocus, setSignupConfirmPasswordFocus] = React.useState("");
+  const history = useHistory();
+  const [signupData, setSignupData] = useState({
+    firstName: "",
+    lastName: "",
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
+
+  const [errors, setErrors] = useState([]);
+
+  const handleSignupChange = e => {
+    const { name, value } = e.target;
+    setSignupData(formData => ({ ...formData, [name]: value }))
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const { password, confirmPassword } = signupData;
+    if(password !== confirmPassword) {
+      setErrors(["Passwords do not match"])
+      return
+    }
+    const copied = { ...signupData }
+    delete copied[confirmPassword];
+    const res = await props.signup(copied);
+    if(res.sucess) {
+      history.push("/profile")
+    } else {
+      setErrors(res.errors)
+    }
+  }
   return (
     <>
       <Button
@@ -78,8 +114,56 @@ function ModalSignup(props) {
               <div className="text-center text-muted mb-4">
                 <small>Or sign up here:</small>
               </div>
-              <Form role="form">
-                <FormGroup className={"mb-3 " + emailFocus}>
+
+              <Form role="form" onSubmit={handleSubmit}>
+                <FormGroup className={"mb-3 " + signupNameFocus}>
+                  <InputGroup className="input-group-alternative">
+                    <InputGroupAddon addonType="prepend">
+                      <InputGroupText>
+                        <i className="ni ni-circle-08"></i>
+                      </InputGroupText>
+                    </InputGroupAddon>
+                    <Input
+                      placeholder="Firstname"
+                      type="text"
+                      name="firstName"
+                      onChange={handleSignupChange}
+                      value={signupData.firstName}
+                      onFocus={() => setSignupNameFocus("focused")}
+                      onBlur={() => setSignupNameFocus("")}
+                    ></Input>
+                    <Input
+                      placeholder="Lastname"
+                      type="text"
+                      name="lastName"
+                      value={signupData.lastName}
+                      onChange={handleSignupChange}
+                      onFocus={() => setSignupNameFocus("focused")}
+                      onBlur={() => setSignupNameFocus("")}
+                    ></Input>
+                  </InputGroup>
+                </FormGroup>
+
+                <FormGroup className={"mb-3 " + signupUsernameFocus}>
+                  <InputGroup className="input-group-alternative">
+                    <InputGroupAddon addonType="prepend">
+                      <InputGroupText>
+                        <i className="ni ni-circle-08"></i>
+                      </InputGroupText>
+                    </InputGroupAddon>
+                    <Input
+                      placeholder="username"
+                      type="text"
+                      name="username"
+                      onChange={handleSignupChange}
+                      value={signupData.username}
+                      onFocus={() => setSignupUsernameFocus("focused")}
+                      onBlur={() => setSignupUsernameFocus("")}
+                    ></Input>
+                  </InputGroup>
+                </FormGroup>
+
+                <FormGroup className={"mb-3 " + signupEmailFocus}>
                   <InputGroup className="input-group-alternative">
                     <InputGroupAddon addonType="prepend">
                       <InputGroupText>
@@ -89,12 +173,16 @@ function ModalSignup(props) {
                     <Input
                       placeholder="Email"
                       type="email"
-                      onFocus={() => setEmailFocus("focused")}
-                      onBlur={() => setEmailFocus("")}
+                      name="email"
+                      value={signupData.email}
+                      onChange={handleSignupChange}
+                      onFocus={() => setSignupEmailFocus("focused")}
+                      onBlur={() => setSignupEmailFocus("")}
                     ></Input>
                   </InputGroup>
                 </FormGroup>
-                <FormGroup className={passwordFocus}>
+
+                <FormGroup className={signupPasswordFocus}>
                   <InputGroup className="input-group-alternative">
                     <InputGroupAddon addonType="prepend">
                       <InputGroupText>
@@ -104,12 +192,14 @@ function ModalSignup(props) {
                     <Input
                       placeholder="Password"
                       type="password"
-                      onFocus={() => setPasswordFocus("focused")}
-                      onBlur={() => setPasswordFocus("")}
+                      name="password"
+                      value={signupData.password}
+                      onChange={handleSignupChange}
+                      onFocus={() => setSignupPasswordFocus("focused")}
+                      onBlur={() => setSignupPasswordFocus("")}
                     ></Input>
                   </InputGroup>
-                </FormGroup>
-                <FormGroup className={passwordConfirmFocus}>
+
                   <InputGroup className="input-group-alternative">
                     <InputGroupAddon addonType="prepend">
                       <InputGroupText>
@@ -119,20 +209,21 @@ function ModalSignup(props) {
                     <Input
                       placeholder="Confirm Password"
                       type="password"
-                      onFocus={() => setPasswordConfirmFocus("focused")}
-                      onBlur={() => setPasswordConfirmFocus("")}
+                      name="confirmPassword"
+                      value={signupData.confirmPassword}
+                      onChange={handleSignupChange}
+                      onFocus={() => setSignupConfirmPasswordFocus("focused")}
+                      onBlur={() => setSignupConfirmPasswordFocus("")}
                     ></Input>
                   </InputGroup>
                 </FormGroup>
-                <div className="text-center">
-                  <Button className="my-4" color="primary" type="button">
-                    Sign Up
-                  </Button>
-                </div>
+
+                <Button onSubmit={handleSubmit} color="primary">Sign Up</Button>
               </Form>
             </CardBody>
           </Card>
         </div>
+        {errors.length > 0 ? <ErrorModal title="Invalid password" message="Passwords do not match" /> : null}
       </Modal>
     </>
   );

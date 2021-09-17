@@ -2,15 +2,14 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, useHistory } from "react-router-dom";
 import "./App.css";
 
-// import Routes from "./routes/Routes";
+import { Spinner } from "reactstrap";
+
 import Api from "./api/api";
 import jwt from "jsonwebtoken";
 import UserContext from "./UserContext";
 
 import NavBar from "MyComponents/Navbar";
-import LandingPage from "pages/Landing";
-
-import Index from "views/Index";
+import Routes from "routes/Routes"
 
 
 
@@ -80,12 +79,13 @@ function App() {
     history.push("/");
   };
 
+  if(!infoLoaded) return <Spinner className="text-primary"/>
   return (
     <Router>
       <UserContext.Provider value={{ currentUser, setCurrentUser }}>
         <div>
-          <NavBar />
-          <LandingPage />
+          <NavBar logout={logout} />
+          <Routes login={login} signup={signup} />
         </div>
       </UserContext.Provider>
     </Router>

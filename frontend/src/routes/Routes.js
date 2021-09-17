@@ -1,11 +1,11 @@
 import React from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 
-import Progress from "../pages/Progress";
-import Messenger from "../pages/Messenger";
-import Login from "../pages/Login";
-import RegisterForm from "../components/RegisterForm";
-import Profile from "../pages/Profile";
+import Messenger from "pages/Messenger";
+import Login from "pages/Login";
+import Register from "pages/Register";
+import Profile from "pages/UserProfile";
+import LandingPage from "pages/Landing";
 import PrivateRoute from "./PrivateRoute";
 
 /** Site-wide routes.
@@ -18,36 +18,32 @@ import PrivateRoute from "./PrivateRoute";
 const Routes = (props) => {
   console.debug(
     "Routes",
-    `login=${typeof props.login}, register=${typeof props.register}`
+    `login=${typeof props.login}, signup=${typeof props.signup}`
   );
   return (
     <Switch>
       <Route path="/" exact>
-        <strong style={{ color: "pink" }}>Welcome Homeeeee ^.^ </strong>
+        <LandingPage signup={props.signup} />
       </Route>
       
-      <PrivateRoute path="/progress">
+      <Route path="/progress" exact>
         <strong style={{ color: "pink" }}>progresssss~ 💪🏼🥺</strong>
-        <Progress />
-      </PrivateRoute>
+      </Route>
       
-      <PrivateRoute path="/messenger">
-        <strong style={{ color: "#ADB4A2" }}>
-          LETS GET THEM GAINZ BOOOIZ~ 💪🏼🥺💪🏼
-        </strong>
+      <Route path="/messenger" exact>
         <Messenger />
-      </PrivateRoute>
+      </Route>
       
-      <PrivateRoute exact path="/profile/:username">
+      <Route exact path="/profile/:username">
         <Profile />
-      </PrivateRoute>
+      </Route>
       
-      <Route path="/login">
+      <Route path="/login" exact>
         <Login login={props.login} />
       </Route>
       
-      <Route path="/register">
-        <RegisterForm signup={props.signup} />
+      <Route path="/register" exact>
+        <Register signup={props.signup} login={props.login} />
       </Route>
 
       <Redirect to="/" />
