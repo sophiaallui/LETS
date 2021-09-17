@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
-import NavBar from "./components/NavBar";
 import { BrowserRouter as Router, useHistory } from "react-router-dom";
 import "./App.css";
 
-import Routes from "./routes/Routes";
+// import Routes from "./routes/Routes";
 import Api from "./api/api";
 import jwt from "jsonwebtoken";
 import UserContext from "./UserContext";
+
+import NavBar from "MyComponents/Navbar";
+import LandingPage from "pages/Landing";
+
+import Index from "views/Index";
+
 
 
 function App() {
@@ -73,18 +78,14 @@ function App() {
     setToken(null);
     setCurrentUser(null);
     history.push("/");
-  }
+  };
 
   return (
     <Router>
-      <UserContext.Provider
-        value={{ currentUser, setCurrentUser}}
-      >
+      <UserContext.Provider value={{ currentUser, setCurrentUser }}>
         <div>
-          <nav>
-            <NavBar logout={logout} />
-          </nav>
-          <Routes  login={login} signup={signup} />
+          <NavBar />
+          <LandingPage />
         </div>
       </UserContext.Provider>
     </Router>
