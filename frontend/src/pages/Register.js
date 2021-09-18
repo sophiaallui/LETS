@@ -15,6 +15,14 @@ import {
 import ErrorModal from "MyComponents/common/ModalNotification";
 
 function RegisterPage(props) {
+  React.useEffect(() => {
+    document.body.classList.add("register-page");
+    window.scrollTo(0, 0);
+    document.body.scrollTop = 0;
+    return function cleanup() {
+      document.body.classList.remove("register-page");
+    };
+  }, []);
   const [activeContainer, setActiveContainer] = React.useState("");
   const [signupNameFocus, setSignupNameFocus] = React.useState("");
   const [signupEmailFocus, setSignupEmailFocus] = React.useState("");
@@ -31,12 +39,14 @@ function RegisterPage(props) {
     password : "",
     confirmPassword : ""
   });
+  
   const [loginData, setLoginData] = useState({
     username : "",
     password : ""
   });
+
   const [errors, setErrors] = useState([]);
-  const history = useHistory()
+  const history = useHistory();
   const handleSignupChange = e => {
     const { name, value } = e.target;
     setSignupData(formData => ({ ...formData, [name] : value }))
@@ -65,7 +75,7 @@ function RegisterPage(props) {
       return
     }
     const copied = { ...signupData }
-    delete copied[confirmPassword];
+    delete copied.confirmPassword;
     const res = await props.signup(copied);
     if(res.sucess) {
       history.push("/profile")
@@ -74,14 +84,11 @@ function RegisterPage(props) {
     }
   };
 
-  React.useEffect(() => {
-    document.body.classList.add("register-page");
-    window.scrollTo(0, 0);
-    document.body.scrollTop = 0;
-    return function cleanup() {
-      document.body.classList.remove("register-page");
-    };
-  }, []);
+  console.debug(
+    "signupData=", signupData,
+    "loginData=", loginData,
+    "errors=", errors
+  )
   return (
     <>
 
@@ -140,7 +147,7 @@ function RegisterPage(props) {
                       type="text"
                       name="username"
                       onChange={handleSignupChange}
-                      value={signupData.firstName}
+                      value={signupData.username}
                       onFocus={() => setSignupUsernameFocus("focused")}
                       onBlur={() => setSignupUsernameFocus("")}
                     ></Input>
@@ -239,11 +246,12 @@ function RegisterPage(props) {
                     <Input
                       placeholder="Username"
                       type="text"
+                      name="username"
                       value={loginData.username}
                       onChange={handleLoginChange}
                       onFocus={() => setSigninEmailFocus("focused")}
                       onBlur={() => setSigninEmailFocus("")}
-                    ></Input>
+                    />
                   </InputGroup>
                 </FormGroup>
                 <FormGroup className={signinPasswordFocus}>
@@ -256,11 +264,12 @@ function RegisterPage(props) {
                     <Input
                       placeholder="Password"
                       type="password"
+                      name="password"
                       value={loginData.password}
                       onChange={handleLoginChange}
                       onFocus={() => setSigninPasswordFocus("focused")}
                       onBlur={() => setSigninPasswordFocus("")}
-                    ></Input>
+                    />
                   </InputGroup>
                 </FormGroup>
                 <a href="#pablo" onClick={(e) => e.preventDefault()}>

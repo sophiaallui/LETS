@@ -14,7 +14,7 @@ import {
   InputGroup,
 } from "reactstrap";
 
-// Core Components
+import NotificationAlerts from "MyComponents/common/NotificationAlert";
 
 function LoginCard(props) {
   const [emailFocus, setEmailFocus] = React.useState("");
@@ -23,24 +23,33 @@ function LoginCard(props) {
     username: "",
     password: ""
   });
-  const [errors, setErrors] = useState([]);
+  const [errors, setErrors] = useState([1]);
   const history = useHistory();
+
   const handleChange = e => {
     const { name, value } = e.target;
     setFormData(form => ({ ...form, [name]: value }));
-  }
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
     const res = await props.login(formData);
     if(res.success) {
       history.push("/profile")
     } else {
-      setErrors(res.errors);
+      setErrors(res.errors)
     }
   }
-  
+
+  console.debug(
+    "LoginCard formData=", formData,
+    "errors=", errors,
+    "props are=", props
+  )
   return (
-    <>
+    <> 
+      {errors.length > 0 ?  <NotificationAlerts title="testing" message="something" type="danger" dissMissIn={2} /> : null}
+     
       <Card className="bg-secondary shadow border-0">
         <CardHeader className="bg-white pb-5">
           <div className="text-muted text-center mb-3">
@@ -81,7 +90,8 @@ function LoginCard(props) {
           <div className="text-center text-muted mb-4">
             <small>Or login with credentials</small>
           </div>
-          <Form role="form">
+
+          <Form onSubmit={handleSubmit}  role="form" >
             <FormGroup className={"mb-3 " + emailFocus}>
               <InputGroup className="input-group-alternative">
                 <InputGroupAddon addonType="prepend">
@@ -97,7 +107,7 @@ function LoginCard(props) {
                   onChange={handleChange}
                   onFocus={() => setEmailFocus("focused")}
                   onBlur={() => setEmailFocus("")}
-                ></Input>
+                />
               </InputGroup>
             </FormGroup>
             <FormGroup className={passwordFocus}>
@@ -115,7 +125,7 @@ function LoginCard(props) {
                   onChange={handleChange}
                   onFocus={() => setPasswordFocus("focused")}
                   onBlur={() => setPasswordFocus("")}
-                ></Input>
+                />
               </InputGroup>
             </FormGroup>
             <div className="custom-control custom-control-alternative custom-checkbox">
@@ -132,7 +142,7 @@ function LoginCard(props) {
               </label>
             </div>
             <div className="text-center">
-              <Button className="my-4" color="primary" type="button">
+              <Button className="my-4" color="primary" type="button" onSubmit={handleSubmit}>
                 Login
               </Button>
             </div>

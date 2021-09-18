@@ -19,6 +19,7 @@ function UserProfile() {
       document.body.classList.remove("profile-page");
     };
   });
+  console.debug("UserProfile currentUser=", currentUser)
   return (
     <>
 
