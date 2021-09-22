@@ -112,6 +112,18 @@ async function commonBeforeAll() {
         ('test33', 'test22', 0),
         ('test11', 'test3', 1)`
   );
+
+  // SETUP goals for testing
+  const dueDate = new Date(2021, 10, 17, 3, 24, 0);
+  const dueDate2 = new Date(2022, 10, 17, 3, 24, 0);
+  await db.query(
+    `INSERT INTO goals
+      (id, created_by, content, due_date, is_complete) VALUES
+      (1, 'test11', 'testing content', $1, 'FALSE'),
+      (2, 'test11', 'testing content2', $2, 'FALSE')`, 
+    [dueDate, dueDate2]
+  );
+
 }
 
 async function commonBeforeEach() {
