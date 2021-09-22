@@ -1,15 +1,3 @@
--- DROP DATABASE workout_buddy;
--- CREATE DATABASE workout_buddy;
--- \connect workout_buddy;
-
--- DROP TABLE IF EXISTS users_measurements;
--- DROP TABLE IF EXISTS messages;
--- DROP TABLE IF EXISTS posts_comments_comments;
--- DROP TABLE IF EXISTS posts_comments;
--- DROP TABLE IF EXISTS posts;
--- DROP TABLE IF EXISTS users_friends;
--- DROP TABLE IF EXISTS users;
-
 CREATE TABLE users (
   username VARCHAR(25) PRIMARY KEY UNIQUE,
   email TEXT NOT NULL CHECK (position('@' IN email) > 1),
@@ -17,6 +5,14 @@ CREATE TABLE users (
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
   is_admin BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE goals (
+  id SERIAL PRIMARY KEY,
+  created_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  due_date TIMESTAMP NOT NULL,
+  is_complete BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE posts (
