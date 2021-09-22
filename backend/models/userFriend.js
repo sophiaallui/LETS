@@ -6,11 +6,15 @@ class UserFriend {
   // Gets all confirmed friends about that username.
   static async getAllFrom(username) {
     const res = await db.query(
-      `SELECT * FROM users_friends
-      WHERE user_from = $1 OR 
-      user_to = $1 AND
-      confirmed = $2`, 
-      [username, 1]
+      `SELECT * 
+        FROM users_friends
+        WHERE 
+          user_from = $1 OR 
+          user_to = $2
+          GROUP BY user_from, user_to
+           HAVING 
+          confirmed = 1`,
+      [username, username]
     );
     return res.rows;
   }
@@ -33,6 +37,13 @@ class UserFriend {
     );
     if (preCheck.rows.length !== 2) {
       throw new NotFoundError();
+    }
+    const checkIfRequestWasSentAlready = await db.query(
+      `SELECT * FROM users_friends WHERE user_from = $1 AND user_to = $2 AND confirmed = 0`, [userTo, userFrom]
+    );
+    if(checkIfRequestWasSentAlready.rows[0]) {
+      const res = await this.confirmFriendRequest(userTo, userFrom);
+      return res
     }
     const results = await db.query(
       `INSERT INTO users_friends 
@@ -65,12 +76,21 @@ class UserFriend {
        SET confirmed = 1
        WHERE user_from = $1
        AND user_to = $2
-       RETURNING *`, [userFrom, userTo]
+       RETURNING
+        user_from AS "userFrom",
+        user_to AS "userTo",
+        request_time AS "requestTime",
+        confirmed
+        `, [userFrom, userTo]
     );
     return results.rows[0];
   };
 
-
+  static async removeFriend(userFrom, userTo) {
+    return;
+  }
 }
+
+
 
 module.exports = UserFriend;

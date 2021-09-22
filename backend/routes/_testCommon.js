@@ -1,6 +1,6 @@
 "use strict";
 
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const db = require("../db");
 const { BCRYPT_WORK_FACTOR } = require("../config");
 const User = require("../models/user");
@@ -104,12 +104,13 @@ async function commonBeforeAll() {
   
   // SETUP users_friends for testing
   await db.query(
-    `INSERT INTO user_friends 
+    `INSERT INTO users_friends 
     (user_from, user_to, confirmed)
       VALUES
         ('test11', 'test22', 0),
         ('test11', 'test33', 1),
-        ('test33', 'test22', 0)`
+        ('test33', 'test22', 0),
+        ('test11', 'test3', 1)`
   );
 }
 
