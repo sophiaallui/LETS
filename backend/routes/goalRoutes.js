@@ -6,6 +6,8 @@ const jsonschema = require("jsonschema");
 const goalNewSchema = require("../schemas/goalNew.json");
 const goalUpdateSchema = require("../schemas/goalUpdate.json");
 const { BadRequestError } = require("../ExpressError");
+
+
 // GET /goals/
 // auth required: logged in.
 // returns => { goals : [{ }] }
@@ -64,7 +66,8 @@ router.put("/:username/:id", ensureCorrectUserOrAdmin, async (req, res, next) =>
   }
 });
 
-// DELETE /goals/[goalId]
+// DELETE /goals/[username]/[goalId]
+// auth required : same as :username or admin
 router.delete("/:username/:id", ensureCorrectUserOrAdmin, async (req, res, next) => {
   try {
     const { id } = req.params;

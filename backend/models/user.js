@@ -300,32 +300,6 @@ class User {
     return updatedMeasurement;
   }
 
-  // Adding a friend (sending a friend request)
-  static async sendFriendRequest(userFrom, userTo) {
-    const preCheck = await db.query(
-      `SELECT username FROM users WHERE username = $1 OR username = $2`,
-      [userFrom, userTo]
-    );
-    if (preCheck.rows.length !== 2) {
-      throw new NotFoundError();
-    }
-    const results = await db.query(
-      `INSERT INTO users_friends 
-      (user_from, user_to) VALUES
-      ($1, $2)
-      RETURNING
-        user_from AS "userFrom",
-        user_to AS "userTo",
-        request_time AS "requestTime",
-        confirmed`,
-      [userFrom, userTo]
-    );
-    const userFriendRequest = results.rows[0];
-    if (!userFriendRequest) {
-      throw new BadRequestError();
-    }
-    return userFriendRequest;
-  }
 }
 
 module.exports = User;

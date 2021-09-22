@@ -8,6 +8,7 @@ const { createToken } = require("../helpers/tokens");
 
 
 async function commonBeforeAll() {
+  await db.query("DELETE FROM users_friends")
   await db.query("DELETE FROM posts_comments_comments")
   await db.query("DELETE FROM posts_comments");
   await db.query("DELETE FROM posts");
@@ -91,6 +92,7 @@ async function commonBeforeAll() {
     (1, 'test22', 'testContent1'),
     (2, 'test33', 'testContent2')`
   );
+
   await db.query(
     `INSERT INTO posts_comments
     (id, post_id, posted_by, content) 
@@ -100,6 +102,15 @@ async function commonBeforeAll() {
     (3, 2, 'test22', 'testingComment')`
   );
   
+  // SETUP users_friends for testing
+  await db.query(
+    `INSERT INTO user_friends 
+    (user_from, user_to, confirmed)
+      VALUES
+        ('test11', 'test22', 0),
+        ('test11', 'test33', 1),
+        ('test33', 'test22', 0)`
+  );
 }
 
 async function commonBeforeEach() {
