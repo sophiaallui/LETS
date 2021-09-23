@@ -5,8 +5,8 @@ const path = require("path");
 const db = require("../knexDb");
 const { NotFoundError } = require("../ExpressError");
 const { ensureLoggedIn } = require("../middleware/auth");
-const imageUpload = multer({ dest : "images" })
 
+const imageUpload = multer({ dest : "images" })
 
 router.post("/", ensureLoggedIn, imageUpload.single("image"), async (req, res, next) => {
    try {

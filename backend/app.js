@@ -16,6 +16,8 @@ const friendsRoutes = require("./routes/friendsRoutes");
 const postCommentRoutes = require("./routes/postsCommentRoutes");
 const postRoutes = require("./routes/postRoutes");
 const imageRoutes = require("./routes/imagesRoutes");
+const goalRoutes = require("./routes/goalRoutes");
+
 
 app.use(cors());
 app.use(express.json());
@@ -29,6 +31,8 @@ app.use("/friends", friendsRoutes);
 app.use("/comments", postCommentRoutes);
 app.use("/posts", postRoutes);
 app.use("/images", imageRoutes);
+app.use("/goals", goalRoutes);
+
 
 /** Handle 404 errors -- this matches everything */
 app.use((req, res, next) => {
