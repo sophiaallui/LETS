@@ -106,5 +106,6 @@ describe("UserFriends.confirmFriendRequest(userFrom, userTo)", () => {
     } catch(e) {
       expect(e instanceof NotFoundError).toBeTruthy();
     }
-  })
-})
+  });
+});
+

@@ -23,7 +23,7 @@ function LoginPage(props) {
             className="page-header-image"
             style={{
               backgroundImage:
-                "url(" + require("assets/img/sections/unsplashs.jpg") + ")",
+                "url(" + require("assets/img/ill/presentation_bg.png") + ")",
             }}
           ></div>
           <Container>

@@ -14,16 +14,16 @@ import {
   InputGroup,
 } from "reactstrap";
 
-import NotificationAlerts from "MyComponents/common/NotificationAlert";
+
 
 function LoginCard(props) {
-  const [emailFocus, setEmailFocus] = React.useState("");
+  const [usernameFocus, setUsernameFocus] = React.useState("");
   const [passwordFocus, setPasswordFocus] = React.useState("");
   const [formData, setFormData] = useState({
     username: "",
     password: ""
   });
-  const [errors, setErrors] = useState([1]);
+  const [errors, setErrors] = useState([]);
   const history = useHistory();
 
   const handleChange = e => {
@@ -35,7 +35,7 @@ function LoginCard(props) {
     e.preventDefault();
     const res = await props.login(formData);
     if(res.success) {
-      history.push("/profile")
+      history.push(`/profile/${formData.username}`)
     } else {
       setErrors(res.errors)
     }
@@ -48,8 +48,6 @@ function LoginCard(props) {
   )
   return (
     <> 
-      {errors.length > 0 ?  <NotificationAlerts title="testing" message="something" type="danger" dissMissIn={2} /> : null}
-     
       <Card className="bg-secondary shadow border-0">
         <CardHeader className="bg-white pb-5">
           <div className="text-muted text-center mb-3">
@@ -59,7 +57,6 @@ function LoginCard(props) {
             <Button
               className="btn-neutral btn-icon"
               color="default"
-              href="#pablo"
               onClick={(e) => e.preventDefault()}
             >
               <span className="btn-inner--icon">
@@ -73,7 +70,6 @@ function LoginCard(props) {
             <Button
               className="btn-neutral btn-icon"
               color="default"
-              href="#pablo"
               onClick={(e) => e.preventDefault()}
             >
               <span className="btn-inner--icon">
@@ -87,12 +83,13 @@ function LoginCard(props) {
           </div>
         </CardHeader>
         <CardBody className="px-lg-5 py-lg-5">
+
           <div className="text-center text-muted mb-4">
             <small>Or login with credentials</small>
           </div>
 
           <Form onSubmit={handleSubmit}  role="form" >
-            <FormGroup className={"mb-3 " + emailFocus}>
+            <FormGroup className={"mb-3 " + usernameFocus}>
               <InputGroup className="input-group-alternative">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
@@ -105,12 +102,12 @@ function LoginCard(props) {
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
-                  onFocus={() => setEmailFocus("focused")}
-                  onBlur={() => setEmailFocus("")}
+                  onFocus={() => setUsernameFocus("focused")}
+                  onBlur={() => setUsernameFocus("")}
                 />
               </InputGroup>
             </FormGroup>
-            <FormGroup className={passwordFocus}>
+            <FormGroup className={"mb-3 " + passwordFocus}>
               <InputGroup className="input-group-alternative">
                 <InputGroupAddon addonType="prepend">
                   <InputGroupText>
@@ -142,7 +139,7 @@ function LoginCard(props) {
               </label>
             </div>
             <div className="text-center">
-              <Button className="my-4" color="primary" type="button" onSubmit={handleSubmit}>
+              <Button className="my-4" color="primary" type="submit" onSubmit={handleSubmit}>
                 Login
               </Button>
             </div>

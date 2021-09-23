@@ -53,7 +53,7 @@ function ModalSignup(props) {
     delete copied[confirmPassword];
     const res = await props.signup(copied);
     if(res.sucess) {
-      history.push("/profile")
+      history.push("/profile/" + signupData.username)
     } else {
       setErrors(res.errors)
     }
@@ -223,7 +223,7 @@ function ModalSignup(props) {
             </CardBody>
           </Card>
         </div>
-        {errors.length > 0 ? <ErrorModal title="Invalid password" message="Passwords do not match" /> : null}
+        {errors.length > 0 ? <ErrorModal title="Error" message={errors[0]} /> : null}
       </Modal>
     </>
   );

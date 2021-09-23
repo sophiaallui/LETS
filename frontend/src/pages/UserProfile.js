@@ -1,16 +1,16 @@
 import React, { useContext } from "react";
 import UserContext from "UserContext";
-
+import Api from "api/api";
+import { useParams } from "react-router-dom";
 
 // reactstrap components
 import { Container } from "reactstrap";
 
 // Core Components
-import DemoFooter from "components/footers/DemoFooter.js";
-import ProfileCard7 from "components/cards/ProfileCard7.js";
+import ProfileCard from "MyComponents/ProfileCard";
 
-function UserProfile() {
-  const { currentUser } = useContext(UserContext);
+function UserProfile(props) {
+  const { username } = useParams();
   React.useEffect(() => {
     document.body.classList.add("profile-page");
     window.scrollTo(0, 0);
@@ -19,10 +19,9 @@ function UserProfile() {
       document.body.classList.remove("profile-page");
     };
   });
-  console.debug("UserProfile currentUser=", currentUser)
+  console.debug("UserProfile:", "username=",username)
   return (
     <>
-
       <div className="wrapper">
         <section className="section-profile-cover section-shaped my-0">
           <img
@@ -49,10 +48,9 @@ function UserProfile() {
         </section>
         <section className="section bg-secondary">
           <Container>
-            <ProfileCard7 />
+           <ProfileCard username={username} />
           </Container>
         </section>
-        <DemoFooter />
       </div>
     </>
   );

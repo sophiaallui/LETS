@@ -34,9 +34,9 @@ const Routes = (props) => {
         <Messenger />
       </Route>
       
-      <Route exact path="/profile/:username">
+      <PrivateRoute exact path="/profile/:username">
         <Profile />
-      </Route>
+      </PrivateRoute>
       
       <Route path="/login" exact>
         <Login login={props.login} />
