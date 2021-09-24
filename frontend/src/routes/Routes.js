@@ -8,6 +8,7 @@ import Profile from "pages/UserProfile";
 import LandingPage from "pages/Landing";
 import PrivateRoute from "./PrivateRoute";
 import EditProfile from "pages/EditProfile";
+import Goal from "pages/Goal";
 /** Site-wide routes.
  *
  * Parts of site should only be visitable when logged in. Those routes are
@@ -30,6 +31,10 @@ const Routes = (props) => {
         
       </Route>
       
+      <PrivateRoute path="/goals">
+        <Goal />
+      </PrivateRoute>
+
       <PrivateRoute path="/edit-profile">
         <EditProfile />
       </PrivateRoute>

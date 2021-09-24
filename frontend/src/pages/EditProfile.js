@@ -206,7 +206,6 @@ function AccountSettings(props) {
                           <Col className="align-self-center" md="9">
                             <FormGroup>
                               <Input
-                                defaultValue="Charlie"
                                 id="firstName"
                                 name="firstName"
                                 value={generalSectionForm.firstName}
@@ -226,7 +225,6 @@ function AccountSettings(props) {
                           <Col className="align-self-center" md="9">
                             <FormGroup>
                               <Input
-                                defaultValue="Bailey"
                                 id="lastName"
                                 name="lastName"
                                 value={generalSectionForm.lastName}
@@ -352,7 +350,6 @@ function AccountSettings(props) {
                           <Col className="align-self-center" md="9">
                             <FormGroup>
                               <Input
-                                defaultValue="charlie.bailey@example.com"
                                 id="email"
                                 name="email"
                                 value={generalSectionForm.email}
@@ -372,7 +369,6 @@ function AccountSettings(props) {
                           <Col className="align-self-center" md="9">
                             <FormGroup>
                               <Input
-                                defaultValue="charlie.bailey@example.com"
                                 id="confirmEmail"
                                 name="confirmEmail"
                                 value={generalSectionForm.confirmEmail}

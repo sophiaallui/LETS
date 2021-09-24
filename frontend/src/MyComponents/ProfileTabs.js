@@ -11,7 +11,7 @@ import {
   Col,
 } from "reactstrap";
 
-const ProfileTabs = props => {
+const ProfileTabs = ({ progress, posts, goals }) => {
   const [hTabsIcons, setHTabsIcons] = useState("hTabsIcons-1");
   return (
     <>
@@ -29,7 +29,7 @@ const ProfileTabs = props => {
                     setHTabsIcons("hTabsIcons-1")
                   }}>
                   <i className="ni ni-cloud-upload-96 mr-2"></i>
-                  Progress
+                  Goals
                 </NavLink>
               </NavItem>
 
@@ -88,11 +88,7 @@ const ProfileTabs = props => {
               <TabContent id="myTabContent" activeTab={hTabsIcons}>
                 <TabPane tabId="hTabsIcons-1" role="tabpanel">
                   <p className="description">
-                    Raw denim you probably haven't heard of them jean shorts
-                    Austin. Nesciunt tofu stumptown aliqua, retro synth master
-                    cleanse. Mustache cliche tempor, williamsburg carles vegan
-                    helvetica. Reprehenderit butcher retro keffiyeh dreamcatcher
-                    synth.
+                    {}
                   </p>
                   <p className="description">
                     Raw denim you probably haven't heard of them jean shorts

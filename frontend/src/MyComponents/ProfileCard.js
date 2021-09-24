@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import UserContext from "UserContext";
 
 // reactstrap components
@@ -80,8 +81,8 @@ function ProfileCard({ username }) {
                     <Button
                       className="float-right"
                       color="info"
-                      onClick={(e) => e.preventDefault()}
-                      
+                      tag={Link}
+                      to="/edit-profile"
                     >
                       Edit Profile
                     </Button>
@@ -94,17 +95,17 @@ function ProfileCard({ username }) {
             <Col className="order-lg-1" lg="5">
               <div className="card-profile-stats d-flex justify-content-center">
                 <div>
-                  <span className="heading">{loadedUser?.posts?.length || 0}</span>
+                  <span className="heading">{loadedUser?.posts?.length}</span>
                   <span className="description">Posts</span>
                 </div>
 
                 <div>
-                  <span className="heading">{loadedUser?.measurements?.length || 0}</span>
-                  <span className="description">Measurements</span>
+                  <span className="heading">{loadedUser?.friends?.length}</span>
+                  <span className="description">Friends</span>
                 </div>
                 
                 <div>
-                  <span className="heading">{loadedUser?.goals?.length || 0}</span>
+                  <span className="heading">{loadedUser?.goals?.length}</span>
                   <span className="description">Goals</span>
                 </div>
               </div>
@@ -126,7 +127,11 @@ function ProfileCard({ username }) {
           <div className="mt-5 py-5 border-top text-center">
             <Row className="justify-content-center">
               <Col lg="12">
-                <ProfileTabs />
+                <ProfileTabs 
+                  progress={loadedUser?.progress}
+                  posts={loadedUser?.posts}
+                  goals={loadedUser?.goals}
+                />
               </Col>
             </Row>
           </div>
