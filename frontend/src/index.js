@@ -13,9 +13,9 @@ import "assets/css/argon-dashboard-pro-react.css";
 // import "assets/vendor/sweetalert2/dist/sweetalert2.min.css";
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+
+  <App />
+  ,
   document.getElementById('root')
 );
 

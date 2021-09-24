@@ -10,7 +10,7 @@ function Landing(props) {
   return (
     <>
       <div className="section features-2">
-        <UserInfo />
+        {/* <UserInfo /> */}
         <Container>
           <Row className="align-items-center justify-content-center">
             <Col className="mr-auto text-left" lg="4" md="8">

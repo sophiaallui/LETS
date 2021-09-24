@@ -88,41 +88,37 @@ const ProfileTabs = ({ progress, posts, goals }) => {
             <CardBody>
               <TabContent id="myTabContent" activeTab={hTabsIcons}>
                 <TabPane tabId="hTabsIcons-1" role="tabpanel">
-                  <p className="description">
-                    {
+                {
                       goals?.length === 0 ?
-                        <div>
+                        <div className="description">
                           <h2>You have no goals</h2>
                           <Button>Post One</Button>
                         </div> :
                         null
                     }
-                  </p>
                 </TabPane>
 
                 <TabPane tabId="hTabsIcons-2" role="tabpanel">
-                  <p className="description">
-                    {
+                  {
                       posts?.length === 0 ?
-                        <div>
+                        <div className="description">
                           <h2>You have no posts</h2>
                           <Button>Post One</Button>
                         </div> :
                         null
                     }
-                  </p>
                 </TabPane>
 
                 <TabPane tabId="hTabsIcons-3" role="tabpanel">
-                  <p className="description">
+                  <div className="description">
                     <Charts />
-                  </p>
+                  </div>
                 </TabPane>
 
                 <TabPane tabId="hTabsIcons-4" role="tabpanel">
-                  <p className="description">
+                  <div className="description">
                     
-                  </p>
+                  </div>
                 </TabPane>
               </TabContent>
             </CardBody>

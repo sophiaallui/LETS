@@ -22,17 +22,24 @@ import {
 } from "reactstrap";
 
 import { events } from "variables/general.js";
-
+import UserContext from "UserContext";
+import Api from "api/api";
 let calendar;
 
 class Fullcalendar extends React.Component {
-  state = {
-    events: events,
-    alert: null
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      events : events,
+      alert : null
+    }
+    console.debug("props are", this.props);
+  }
+
   componentDidMount() {
     this.createCalendar();
   }
+
   createCalendar = () => {
     calendar = new Calendar(this.refs.calendar, {
       plugins: [interaction, dayGridPlugin],
@@ -67,13 +74,15 @@ class Fullcalendar extends React.Component {
       currentDate: calendar.view.title
     });
   };
+
   changeView = newView => {
     calendar.changeView(newView);
     this.setState({
       currentDate: calendar.view.title
     });
   };
-  addNewEvent = () => {
+
+  addNewEvent = async () => {
     var newEvents = this.state.events;
     newEvents.push({
       title: this.state.eventTitle,
@@ -89,6 +98,7 @@ class Fullcalendar extends React.Component {
       className: this.state.radios,
       id: this.state.events[this.state.events.length - 1] + 1
     });
+    // await Api.createCalendarEvent()
     this.setState({
       modalAdd: false,
       events: newEvents,
@@ -98,6 +108,7 @@ class Fullcalendar extends React.Component {
       eventTitle: undefined
     });
   };
+
   changeEvent = () => {
     var newEvents = this.state.events.map((prop, key) => {
       if (prop.id + "" === this.state.eventId + "") {
@@ -128,6 +139,7 @@ class Fullcalendar extends React.Component {
       event: undefined
     });
   };
+
   deleteEventSweetAlert = () => {
     this.setState({
       alert: (
@@ -157,6 +169,7 @@ class Fullcalendar extends React.Component {
       )
     });
   };
+
   deleteEvent = () => {
     var newEvents = this.state.events.filter(
       prop => prop.id + "" !== this.state.eventId
@@ -186,7 +199,12 @@ class Fullcalendar extends React.Component {
       event: undefined
     });
   };
+
+ 
   render() {
+    console.debug(this.state)
+    console.debug("Calendar.js eventTitle state=", this.state.eventTitle);
+
     return (
       <>
         {this.state.alert}
@@ -343,6 +361,19 @@ class Fullcalendar extends React.Component {
                   />
                 </ButtonGroup>
               </FormGroup>
+              <FormGroup>
+                <label className="form-control-label">Description</label>
+                <Input
+                  className="form-control-alternative edit-event--description textarea-autosize"
+                  placeholder="Event Desctiption"
+                  type="textarea"
+                  defaultValue={this.state.eventDescription}
+                  onChange={e =>
+                    this.setState({ eventDescription: e.target.value })
+                  }
+                />
+                <i className="form-group--bar" />
+              </FormGroup>
             </form>
           </div>
           <div className="modal-footer">
@@ -364,6 +395,8 @@ class Fullcalendar extends React.Component {
             </Button>
           </div>
         </Modal>
+
+
         <Modal
           isOpen={this.state.modalChange}
           toggle={() => this.setState({ modalChange: false })}

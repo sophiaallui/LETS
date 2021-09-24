@@ -17,7 +17,7 @@ const postCommentRoutes = require("./routes/postsCommentRoutes");
 const postRoutes = require("./routes/postRoutes");
 const imageRoutes = require("./routes/imagesRoutes");
 const goalRoutes = require("./routes/goalRoutes");
-
+const calendarRoutes = require("./routes/calendarEventRoutes");
 
 app.use(cors());
 app.use(express.json());
@@ -32,7 +32,7 @@ app.use("/comments", postCommentRoutes);
 app.use("/posts", postRoutes);
 app.use("/images", imageRoutes);
 app.use("/goals", goalRoutes);
-
+app.use("/calendar-events", calendarRoutes);
 
 /** Handle 404 errors -- this matches everything */
 app.use((req, res, next) => {

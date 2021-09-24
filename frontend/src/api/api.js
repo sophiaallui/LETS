@@ -46,8 +46,19 @@ class Api {
 
   static async sendMessage(currentUsername, toUsername, data) {
     const res = await this.request(`messages/${currentUsername}/to/${toUsername}`, data, "POST");
-    return res.message
+    return res.message;
   }
+
+  static async createCalendarEvent(currentUsername, data) {
+    const res = await this.request(`calendar-events/${currentUsername}`, data, "post");
+    return res.event;
+  }
+
+  static async getUserCalendarEvents(currentUsername) {
+    const res = await this.request(`calendar-events/${currentUsername}`);
+    return res.events;
+  }
+  
 }
 
 export default Api;

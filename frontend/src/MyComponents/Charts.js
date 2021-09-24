@@ -13,8 +13,6 @@ import {
   chartExample2,
   chartExample3,
   chartExample4,
-  chartExample5,
-  chartExample6,
   chartExample7,
 } from "../variables/charts";
 
