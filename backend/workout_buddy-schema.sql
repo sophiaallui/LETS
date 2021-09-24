@@ -19,7 +19,7 @@ CREATE TABLE calendar_event (
   id SERIAL PRIMARY KEY,
   posted_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE,
   event_title TEXT NOT NULL,
-  event_description TEXT NOT NULL,
+  event_description TEXT,
   start_date DATE NOT NULL,
   end_date DATE NOT NULL,
   radios TEXT NOT NULL
