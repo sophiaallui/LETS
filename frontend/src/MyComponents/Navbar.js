@@ -53,7 +53,7 @@ function NavbarOrange({ logout }) {
               <i className="ni ni-single-02"></i>
               <span>My profile</span>
             </DropdownItem>
-            <DropdownItem tag={Link} onClick={(e) => e.preventDefault()}>
+            <DropdownItem tag={Link} to="/edit-profile">
               <i className="ni ni-settings-gear-65"></i>
               <span>Edit Profile</span>
             </DropdownItem>

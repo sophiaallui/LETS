@@ -7,7 +7,7 @@ import Register from "pages/Register";
 import Profile from "pages/UserProfile";
 import LandingPage from "pages/Landing";
 import PrivateRoute from "./PrivateRoute";
-
+import EditProfile from "pages/EditProfile";
 /** Site-wide routes.
  *
  * Parts of site should only be visitable when logged in. Those routes are
@@ -30,9 +30,13 @@ const Routes = (props) => {
         
       </Route>
       
-      <Route path="/messenger" exact>
+      <PrivateRoute path="/edit-profile">
+        <EditProfile />
+      </PrivateRoute>
+
+      <PrivateRoute path="/messenger" exact>
         <Messenger />
-      </Route>
+      </PrivateRoute>
       
       <PrivateRoute exact path="/profile/:username">
         <Profile />
