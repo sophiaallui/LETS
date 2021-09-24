@@ -9,8 +9,9 @@ import {
   TabPane,
   Row,
   Col,
+  Button
 } from "reactstrap";
-
+import Charts from "MyComponents/Charts";
 const ProfileTabs = ({ progress, posts, goals }) => {
   const [hTabsIcons, setHTabsIcons] = useState("hTabsIcons-1");
   return (
@@ -60,11 +61,11 @@ const ProfileTabs = ({ progress, posts, goals }) => {
                   }}
                 >
                   <i className="ni ni-calendar-grid-58 mr-2"></i>
-                  Messages
+                  Progress
                 </NavLink>
               </NavItem>
 
-              
+
               <NavItem>
                 <NavLink
                   className={
@@ -88,28 +89,39 @@ const ProfileTabs = ({ progress, posts, goals }) => {
               <TabContent id="myTabContent" activeTab={hTabsIcons}>
                 <TabPane tabId="hTabsIcons-1" role="tabpanel">
                   <p className="description">
-                    {}
-                  </p>
-                  <p className="description">
-                    Raw denim you probably haven't heard of them jean shorts
-                    Austin. Nesciunt tofu stumptown aliqua, retro synth master
-                    cleanse.
+                    {
+                      goals?.length === 0 ?
+                        <div>
+                          <h2>You have no goals</h2>
+                          <Button>Post One</Button>
+                        </div> :
+                        null
+                    }
                   </p>
                 </TabPane>
+
                 <TabPane tabId="hTabsIcons-2" role="tabpanel">
                   <p className="description">
-                    Cosby sweater eu banh mi, qui irure terry richardson ex
-                    squid. Aliquip placeat salvia cillum iphone. Seitan aliquip
-                    quis cardigan american apparel, butcher voluptate nisi qui.
+                    {
+                      posts?.length === 0 ?
+                        <div>
+                          <h2>You have no posts</h2>
+                          <Button>Post One</Button>
+                        </div> :
+                        null
+                    }
                   </p>
                 </TabPane>
+
                 <TabPane tabId="hTabsIcons-3" role="tabpanel">
                   <p className="description">
-                    Raw denim you probably haven't heard of them jean shorts
-                    Austin. Nesciunt tofu stumptown aliqua, retro synth master
-                    cleanse. Mustache cliche tempor, williamsburg carles vegan
-                    helvetica. Reprehenderit butcher retro keffiyeh dreamcatcher
-                    synth.
+                    <Charts />
+                  </p>
+                </TabPane>
+
+                <TabPane tabId="hTabsIcons-4" role="tabpanel">
+                  <p className="description">
+                    
                   </p>
                 </TabPane>
               </TabContent>

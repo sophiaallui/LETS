@@ -47,7 +47,7 @@ function UserProfile(props) {
           </div>
         </section>
         <section className="section bg-secondary">
-          <Container>
+          <Container fluid>
            <ProfileCard username={username} />
           </Container>
         </section>

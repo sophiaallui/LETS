@@ -2,7 +2,7 @@ import React from "react";
 // JavaScript library for creating fancy carousels like components
 import Glide from "@glidejs/glide";
 // reactstrap components
-import { Button, Container, Row, Col } from "reactstrap";
+import { Form, Input , Container, Row, Col } from "reactstrap";
 
 // Core Components
 
@@ -11,9 +11,9 @@ function Testimonials3() {
     new Glide(".testimonial-glide", {
       type: "carousel",
       startAt: 0,
-      focusAt: 2,
+      focusAt: 1,
       perTouch: 1,
-      perView: 4,
+      perView: 3,
     }).mount();
   }, []);
   return (
@@ -35,14 +35,6 @@ function Testimonials3() {
                           alone. This is the way to success. A single rose can
                           be my garden... a single friend, my world."
                         </p>
-                        <div className="author">
-                          <img
-                            alt="..."
-                            className="avatar img-raised"
-                            src={require("assets/img/faces/team-1.jpg")}
-                          ></img>
-                          <span>Andrew Lino</span>
-                        </div>
                       </div>
                     </li>
                     <li className="glide__slide">
@@ -55,16 +47,9 @@ function Testimonials3() {
                           applied to a person who engages in an activity deemed
                           to be an art."
                         </p>
-                        <div className="author">
-                          <img
-                            alt="..."
-                            className="avatar img-raised"
-                            src={require("assets/img/faces/team-2.jpg")}
-                          ></img>
-                          <span>Michael Jenos</span>
-                        </div>
                       </div>
                     </li>
+
                     <li className="glide__slide">
                       <div className="info text-left">
                         <p className="description">
@@ -74,16 +59,9 @@ function Testimonials3() {
                           repeatedly, if possible – to identify the parts that
                           make the whole"
                         </p>
-                        <div className="author">
-                          <img
-                            alt="..."
-                            className="avatar img-raised"
-                            src={require("assets/img/faces/team-3.jpg")}
-                          ></img>
-                          <span>Rose Arthur</span>
-                        </div>
                       </div>
                     </li>
+
                     <li className="glide__slide">
                       <div className="info text-left">
                         <p className="description">
@@ -94,16 +72,9 @@ function Testimonials3() {
                           housing for your dog should be as easy as renting an
                           Airbnb."
                         </p>
-                        <div className="author">
-                          <img
-                            alt="..."
-                            className="avatar img-raised"
-                            src={require("assets/img/faces/team-4.jpg")}
-                          ></img>
-                          <span>Lora Jimi</span>
-                        </div>
                       </div>
                     </li>
+                    
                     <li className="glide__slide">
                       <div className="info text-left">
                         <p className="description">
@@ -114,14 +85,6 @@ function Testimonials3() {
                           U.S. startups rose sequentially in the second quarter
                           of 2017, boosted by large."
                         </p>
-                        <div className="author">
-                          <img
-                            alt="..."
-                            className="avatar img-raised"
-                            src={require("assets/img/faces/team-5.jpg")}
-                          ></img>
-                          <span>Mike Ranson</span>
-                        </div>
                       </div>
                     </li>
                   </ul>

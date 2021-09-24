@@ -31,7 +31,7 @@ const Routes = (props) => {
         
       </Route>
       
-      <PrivateRoute path="/goals">
+      <PrivateRoute path="/schedules">
         <Goal />
       </PrivateRoute>
 

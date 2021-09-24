@@ -87,10 +87,12 @@ function AccountSettings(props) {
     email : currentUser.email || "",
     confirmEmail : currentUser.email || "",
   });
+  
   const handleGeneralSectionChange = e => {
     const { name, value } = e.target;
     setGeneralSectionForm(data => ({ ...data, [name] : value }))
   }
+
   return (
     <>
       <div className="wrapper">

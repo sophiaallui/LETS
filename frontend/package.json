@@ -1,5 +1,5 @@
 {
-  "name": "argon-design-system-pro-react",
+  "name": "GAINS",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
@@ -13,6 +13,7 @@
     "@testing-library/user-event": "7.1.2",
     "axios": "^0.21.4",
     "choices.js": "9.0.1",
+    "chart.js": "2.9.4",
     "gulp": "4.0.2",
     "gulp-append-prepend": "1.0.8",
     "headroom.js": "0.11.0",
@@ -22,6 +23,7 @@
     "nouislider": "14.6.0",
     "prop-types": "15.7.2",
     "react": "16.13.1",
+    "react-chartjs-2": "2.11.1",
     "react-bootstrap-sweetalert": "5.2.0",
     "react-datetime": "2.16.3",
     "react-dom": "16.13.1",

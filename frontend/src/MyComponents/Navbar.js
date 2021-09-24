@@ -37,8 +37,8 @@ function NavbarOrange({ logout }) {
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink tag={Link} to="/goals">
-            Goals
+          <NavLink tag={Link} to="/schedules">
+            My Schedule
           </NavLink>
         </NavItem>
         <UncontrolledDropdown>

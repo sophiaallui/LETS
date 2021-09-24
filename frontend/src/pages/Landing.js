@@ -4,11 +4,13 @@ import React from "react";
 import { Badge, Container, Row, Col } from "reactstrap";
 
 import SignupModal from "MyComponents/SignupModal";
+import UserInfo from "MyComponents/UserInfo";
 
 function Landing(props) {
   return (
     <>
       <div className="section features-2">
+        <UserInfo />
         <Container>
           <Row className="align-items-center justify-content-center">
             <Col className="mr-auto text-left" lg="4" md="8">
@@ -30,18 +32,6 @@ function Landing(props) {
                       </div>
                       <div>
                         <h6 className="mb-0">See progress analytics</h6>
-                      </div>
-                    </div>
-                  </li>
-                  <li className="py-2">
-                    <div className="d-flex align-items-center">
-                      <div>
-                        <Badge className="badge-circle mr-3" color="primary">
-                          <i className="ni ni-html5"></i>
-                        </Badge>
-                      </div>
-                      <div>
-                        <h6 className="mb-0">Amazing page examples</h6>
                       </div>
                     </div>
                   </li>

@@ -174,7 +174,7 @@ class Fullcalendar extends React.Component {
           confirmBtnText="Ok"
           btnSize=""
         >
-          A few words about this sweet alert ...
+          Deleted Event
         </ReactBSAlert>
       ),
       modalChange: false,
@@ -203,7 +203,7 @@ class Fullcalendar extends React.Component {
                   className="fullcalendar-btn-prev btn-neutral"
                   color="default"
                   onClick={() => {
-                    calendar.next();
+                    calendar.prev();
                   }}
                   size="sm"
                 >
@@ -213,7 +213,7 @@ class Fullcalendar extends React.Component {
                   className="fullcalendar-btn-next btn-neutral"
                   color="default"
                   onClick={() => {
-                    calendar.prev();
+                    calendar.next();
                   }}
                   size="sm"
                 >
@@ -251,11 +251,14 @@ class Fullcalendar extends React.Component {
           </CardHeader>
           <CardBody className="p-0">
             <div
-              className="calendar"
+              className="full-calendar"
               ref="calendar"
             />
           </CardBody>
         </Card>
+
+
+
         <Modal
           isOpen={this.state.modalAdd}
           toggle={() => this.setState({ modalAdd: false })}
