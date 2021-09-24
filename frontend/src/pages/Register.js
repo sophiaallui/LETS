@@ -91,7 +91,7 @@ function RegisterPage(props) {
   )
   return (
     <>
-
+      {errors.length > 0 ? <ErrorModal /> : null}
       <div className="wrapper">
         <div className="page-header bg-default">
           <div

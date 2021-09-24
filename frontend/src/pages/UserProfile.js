@@ -24,12 +24,12 @@ function UserProfile(props) {
     <>
       <div className="wrapper">
         <section className="section-profile-cover section-shaped my-0">
-          <img
+          {/* <img
             alt="..."
             className="bg-image"
             src={require("assets/img/pages/mohamed.jpg")}
             style={{ width: "100%" }}
-          ></img>
+          ></img> */}
           <div className="separator separator-bottom separator-skew">
             <svg
               xmlns="http://www.w3.org/2000/svg"

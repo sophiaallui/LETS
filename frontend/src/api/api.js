@@ -11,7 +11,7 @@ const BASE_URL= process.env.REACT_APP_BASE_URL || "http://localhost:3001";
  */
 
 class Api {
-  static token;
+  static token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTYzMjQxODY1NH0.DH7r7dHwTuCTLGGBLOncca4mTAOXjbPKl6BtNutiz50";
   static async request(endpoint, data = {}, method = "get") {
     console.debug("API Call:", endpoint, data, method);
 
@@ -42,6 +42,11 @@ class Api {
   static async getCurrentUser(username) {
     const res = await this.request(`users/${username}`);
     return res.user;
+  }
+
+  static async sendMessage(currentUsername, toUsername, data) {
+    const res = await this.request(`messages/${currentUsername}/to/${toUsername}`, data, "POST");
+    return res.message
   }
 }
 

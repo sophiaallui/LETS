@@ -27,7 +27,7 @@ const Routes = (props) => {
       </Route>
       
       <Route path="/progress" exact>
-        <strong style={{ color: "pink" }}>progresssss~ 💪🏼🥺</strong>
+        
       </Route>
       
       <Route path="/messenger" exact>

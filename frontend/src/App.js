@@ -16,7 +16,7 @@ import Routes from "routes/Routes"
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [infoLoaded, setInfoLoaded] = useState(false);
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(Api.token);
   const history = useHistory();
   console.debug(
     "App",

@@ -7,17 +7,16 @@ import {
   Nav,
   TabContent,
   TabPane,
-  Container,
   Row,
   Col,
 } from "reactstrap";
 
 const ProfileTabs = props => {
-  const [hTabsIcons, setHTabsIcons] = React.useState("hTabsIcons-1");
+  const [hTabsIcons, setHTabsIcons] = useState("hTabsIcons-1");
   return (
     <>
       <Row className="justify-content-center">
-        <Col lg="12">
+        <Col lg="10">
           <div className="mb-3">
           </div>
           <div className="nav-wrapper">
@@ -62,6 +61,23 @@ const ProfileTabs = props => {
                 >
                   <i className="ni ni-calendar-grid-58 mr-2"></i>
                   Messages
+                </NavLink>
+              </NavItem>
+
+              
+              <NavItem>
+                <NavLink
+                  className={
+                    "mb-sm-3 mb-md-0 " +
+                    (hTabsIcons === "hTabsIcons-4" ? "active" : "")
+                  }
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setHTabsIcons("hTabsIcons-4");
+                  }}
+                >
+                  <i className="ni ni-calendar-grid-58 mr-2"></i>
+                  Activity Feed
                 </NavLink>
               </NavItem>
             </Nav>

@@ -12,6 +12,7 @@ const {
   BadRequestError,
   UnauthorizedError,
 } = require("../ExpressError");
+const UserFriend = require("./userFriend");
 const { BCRYPT_WORK_FACTOR } = require("../config");
 
 /** Related functions for user */
@@ -115,6 +116,20 @@ class User {
         WHERE created_by = $1`,
       [user.username]
     );
+    const userGoals = await db.query(
+      `SELECT 
+        id, 
+        created_by AS "createdBy", 
+        content, 
+        due_date AS "dueDate", 
+        is_complete AS "isComplete" 
+          FROM goals 
+            WHERE created_by = $1`, [user.username]
+    );
+    const userFriends = await UserFriend.getAllFrom(user.username);
+    
+    user.friends = userFriends;
+    user.goals = userGoals.rows;
     user.posts = userPosts.rows;
     user.measurements = userMeasurements.rows;
     return user;

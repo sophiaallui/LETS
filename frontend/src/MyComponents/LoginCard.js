@@ -14,7 +14,7 @@ import {
   InputGroup,
 } from "reactstrap";
 
-
+ import ErrorModal from "MyComponents/common/ModalNotification";
 
 function LoginCard(props) {
   const [usernameFocus, setUsernameFocus] = React.useState("");
@@ -33,6 +33,7 @@ function LoginCard(props) {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    setErrors([])
     const res = await props.login(formData);
     if(res.success) {
       history.push(`/profile/${formData.username}`)
@@ -48,6 +49,7 @@ function LoginCard(props) {
   )
   return (
     <> 
+      {errors.length > 0 ? <ErrorModal title="Error" message={errors[0]} /> : null}
       <Card className="bg-secondary shadow border-0">
         <CardHeader className="bg-white pb-5">
           <div className="text-muted text-center mb-3">
