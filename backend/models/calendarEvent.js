@@ -44,7 +44,7 @@ class CalendarEvent {
           RETURNING
           id,
           event_title AS "eventTitle",
-          event_description AS "event_description"
+          event_description AS "eventDescription",
           start_date AS "startDate",
           end_date AS "endDate",
           radios`, [username, data.eventTitle, data.eventDescription, data.startDate, data.endDate, data.radios]

@@ -1,12 +1,10 @@
-import React, { useContext } from "react";
+import React from "react";
 import Calendar from "MyComponents/Calendar";
 import { Container } from "reactstrap";
-import UserContext from "UserContext";
 const Goal = () => {
-  const { currentUser } = useContext(UserContext);
   return (
     <Container >
-      <Calendar username={currentUser.username} />
+      <Calendar />
     </Container>
   )
 }
