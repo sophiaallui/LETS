@@ -30,15 +30,16 @@ class ImageUpload extends React.Component {
       });
     };
     reader.readAsDataURL(file);
+    this.props.setFile(file)
   }
+
   handleSubmit(e) {
     e.preventDefault();
-    console.log(this.state.file);
-    
     // this.state.file is the file/image uploaded
     // in this function you can save the image (this.state.file) on form submit
     // you have to call it yourself
   }
+  
   handleClick() {
     this.refs.fileInput.click();
   }

@@ -59,6 +59,30 @@ class Api {
     return res.events;
   }
   
+  static async createPost(currentUsername, content) {
+    const res = await this.request(`posts/${currentUsername}`, content, "POST");
+    return res.post
+  }
+
+  static async updatePost(currentUsername, content) {
+    const res = await this.request(`posts/${currentUsername}`, content, "put");
+    return res.post;
+  }
+
+  static async sendFriendRequest(currentUsername, targetUsername) {
+    const res = await this.request(`friends/${currentUsername}/to/${targetUsername}`, {}, "POST");
+    return res.friendRequest;
+  }
+
+  static async getPendingFriendRequests(currentUsername) {
+    const res = await this.request(`friends/${currentUsername}/pending`);
+    return res.requests
+  }
+
+  static async confirmFriendRequest(currentUsername, theRequestorUsername) {
+    const res = await this.request(`friends/${currentUsername}/from/${theRequestorUsername}`, {}, "PUT")
+    return res.friendRequest;
+  }
 }
 
 export default Api;

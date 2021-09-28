@@ -22,6 +22,8 @@ import ImageUpload from "components/upload/Upload";
 //   content TEXT NOT NULL,
 //   created_at TIMESTAMP NOT NULL DEFAULT NOW() 
 // );
+import Api from "api/api";
+import axios from "axios";
 
 const NewPostFormModal = ({ buttonText }) => {
 
@@ -42,6 +44,7 @@ const NewPostFormModal = ({ buttonText }) => {
     content: "",
     createdAt: getCurrentDateTime()
   });
+  const [file, setFile] = useState(null);
 
   const toggleModalState = () => {
     setModalOpen(open => !open);
@@ -52,9 +55,25 @@ const NewPostFormModal = ({ buttonText }) => {
     setFormData(formData => ({ ...formData, [name]: value }))
   }
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
+    const { username } = currentUser;
+    const { content } = formData;
+    const newPost = await Api.createPost(username, { content });
 
+    const headers = {
+      Authorization : `Bearer ${Api.token}`,
+      post_id : newPost?.id,
+      username : username
+    }
+    const imageFile = await axios({
+      url : "http://localhost:3001/images/",
+      method : "POST",
+      data : file,
+      headers
+    });
+    console.log(imageFile);
+    console.log(newPost)
   }
 
   return (
@@ -71,7 +90,7 @@ const NewPostFormModal = ({ buttonText }) => {
             <CardBody className="">
               <Form role="form" onSubmit={handleSubmit}>
                 <FormGroup>
-                  <ImageUpload />
+                  <ImageUpload setFile={setFile} />
                 </FormGroup>
                 <FormGroup>
                   <div>Content</div>
@@ -83,7 +102,7 @@ const NewPostFormModal = ({ buttonText }) => {
                     cols={50}
                   />
                 </FormGroup>
-                <Button>Post</Button>
+                <Button onSubmit={handleSubmit}>Post</Button>
               </Form>
             </CardBody>
           </Card>
