@@ -7,6 +7,7 @@ import {
   CardBody,
   FormGroup,
   Form,
+  TextArea,
   Input,
   InputGroupAddon,
   InputGroupText,
@@ -14,7 +15,7 @@ import {
   Modal,
 } from "reactstrap";
 import UserContext from "UserContext";
-
+import ImageUpload from "components/upload/Upload";
 // CREATE TABLE posts (
 //   id SERIAL PRIMARY KEY,
 //   posted_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE,
@@ -22,7 +23,7 @@ import UserContext from "UserContext";
 //   created_at TIMESTAMP NOT NULL DEFAULT NOW() 
 // );
 
-const NewPostFormModal = props => {
+const NewPostFormModal = ({ buttonText }) => {
 
   function getCurrentDateTime() {
     const today = new Date();
@@ -46,15 +47,45 @@ const NewPostFormModal = props => {
     setModalOpen(open => !open);
   };
 
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setFormData(formData => ({ ...formData, [name]: value }))
+  }
+
+  const handleSubmit = e => {
+    e.preventDefault();
+
+  }
+
   return (
     <>
       <Button color="info" type="button" onClick={toggleModalState}>
-        {props.buttonText}
+        {buttonText}
       </Button>
       <Modal className="modal-dialog-centered modal-md" isOpen={modalOpen} toggle={toggleModalState}>
         <div className="modal-body p-0">
           <Card className="bg-secondary shadow border-0 mb-0">
-            <h5>New Post</h5>
+            <CardHeader className="bg-warning">
+              <h2 className="text-white">New Post</h2>
+            </CardHeader>
+            <CardBody className="">
+              <Form role="form" onSubmit={handleSubmit}>
+                <FormGroup>
+                  <ImageUpload />
+                </FormGroup>
+                <FormGroup>
+                  <div>Content</div>
+                  <textarea
+                    name="content"
+                    value={formData.content}
+                    onChange={handleChange}
+                    rows={5}
+                    cols={50}
+                  />
+                </FormGroup>
+                <Button>Post</Button>
+              </Form>
+            </CardBody>
           </Card>
         </div>
       </Modal>

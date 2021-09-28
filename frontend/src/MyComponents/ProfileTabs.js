@@ -106,7 +106,7 @@ const ProfileTabs = ({ progress, posts, goals }) => {
                       posts?.length === 0 ?
                         <div className="description">
                           <h2>You have no posts</h2>
-                          <NewPostFormModal />
+                          <NewPostFormModal buttonText="Post one"/>
                         </div> :
                         // Do the Posts HERE
                         null
