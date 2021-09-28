@@ -12,6 +12,8 @@ import {
   Button
 } from "reactstrap";
 import Charts from "MyComponents/Charts";
+import NewPostFormModal from "./NewPostFormModal";
+
 const ProfileTabs = ({ progress, posts, goals }) => {
   const [hTabsIcons, setHTabsIcons] = useState("hTabsIcons-1");
   return (
@@ -94,6 +96,7 @@ const ProfileTabs = ({ progress, posts, goals }) => {
                           <h2>You have no goals</h2>
                           <Button>Post One</Button>
                         </div> :
+                        // Do the Goals HERE
                         null
                     }
                 </TabPane>
@@ -103,8 +106,9 @@ const ProfileTabs = ({ progress, posts, goals }) => {
                       posts?.length === 0 ?
                         <div className="description">
                           <h2>You have no posts</h2>
-                          <Button>Post One</Button>
+                          <NewPostFormModal />
                         </div> :
+                        // Do the Posts HERE
                         null
                     }
                 </TabPane>
@@ -121,6 +125,7 @@ const ProfileTabs = ({ progress, posts, goals }) => {
                   </div>
                 </TabPane>
               </TabContent>
+
             </CardBody>
           </Card>
         </Col>

@@ -16,15 +16,15 @@ import Goal from "pages/Goal";
  *
  * Visiting a non-existant route redirects to the homepage.
  */
-const Routes = (props) => {
+const Routes = ({ signup, events, login }) => {
   console.debug(
     "Routes",
-    `login=${typeof props.login}, signup=${typeof props.signup}`
+    `login=${typeof login}, signup=${typeof signup}`
   );
   return (
     <Switch>
       <Route path="/" exact>
-        <LandingPage signup={props.signup} />
+        <LandingPage signup={signup} />
       </Route>
       
       <Route path="/progress" exact>
@@ -32,7 +32,7 @@ const Routes = (props) => {
       </Route>
       
       <PrivateRoute path="/schedules">
-        <Goal />
+        <Goal events={events} />
       </PrivateRoute>
 
       <PrivateRoute path="/edit-profile">
@@ -48,11 +48,11 @@ const Routes = (props) => {
       </PrivateRoute>
       
       <Route path="/login" exact>
-        <Login login={props.login} />
+        <Login login={login} />
       </Route>
       
       <Route path="/register" exact>
-        <Register signup={props.signup} login={props.login} />
+        <Register signup={signup} login={login} />
       </Route>
 
       <Redirect to="/" />

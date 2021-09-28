@@ -1,7 +1,7 @@
 import React from "react"
 import Chart from "chart.js";
 // react plugin used to create charts
-import { Line, Bar, Doughnut, Pie } from "react-chartjs-2";
+import { Line, Bar } from "react-chartjs-2";
 // reactstrap components
 import { Card, CardHeader, CardBody, Container, Row, Col } from "reactstrap";
 // core components
@@ -16,7 +16,7 @@ import {
   chartExample7,
 } from "../variables/charts";
 
-function Charts() {
+function Charts(props) {
   if (window.Chart) {
     parseOptions(Chart, chartOptions());
   }

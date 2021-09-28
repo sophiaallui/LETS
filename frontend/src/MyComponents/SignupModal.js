@@ -91,8 +91,7 @@ function ModalSignup(props) {
                       alt="..."
                       src={require("assets/img/icons/common/google.svg")}
                     ></img>
-                  </span>{" "}
-                  <span className="btn-inner--text">Google</span>
+                  </span>{" "} <span className="btn-inner--text">Google</span>
                 </Button>{" "}
                 <Button
                   className="btn-neutral btn-icon"

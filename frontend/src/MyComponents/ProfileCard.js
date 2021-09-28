@@ -135,6 +135,7 @@ function ProfileCard({ username }) {
               </Col>
             </Row>
           </div>
+          
         </div>
       </Card>
     </>

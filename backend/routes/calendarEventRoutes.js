@@ -16,7 +16,8 @@ const CalendarEvent = require("../models/calendarEvent");
 // get calendar-event/[username]
 router.get("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
   try {
-    const events = CalendarEvent.getAll(req.params.username);
+    const { username } = req.params;
+    const events = CalendarEvent.getAll(username);
     return res.json({ events })
   } 
   catch(e) {

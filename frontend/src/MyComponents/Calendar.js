@@ -21,8 +21,6 @@ import {
   Container,
   Row,
   Col,
-  Breadcrumb,
-  BreadcrumbItem,
 } from "reactstrap";
 // core components
 import { events as eventsVariables } from "variables/general.js";
@@ -30,9 +28,9 @@ import UserContext from "UserContext";
 import Api from "api/api";
 let calendar;
 
-function CalendarView() {
+function CalendarView({ userEvents }) {
   const { currentUser } = useContext(UserContext);
-
+  const { username } = currentUser;
   const [events, setEvents] = React.useState(eventsVariables);
   const [alert, setAlert] = React.useState(null);
   const [modalAdd, setModalAdd] = React.useState(false);
@@ -49,20 +47,17 @@ function CalendarView() {
   const [currentDate, setCurrentDate] = React.useState(null);
   const calendarRef = React.useRef(null);
 
+
   React.useEffect(() => {
     createCalendar();
-    const getCalendarEvents = async () => {
-      try {
-        const userEvents = await Api.getUserCalendarEvents(
-          currentUser.username
-        );
-        setEvents(userEvents);
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    getCalendarEvents();
-  }, [currentUser.username]);
+  }, []);
+
+
+  console.debug(
+    "events=",events,
+    `event=${event},
+    `
+  )
 
   const createCalendar = () => {
     calendar = new Calendar(calendarRef.current, {
@@ -99,22 +94,6 @@ function CalendarView() {
   };
 
   const addNewEvent = async () => {
-    var newEvents = events;
-    newEvents.push({
-      title: eventTitle,
-      start: startDate,
-      end: endDate,
-      className: radios,
-      id: events[events.length - 1] + 1,
-    });
-    calendar.addEvent({
-      title: eventTitle,
-      start: startDate,
-      end: endDate,
-      className: radios,
-      id: events[events.length - 1] + 1,
-    });
-    console.log(startDate);
     const event = await Api.createCalendarEvent(currentUser.username, {
       eventTitle,
       eventDescription,
@@ -122,9 +101,10 @@ function CalendarView() {
       endDate,
       radios,
     });
-    console.log("inside addNewEvent", event);
+
+    setEvents(events => [ ...events, event ])
+    setEvent(event)
     setModalAdd(false);
-    setEvents(newEvents);
     setStartDate(undefined);
     setEndDate(undefined);
     setRadios("bg-info");
@@ -161,6 +141,8 @@ function CalendarView() {
     setEventId(undefined);
     setEvent(undefined);
   };
+
+
   const deleteEventSweetAlert = () => {
     setAlert(
       <ReactBSAlert
@@ -186,6 +168,7 @@ function CalendarView() {
       </ReactBSAlert>
     );
   };
+  
   const deleteEvent = () => {
     var newEvents = events.filter((prop) => prop.id + "" !== eventId);
     setEvent(undefined);

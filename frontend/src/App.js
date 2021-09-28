@@ -85,7 +85,7 @@ function App() {
       <UserContext.Provider value={{ currentUser, setCurrentUser }}>
         <div>
           <NavBar logout={logout} />
-          <Routes login={login} signup={signup} />
+          <Routes login={login} signup={signup} events={currentUser?.events} />
         </div>
       </UserContext.Provider>
     </Router>

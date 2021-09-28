@@ -14,6 +14,7 @@ const {
 } = require("../ExpressError");
 const UserFriend = require("./userFriend");
 const { BCRYPT_WORK_FACTOR } = require("../config");
+const CalendarEvent = require("./calendarEvent");
 
 /** Related functions for user */
 class User {
@@ -127,11 +128,13 @@ class User {
             WHERE created_by = $1`, [user.username]
     );
     const userFriends = await UserFriend.getAllFrom(user.username);
-    
+    const userCalendarEvents = await CalendarEvent.getAll(user.username);
+
     user.friends = userFriends;
     user.goals = userGoals.rows;
     user.posts = userPosts.rows;
     user.measurements = userMeasurements.rows;
+    user.events = userCalendarEvents;
     return user;
   }
 
