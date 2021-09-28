@@ -8,11 +8,12 @@ import ProfileTabs from "MyComponents/ProfileTabs";
 import Api from "api/api";
 import MessageModal from "MyComponents/common/MessageModal";
 import ImageUpload from "MyComponents/common/ImageUpload";
-
+import SendFriendRequestButton from "./SendFriendRequestButton";
 function ProfileCard({ username }) {
   const [loadedUser, setLoadedUser] = useState({});
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [errors, setErrors] = useState([])
+  const [friendRequest, setFriendRequest] = useState(null);
   const { currentUser } = useContext(UserContext);
   
   useEffect(() => {
@@ -66,17 +67,17 @@ function ProfileCard({ username }) {
               lg="5"
             >
               {currentUser.username !== loadedUser?.username ?
-                (<div className="card-profile-actions py-4 mt-lg-0">
-                  <Button
-                    className="mr-4"
-                    color="info"
-                    onClick={(e) => e.preventDefault()}
-                    
-                  >
-                    Connect
-                  </Button>
+                (
+                <div className="card-profile-actions py-4 mt-lg-0">
+                  <SendFriendRequestButton 
+                    targetUsername={loadedUser?.username}
+                    setFriendRequest={setFriendRequest}
+                    setErrors={setErrors} 
+                  />
                   <MessageModal sendTo={loadedUser?.username} />
-                </div>) : (
+                </div>
+                ) : 
+                (
                   <div className="card-profile-actions py-4 mt-lg-0">
                     <Button
                       className="float-right"
