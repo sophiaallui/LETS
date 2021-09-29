@@ -10,7 +10,8 @@ class CalendarEvent {
         event_description AS "eventDescription",
         start_date AS "startDate",
         end_date AS "endDate",
-        radios FROM calendar_event
+        radios AS "className" 
+          FROM calendar_event
          WHERE posted_by = $1
         `, [username]
     );
@@ -21,10 +22,11 @@ class CalendarEvent {
       `SELECT
         id,
         event_title AS "eventTitle",
-        event_description AS "event_description"
+        event_description AS "event_description",
         start_date AS "startDate",
         end_date AS "endDate",
-        radios FROM calendar_event
+        radios AS "className" 
+        FROM calendar_event
          WHERE id = $1
         `,
         [id]
@@ -47,7 +49,7 @@ class CalendarEvent {
           event_description AS "eventDescription",
           start_date AS "startDate",
           end_date AS "endDate",
-          radios`, [username, data.eventTitle, data.eventDescription, data.startDate, data.endDate, data.radios]
+          radios AS "className" `, [username, data.eventTitle, data.eventDescription, data.startDate, data.endDate, data.radios]
     );
     if(!res.rows[0]) throw new BadRequestError();
     return res.rows[0]

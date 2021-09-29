@@ -28,10 +28,10 @@ import UserContext from "UserContext";
 import Api from "api/api";
 let calendar;
 
-function CalendarView({ userEvents }) {
+function CalendarView({ userEvents, addEvent }) {
   const { currentUser } = useContext(UserContext);
   const { username } = currentUser;
-  const [events, setEvents] = React.useState(eventsVariables);
+  const [events, setEvents] = React.useState(userEvents);
   const [alert, setAlert] = React.useState(null);
   const [modalAdd, setModalAdd] = React.useState(false);
   const [modalChange, setModalChange] = React.useState(false);
@@ -65,7 +65,7 @@ function CalendarView({ userEvents }) {
       initialView: "dayGridMonth",
       selectable: true,
       editable: true,
-      events: events,
+      events: userEvents,
       headerToolbar: "",
       // Add new event
       select: (info) => {
@@ -94,13 +94,13 @@ function CalendarView({ userEvents }) {
   };
 
   const addNewEvent = async () => {
-    const event = await Api.createCalendarEvent(currentUser.username, {
+    await addEvent(username, {
       eventTitle,
-      eventDescription,
+      eventDescription, 
       startDate,
       endDate,
-      radios,
-    });
+      radios
+    })
 
     setEvents(events => [ ...events, event ])
     setEvent(event)

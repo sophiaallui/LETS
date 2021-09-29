@@ -79,13 +79,28 @@ function App() {
     history.push("/");
   };
 
+  const addEvent = async (username, event) => {
+    try {
+      const event = await Api.createCalendarEvent(username, event);
+      setCurrentUser(user => {
+        return {
+          ...user,
+          events : [ ...user.events, event ]
+        }
+      })
+    } catch(e) {
+      console.error(e);
+      return { success : false, e }
+    }
+  }
+
   if(!infoLoaded) return <Spinner className="text-primary"/>
   return (
     <Router>
       <UserContext.Provider value={{ currentUser, setCurrentUser }}>
         <div>
           <NavBar logout={logout} />
-          <Routes login={login} signup={signup} events={currentUser?.events} />
+          <Routes login={login} signup={signup} events={currentUser?.events} addEvent={addEvent} />
         </div>
       </UserContext.Provider>
     </Router>

@@ -16,7 +16,7 @@ import Goal from "pages/Goal";
  *
  * Visiting a non-existant route redirects to the homepage.
  */
-const Routes = ({ signup, events, login }) => {
+const Routes = ({ signup, events, login, addEvent }) => {
   console.debug(
     "Routes",
     `login=${typeof login}, signup=${typeof signup}`
@@ -32,7 +32,7 @@ const Routes = ({ signup, events, login }) => {
       </Route>
       
       <PrivateRoute path="/schedules">
-        <Goal events={events} />
+        <Goal events={events} addEvent={addEvent} />
       </PrivateRoute>
 
       <PrivateRoute path="/edit-profile">
