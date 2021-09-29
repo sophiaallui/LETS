@@ -7,7 +7,7 @@ const cors = require('cors');
 const morgan = require("morgan");
 const { NotFoundError } = require("./ExpressError");
 const { authenticateJWT } = require("./middleware/auth");
-
+const { ChatUser } = require("./ChatUser");
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -53,7 +53,7 @@ app.ws("/chat/:roomName", async (ws, req, next) => {
 		ws.on("message", async data => {
 			// called when message is recieved from browser
 			try {
-				user.handleClose();
+				user.handleMessage(data);
 			}
 			catch(e) {
 				console.error(e);
@@ -62,7 +62,11 @@ app.ws("/chat/:roomName", async (ws, req, next) => {
 
 		ws.on("close", () => {
 			// called when browser closes connection
-
+			try {
+				user.handleClose();
+			} catch(e) {
+				console.error(e);
+			}
 		})
 	} 
 	catch(e) {
