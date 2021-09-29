@@ -2,9 +2,9 @@
 
 const express = require('express');
 const app = express();
+const wsExpress = require("express-ws")(app);
 const cors = require('cors');
 const morgan = require("morgan");
-
 const { NotFoundError } = require("./ExpressError");
 const { authenticateJWT } = require("./middleware/auth");
 
@@ -33,6 +33,44 @@ app.use("/posts", postRoutes);
 app.use("/images", imageRoutes);
 app.use("/goals", goalRoutes);
 app.use("/calendar-events", calendarRoutes);
+
+
+// Web socket routes
+/** Handle a persistent connection to /chat/[roomName]
+ *
+ * Note that this is only called *once* per client --- not every time
+ * a particular websocket chat is sent.
+ *
+ * `ws` becomes the socket for the client; it is specific to that visitor.
+ * The `ws.send` method is how we'll send messages back to that socket.
+ */
+app.ws("/chat/:roomName", async (ws, req, next) => {
+	try {
+		const { roomName } = req.params;
+		const user = new ChatUser(ws.send.bind(ws), roomName);
+
+		// register handlers for message-received, connection-closed 
+		ws.on("message", async data => {
+			// called when message is recieved from browser
+			try {
+				user.handleClose();
+			}
+			catch(e) {
+				console.error(e);
+			}
+		})
+
+		ws.on("close", () => {
+			// called when browser closes connection
+
+		})
+	} 
+	catch(e) {
+		console.error(e)
+	}
+})
+
+
 
 /** Handle 404 errors -- this matches everything */
 app.use((req, res, next) => {
