@@ -124,6 +124,16 @@ async function commonBeforeAll() {
     [dueDate, dueDate2]
   );
 
+  //  SETUP calendar_event for testing
+
+  await db.query(
+    `INSERT INTO calendar_event
+      (id, posted_by, event_title, start_date, end_date, radios)
+        VALUES  
+      (1, 'test11', 'test11s title', '2021/10/31', '2021/11/1', 'bg-info'),
+      (2, 'test22', 'test22s title', '2021/10/31', '2021/11/1', 'bg-danger')
+    `
+  )
 }
 
 async function commonBeforeEach() {

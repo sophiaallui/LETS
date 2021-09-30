@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "properties": {
+    "eventTitle" : {
+      "type" : "string",
+      "minLength" : 1
+    },
+    "eventDescription" : {
+      "type" : "string",
+      "minLength" : 1
+    },
+    "startDate" : {
+      "type" : "string",
+      "minLength" : 1
+    },
+    "endDate" : {
+    	"type" : "string",
+    	"minLength" : 1
+    },
+    "radios" : {
+    	"type" : "string",
+    	"minLength" : 1
+    }
+  },
+  "additionalProperties": false,
+  "required": ["eventTitle", "startDate", "endDate", "radios"]
+}
+

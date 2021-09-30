@@ -2,6 +2,7 @@ const db = require("../db");
 const { NotFoundError, BadRequestError } = require("../ExpressError");
 
 class CalendarEvent {
+
   static async getAll(username) {
     const res = await db.query(
       `SELECT
@@ -17,12 +18,13 @@ class CalendarEvent {
     );
     return res.rows;
   };
+
   static async getById(id) {
     const res = await db.query(
       `SELECT
         id,
         event_title AS "eventTitle",
-        event_description AS "event_description",
+        event_description AS "eventDescription",
         start_date AS "startDate",
         end_date AS "endDate",
         radios AS "className" 
@@ -35,6 +37,7 @@ class CalendarEvent {
     if(!event) throw new NotFoundError(`Calendar event id ${id} does not exist`);
     return event;
   };
+  
   static async create(username, data) {
     const preCheck = await db.query(`SELECT username FROM users WHERE username = $1`, [username])
     if(!preCheck.rows.length) throw new NotFoundError();
@@ -49,13 +52,27 @@ class CalendarEvent {
           event_description AS "eventDescription",
           start_date AS "startDate",
           end_date AS "endDate",
-          radios AS "className" `, [username, data.eventTitle, data.eventDescription, data.startDate, data.endDate, data.radios]
+          radios AS "className" `, 
+          [
+            username, 
+            data.eventTitle, 
+            data.eventDescription, 
+            data.startDate, 
+            data.endDate, 
+            data.radios
+          ]
     );
-    if(!res.rows[0]) throw new BadRequestError();
-    return res.rows[0]
+    const event = res.rows[0]
+    if(!event) throw new BadRequestError();
+    return event
   };
 
-  
+  static async deleteById(id) {
+    const res = await db.query(
+      `DELETE FROM calendar_event WHERE id = $1 RETURNING id`, [id]
+    );
+    if(!res.rows[0]) throw new NotFoundError(`Calendar id ${id} does not exist`)
+  }
 }
 
 module.exports = CalendarEvent;
