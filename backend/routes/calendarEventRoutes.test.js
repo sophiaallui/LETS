@@ -23,12 +23,34 @@ describe("GET /calendar-events/[username]", function() {
     const res = await request(app)
       .get("/calendar-events/test11")
       .set("authorization", `Bearer ${adminToken}`);
-    console.log(res.body)
+    expect(res.body).toEqual({
+      events : [
+      {
+        id: 1,
+        eventTitle: 'test11s title',
+        eventDescription: null,
+        startDate: '2021-10-31T07:00:00.000Z',
+        endDate: '2021-11-01T07:00:00.000Z',
+        className: 'bg-info'
+      }
+      ]
+    })
   });
 
   test("works for same as :username", async () => {
     const res = await request(app).get("/calendar-events/test22").set("authorization", `Bearer ${test2Token}`);
-    console.log(res.body)
+    expect(res.body).toEqual({
+      events : [
+        {
+          id: 2,
+          eventTitle: 'test22s title',
+          eventDescription: null,
+          startDate: '2021-10-31T07:00:00.000Z',
+          endDate: '2021-11-01T07:00:00.000Z',
+          className: 'bg-danger'
+        }
+      ]
+    })
   })
 
   test("Unauth for invalid users", async () => {
@@ -60,16 +82,74 @@ describe("GET /calendar-events/id/[id]", () => {
 });
 
 describe("POST /calendar-events/[username]", () => {
+  const data = {
+    eventTitle : "some title",
+    eventDescription : "test desc",
+    startDate : "9/30/2021",
+    endDate : "10/1/2021",
+    radios : "bg-info"
+  };
   test("works for admin:", async () => {
-    const data = {
-      eventTitle : "some title",
-      eventDescription : "test desc",
-      startDate : "9/30/2021",
-      endDate : "10/1/2021",
-      radios : "bg-info"
-    };
     const res = await request(app).post("/calendar-events/test22").send(data)
     .set("authorization", `Bearer ${adminToken}`);
-    console.log(res.body)
-  })
+    expect(res.body).toEqual({
+      event : {
+        id: expect.any(Number),
+        eventTitle: 'some title',
+        eventDescription: 'test desc',
+        startDate: expect.any(String),
+        endDate: expect.any(String),
+        className: 'bg-info'
+      }
+    })
+  });
+
+  test("works for same-as:username", async () => {
+
+    const res = await request(app).post("/calendar-events/test22").send(data)
+    .set("authorization", `Bearer ${test2Token}`);
+    expect(res.body).toEqual({
+      event : {
+        id: expect.any(Number),
+        eventTitle: 'some title',
+        eventDescription: 'test desc',
+        startDate: expect.any(String),
+        endDate: expect.any(String),
+        className: 'bg-info'
+      }
+    })
+  });
+
+  test("unauth for invalid users", async () => {
+    const res = await request(app).post("/calendar-events/test22").send(data)
+    .set("authorization", `Bearer ${test3Token}`);
+    expect(res.statusCode).toEqual(401)
+  });
+
+  test("unauth for anons", async () => {
+    const res = await request(app).post("/calendar-events/test22").send(data)
+    expect(res.statusCode).toEqual(401)
+  });
 })
+
+describe("DELETE /calendar-events/[username]/[id]", () => {
+  test("works for admin:", async () => {
+    const res = await request(app).delete("/calendar-events/test11/2").set("authorization", `Bearer ${adminToken}`);
+    expect(res.body).toEqual({ deleted : "2" })
+  });
+
+  test("works for valid users:", async () => {
+    const res = await request(app).delete("/calendar-events/test22/2").set("authorization", `Bearer ${test2Token}`);
+    expect(res.body).toEqual({ deleted : "2" })
+  });
+
+  test("Unauth for invalid users:", async () => {
+    const res = await request(app).delete("/calendar-events/test22/2").set("authorization", `Bearer ${test3Token}`);
+    expect(res.statusCode).toEqual(401);
+  });
+
+  test("Unauth for anons", async () => {
+    const res = await request(app).delete("/calendar-events/test22/2");
+    expect(res.statusCode).toEqual(401);
+  });
+});

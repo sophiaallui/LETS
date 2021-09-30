@@ -13,10 +13,11 @@ const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth
 const jsonSchema = require("jsonschema");
 const CalendarEvent = require("../models/calendarEvent");
 const calendarEventNewSchema = require("../schemas/calendarEventNew.json");
+const calendarEventUpdateSchema = require("../schemas/calendarEventUpdateSchema.json");
 const { BadRequestError } = require("../ExpressError");
 
 // GET
-// get calendar-event/[username]
+// get calendar-events/[username]
 // Get all calendar events by username
 router.get("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
   try {
@@ -31,7 +32,7 @@ router.get("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
 
 // GET
 // get a single event by id 
-// calendar-event/id/[id]
+// calendar-events/id/[id]
 router.get("/id/:id", ensureLoggedIn, async (req, res, next) => {
   try {
     const event = await CalendarEvent.getById(req.params.id);
@@ -59,5 +60,40 @@ router.post("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
     return next(e);
   }
 });
+
+
+/** Delete calendar-event
+ *  Route : calendar-events/[username]/[id]
+ */
+router.delete("/:username/:id", ensureCorrectUserOrAdmin, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await CalendarEvent.deleteById(id);
+    return res.json({ deleted : id })
+  } catch(e) {
+    return next(e);
+  }
+});
+
+/**
+* Update Calendar Event
+* Route : PUT /calendar-events/[username]/[id]
+*/
+router.put("/:username/:id", ensureCorrectUserOrAdmin, async (req, res, next) => {
+  try {
+    const validator = jsonSchema.validate(req.body, calendarEventUpdateSchema);
+    if(!validator.valid) {
+      const errors = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errors)
+    }
+
+    const { id } = req.params;
+    const event = await CalendarEvent.update(id, req.body);
+    return res.json({ event });
+  } 
+  catch(e) {
+    return next(e);
+  }
+})
 
 module.exports = router;
