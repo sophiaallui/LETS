@@ -78,11 +78,11 @@ class CalendarEvent {
 
   static async update(id, data) {
     const { setCols, values } = sqlForPartialUpdate(data, {
-          posted_by : "postedBy",
-          event_title : "eventTitle",
-          event_description : "eventDescription",
-          start_date : "startDate",
-          end_date : "endDate",
+          postedBy : "posted_by",
+          eventTitle : "event_title",
+          eventDescription : "event_description",
+          startDate : "start_date",
+          endDate : "end_date",
           radios : "radios"
         });
     const idIndex = `$${values.length + 1}`

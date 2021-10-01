@@ -64,13 +64,20 @@ class UserFriend {
   };
   
   static async confirmFriendRequest(userFrom, userTo) {
-    const preCheck = await db.query(
-      `SELECT username FROM users WHERE username = $1 OR username = $2`,
-      [userFrom, userTo]
+    const checkIfUserFromExists = await db.query(
+      `SELECT username FROM users WHERE username = $1`, [userFrom]
     );
-    if (preCheck.rows.length !== 2) {
-      throw new NotFoundError();
+    if (!checkIfUserFromExists.rows.length) {
+      throw new NotFoundError(`User ${userFrom} does not exist`);
+    };;
+    const checkIfUserToExists = await db.query(
+      `SELECT username FROM users WHERE username = $1`, [userTo]
+    );
+    if(!checkIfUserToExists.rows.length) {
+      throw new NotFoundError(`User ${userTo} does not exist`)
     };
+
+    
     const results = await db.query(
       `UPDATE users_friends
        SET confirmed = 1
