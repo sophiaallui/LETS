@@ -153,3 +153,16 @@ describe("DELETE /calendar-events/[username]/[id]", () => {
     expect(res.statusCode).toEqual(401);
   });
 });
+
+describe("PUT /calendar-events/[username]/[id]", () => {
+  test("works for admin:", async () => {
+    const res = await request(app)
+      .put("/calendar-events/test22/2")
+      .send({
+        eventDescription : "testing description"
+      })
+      .set("authorization", `Bearer ${adminToken}`);
+    
+      console.log(res.body)
+    })
+})
