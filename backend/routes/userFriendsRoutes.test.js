@@ -48,6 +48,7 @@ describe("GET /friends/[username]", () => {
       ]
     })
   });
+  
   test("Unauth for anons", async () => {
     const res = await request(app).get("/friends/test11");
     expect(res.statusCode).toEqual(401)

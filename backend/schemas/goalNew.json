@@ -17,6 +17,6 @@
     }
   },
   "additionalProperties": false,
-  "required": ["createdBy", "content", "dueDate", "isComplete"]
+  "required": ["content", "dueDate", "isComplete"]
 }
 

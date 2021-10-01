@@ -49,9 +49,9 @@ class Goal {
   static async update(id, data) {
     const { setCols, values } = sqlForPartialUpdate(data, {
       content: "content",
-      created_by: "createdBy",
-      due_date: "dueDate",
-      is_complete: "isComplete"
+      createdBy: "created_by",
+      dueDate: "due_date",
+      isComplete: "is_complete"
     });
     const idIndex = `$${values.length + 1}`
     const querySQL = `UPDATE goals

@@ -42,7 +42,7 @@ router.post("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
        throw new BadRequestError(errors)
      }
      const { username } = req.params;
-     const goal = Goal.create(username, req.body);
+     const goal = await Goal.create(username, req.body);
      return res.json({ goal })
   } catch(e) {
     return next(e);
