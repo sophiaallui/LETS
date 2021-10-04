@@ -6,6 +6,25 @@ CREATE TABLE users (
   last_name TEXT NOT NULL,
   is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
+CREATE TABLE room (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(34),
+  type BOOLEAN
+);
+CREATE TABLE participants (
+  id SERIAL PRIMARY KEY,
+  user_id VARCHAR(25) NOT NULL REFERENCES users(username) ON DELETE CASCADE,
+  room_id INT REFERENCES room(id) ON DELETE CASCADE,
+);
+
+CREATE TABLE messages (
+  id SERIAL PRIMARY KEY,
+  sent_by VARCHAR(25) NOT NULL REFERENCES users(username) ON DELETE CASCADE,
+  text TEXT NOT NULL,
+  room_id INT REFERENCES room(id) ON DELETE CASCADE,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 
 CREATE TABLE goals (
   id SERIAL PRIMARY KEY,
@@ -49,13 +68,6 @@ CREATE TABLE posts_comments_comments (
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE messages (
-  id SERIAL PRIMARY KEY,
-  sent_by VARCHAR(25) NOT NULL REFERENCES users(username) ON DELETE CASCADE,
-  sent_to VARCHAR(25) NOT NULL REFERENCES users(username) ON DELETE CASCADE,
-  text TEXT NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
 
 
 CREATE TABLE users_measurements (
