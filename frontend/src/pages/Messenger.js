@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 
 // reactstrap components
 import {
@@ -24,11 +25,27 @@ import {
   UncontrolledTooltip,
 } from "reactstrap";
 
+import UserContext from "/UserContext";
+
 // Core Components
 
 function Messenger() {
   const [searchFocus, setSearchFocus] = React.useState("");
   const [messageFocus, setMessageFocus] = React.useState("");
+  const [conversations, setConversations] = React.useState([]);
+  const { currentUser } = React.useContext(UserContext);
+
+  React.useEffect(() => {
+    const getConversations = async () => {
+      try {
+        const res = await axios.get(`http://localhost:3000/conversations/${currentUser?.username}`);
+        console.log(res.data)
+      } catch(e) {
+        console.error(e);
+      }
+    }
+  }, [currentUser.username]);
+  
   return (
     <>
       <Row className="flex-row chat">
