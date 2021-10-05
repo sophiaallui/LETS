@@ -10,14 +10,9 @@ CREATE TABLE users (
 CREATE TABLE room (
   id SERIAL PRIMARY KEY,
   name VARCHAR(34),
-  type BOOLEAN
+  members TEXT []
 );
 
-CREATE TABLE participants (
-  id SERIAL PRIMARY KEY,
-  user_id VARCHAR(25) NOT NULL REFERENCES users(username) ON DELETE CASCADE,
-  room_id INT REFERENCES room(id) ON DELETE CASCADE
-);
 
 CREATE TABLE messages (
   id SERIAL PRIMARY KEY,

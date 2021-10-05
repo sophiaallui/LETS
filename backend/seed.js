@@ -38,17 +38,10 @@ async function seedData() {
     		(2, 'jae', 69.0, 151.0, 16.0, 28.0, 31.0);
 
     		INSERT INTO room 
-    		(id, name) VALUES
-    		(1, 'gains'),
-    		(2, 'something');
+    		(id, name, members) VALUES
+    		(1, 'gains', ARRAY ['charles', 'jae']),
+    		(2, 'something', ARRAY ['charles', 'jae', 'admin']);
 
-    		INSERT INTO participants
-    		 (id, user_id, room_id) VALUES
-    		 (1, 'charles', 2),
-    		 (2, 'jae', 2),
-    		 (3, 'admin', 1),
-    		 (4, 'charles', 1),
-    		 (5, 'jae', 1);
 
     		INSERT INTO messages 
     		 (id, sent_by, text, room_id) VALUES
