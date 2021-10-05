@@ -11,7 +11,7 @@ const BASE_URL= process.env.REACT_APP_BASE_URL || "http://localhost:3001";
  */
 
 class Api {
-  static token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTYzMjQxODY1NH0.DH7r7dHwTuCTLGGBLOncca4mTAOXjbPKl6BtNutiz50";
+  static token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImphZSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2MzM0MTI0Nzh9.qzI02fIQw10oZ13esfwFx1XKj--s9qtD3VASXe6GKNA";
   static async request(endpoint, data = {}, method = "get") {
     console.debug("API Call:", endpoint, data, method);
 
@@ -83,6 +83,12 @@ class Api {
     const res = await this.request(`friends/${currentUsername}/from/${theRequestorUsername}`, {}, "PUT")
     return res.friendRequest;
   }
+
+  static async getConversations(currentUsername) {
+    const res = await this.request(`room/${currentUsername}`);
+    return res.conversations;
+  }
 }
+
 
 export default Api;

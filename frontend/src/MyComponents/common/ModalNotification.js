@@ -32,9 +32,11 @@ function ModalNotification(props) {
           <div className="py-3 text-center">
             <i className="ni ni-bell-55 ni-3x"></i>
             <h4 className="heading mt-4">{props.title}</h4>
-            <p>
-              {props.message}
-            </p>
+
+              {props.messages.map((msg, i) => (
+                <p>{msg}</p>
+              ))}
+  
           </div>
         </div>
         <div className="modal-footer">
