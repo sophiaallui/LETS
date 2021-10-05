@@ -3,6 +3,7 @@
 const express = require('express');
 const app = express();
 const wsExpress = require("express-ws")(app);
+const path = require("path");
 const cors = require('cors');
 const morgan = require("morgan");
 const { NotFoundError } = require("./ExpressError");
@@ -22,6 +23,9 @@ const postRoutes = require("./routes/postRoutes");
 const goalRoutes = require("./routes/goalRoutes");
 const calendarRoutes = require("./routes/calendarEventRoutes");
 
+// ROUTES for chat + rooms
+const roomRoutes = require("./routes/roomRoutes");
+
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
@@ -35,9 +39,10 @@ app.use("/messages", messageRoutes);
 app.use("/friends", friendsRoutes);
 app.use("/comments", postCommentRoutes);
 app.use("/posts", postRoutes);
-app.use("/images", imageRoutes);
 app.use("/goals", goalRoutes);
 app.use("/calendar-events", calendarRoutes);
+
+app.use("/room", roomRoutes);
 
 const storage = multer.diskStorage({
 	destination : (req, file, cb) => {
@@ -51,7 +56,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage : storage });
 app.post("/api/upload", upload.single("file"), (req, res, next) => {
 	try {
-		
+		return;
 	}
 	catch(e) {
 		return next(e);
