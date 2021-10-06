@@ -1,6 +1,4 @@
-import React, { useContext } from "react";
-import UserContext from "UserContext";
-import Api from "api/api";
+import React from "react";
 import { useParams } from "react-router-dom";
 
 // reactstrap components
