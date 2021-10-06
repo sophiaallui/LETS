@@ -14,58 +14,37 @@ afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
 /** send */
-describe("send", () => {
+describe("Message.send(sent_by, data)", () => {
+  const data = {
+    text: "testing text",
+    roomId: 1,
+  };
   test("works", async () => {
-    const newMessage = await Message.send("test22", "test33", "testMsg");
-    // id is autoincrementing, and timestamp will always be different based on when it was inserted.
-    expect(newMessage).toEqual({
+    const message = await Message.send("test11", data);
+    expect(message).toEqual({
       id: expect.any(Number),
-      sentBy: "test22",
-      sentTo: "test33",
-      text: "testMsg",
+      sentBy: "test11",
+      text: "testing text",
       createdAt: expect.any(Date),
+      roomId: 1,
     });
   });
-  
+
   test("not found if no such user", async () => {
     try {
-      await Message.send("test11", "non-existing-user", "test");
+      await Message.send("I DONT EXIST LMAO", data);
       fail();
     } catch (e) {
       expect(e instanceof NotFoundError).toBeTruthy();
     }
   });
-
-  test("bad request error for invalid inputs", async () => {
-    try {
-      await Message.send("test11", "test22", ""); // no message
-      fail();
-    } catch (e) {
-      expect(e instanceof BadRequestError).toBeTruthy();
-    }
-  });
 });
 
 /** delete */
-describe("delete", () => {
+describe("Message.delete(messageId)", () => {
   test("works", async () => {
-    const msgResults = await db.query(`INSERT INTO messages 
-      (sent_by, sent_to, text) 
-      VALUES 
-      ('test11', 'test22', 'someMsg')
-      RETURNING *`);
-    const message = msgResults.rows[0];
-    expect(message).toEqual({
-      id: expect.any(Number),
-      sent_by: "test11",
-      sent_to: "test22",
-      text: "someMsg",
-      created_at: expect.any(Date),
-    });
-    await Message.delete(message.id);
-    const res = await db.query(`SELECT * FROM messages WHERE id = $1`, [
-      message.id,
-    ]);
+    await Message.delete(2);
+    const res = await db.query(`SELECT * FROM messages WHERE id = 2`);
     expect(res.rows.length).toEqual(0);
   });
 
@@ -80,37 +59,30 @@ describe("delete", () => {
 });
 
 /** getAll */
-describe("getAll", () => {
+describe("Message.getByRoomId(roomId)", () => {
   test("works", async () => {
-    const allMessagesResults = await Message.getAll();
+    const allMessagesResults = await Message.getByRoomId(1);
     expect(allMessagesResults).toEqual([
       {
-        id: 1,
-        sent_by: "test11",
-        sent_to: "test22",
-        text: "admin sending non-admin message",
-        created_at: expect.any(Date),
-      },
-      {
-        id: 2,
-        sent_by: "test22",
-        sent_to: "test33",
-        text: "regular user sending message",
-        created_at: expect.any(Date),
-      },
-      {
         id: 3,
-        sent_by: "test33",
-        sent_to: "test22",
-        text: "testMsg",
-        created_at: expect.any(Date),
+        sentBy: "test22",
+        text: "I am admin",
+        createdAt: expect.any(Date),
+        roomId: 1,
       },
       {
-        created_at: expect.any(Date),
         id: 4,
-        sent_by: "test22",
-        sent_to: "test33",
-        text: "something",
+        sentBy: "test33",
+        text: "I know I made you",
+        createdAt: expect.any(Date),
+        roomId: 1,
+      },
+      {
+        id: 5,
+        sentBy: "test11",
+        text: "This calendar is stupid",
+        createdAt: expect.any(Date),
+        roomId: 1,
       },
     ]);
   });

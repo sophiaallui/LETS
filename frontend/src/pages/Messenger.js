@@ -15,6 +15,7 @@ import {
   ListGroup,
   Row,
   Col,
+  Form
 } from "reactstrap";
 
 import Message from "MyComponents/messenger/Message";
@@ -42,7 +43,6 @@ function Messenger() {
   const [searchFocus, setSearchFocus] = React.useState("");
   const [messageFocus, setMessageFocus] = React.useState("");
   const { currentUser } = React.useContext(UserContext);
-  const { username } = currentUser;
 
   const [conversations, setConversations] = React.useState([]);
   const [currentChat, setCurrentChat] = React.useState(null);
@@ -52,7 +52,7 @@ function Messenger() {
   React.useEffect(() => {
     const getConversations = async () => {
       try {
-        const res = await Api.getConversations(username);
+        const res = await Api.getConversations(currentUser.username);
         setConversations(res);
       }
       catch (e) {
@@ -60,7 +60,7 @@ function Messenger() {
       }
     }
     getConversations();
-  }, [username]);
+  }, [currentUser.username]);
 
   React.useEffect(() => {
     const getMessages = async () => {
@@ -75,18 +75,27 @@ function Messenger() {
   }, [currentChat]);
 
   const handleSubmit = async e => {
+    e.preventDefault();
+    const messageBody = {
+      text : message,
+      roomId : currentChat.id
+    }
+    
     try {
-      e.preventDefault();
-      console.log(message)
+      const message = await Api.sendMessage(messageBody, currentUser.username);
+      setMessages(messages => [ ...messages, message]);
+      setMessage("")
     }
     catch (e) {
       console.error(e);
     }
   }
+
   console.debug(
-    "Messenger conversations=", conversations,
-    "Messenger currentChat=", currentChat,
-    "Messenger messages=", messages
+    "Messengerconversations=", conversations,
+    "MessengercurrentChat=", currentChat,
+    "Messengermessages=", messages,
+    "Messengermessage=", message
   );
   return (
     <>
@@ -135,7 +144,7 @@ function Messenger() {
                 currentChat ?
                   (
                     messages?.map(m => (
-                      <Message message={m} mine={m.sentBy === username} />
+                      <Message message={m} mine={m.sentBy === currentUser.username} />
                     ))
                   ) :
                   <span>Open a conversation to start a chat</span>
@@ -144,7 +153,7 @@ function Messenger() {
 
             <CardFooter className="d-block">
               
-              <Form onSubmit={handleSubmit}>
+              <Form onSubmit={handleSubmit} role="form">
                 <FormGroup className={messageFocus}>
                   <InputGroup className="mb-4">
                     <Input
@@ -153,7 +162,6 @@ function Messenger() {
                       onFocus={() => setMessageFocus("focused")}
                       onBlur={() => setMessageFocus("")}
                       onChange={e => setMessage(e.target.value)}
-                      name="message"
                       value={message}
                     />
                     <InputGroupAddon addonType="append">

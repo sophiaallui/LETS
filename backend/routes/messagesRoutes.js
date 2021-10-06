@@ -8,7 +8,8 @@ const { BadRequestError } = require("../ExpressError");
 const db = require("../db");
 
 // GET
-// /messages/:roomId/
+// /messages/:roomId
+// returns => [ { id, sentBy, text, createdAt, roomId}, { ... } ]
 router.get("/:roomId", ensureLoggedIn, async (req, res, next) => {
   try {
     const messages = await Message.getByRoomId(req.params.roomId);
@@ -19,18 +20,15 @@ router.get("/:roomId", ensureLoggedIn, async (req, res, next) => {
   }
 })
 
-/** POST /[username]/messages/[toUsername] 
- *  Authorization required : admin or same-user-as:username
- *  NotFoundError if the toUsername doesn't exist.
- *  BadRequestError if the input is not valid.
- *  Returns { message : { id, sentBy, sentTo, text, createdAt } }
+/** POST /messages/:username
+ *  accepts { text, roomId } via req.body
  */ 
- router.post("/:username/to/:toUsername", ensureCorrectUserOrAdmin, async (req, res, next) => {
+ router.post("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
   try { 
-    const { username, toUsername } = req.params;
+    const { username } = req.params;
     if(!req.body.text || typeof req.body.text !== "string" ||!req.body.text.length) throw new BadRequestError();
-    const message = await Message.send(username, toUsername, req.body.text);
-    return res.json({ message })
+    const message = await Message.send(username, req.body);
+    return res.json({ message });
   } 
   catch(e) {
     return next(e);

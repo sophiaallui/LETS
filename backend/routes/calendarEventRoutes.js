@@ -12,6 +12,7 @@ const router = require("express").Router();
 const { ensureLoggedIn, ensureCorrectUserOrAdmin } = require("../middleware/auth");
 const jsonSchema = require("jsonschema");
 const CalendarEvent = require("../models/calendarEvent");
+
 const calendarEventNewSchema = require("../schemas/calendarEventNew.json");
 const calendarEventUpdateSchema = require("../schemas/calendarEventUpdate.json");
 const { BadRequestError } = require("../ExpressError");

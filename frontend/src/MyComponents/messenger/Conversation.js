@@ -19,7 +19,7 @@ const Conversation = ({ conversation }) => {
           const res = await Api.getCurrentUser(uName);
           usersArray.push(res)
         };
-        setUsers(users);
+        setUsers(usersArray);
       } catch (e) {
         console.error(e);
       }
@@ -36,7 +36,7 @@ const Conversation = ({ conversation }) => {
             alt="..."
             className="avatar shadow"
             src={require("assets/img/placeholder.jpg")}
-          ></img>
+          />
           <Media body className="ml-2">
             <div className="justify-content-between align-items-center">
               {friendsUsername.map(uName => <h6 className="mb-0">{uName}</h6> )}

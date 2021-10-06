@@ -39,8 +39,8 @@ async function seedData() {
 
     		INSERT INTO room 
     		(id, name, members) VALUES
-    		(1, 'gains', ARRAY ['charles', 'jae']),
-    		(2, 'something', ARRAY ['charles', 'jae', 'admin']);
+    		(1, 'gains', ARRAY ['charles', 'jae', 'admin']),
+    		(2, 'something', ARRAY ['charles', 'jae']);
 
 
     		INSERT INTO messages 

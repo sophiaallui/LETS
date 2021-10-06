@@ -11,7 +11,7 @@ const BASE_URL= process.env.REACT_APP_BASE_URL || "http://localhost:3001";
  */
 
 class Api {
-  static token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImphZSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2MzM0MTI0Nzh9.qzI02fIQw10oZ13esfwFx1XKj--s9qtD3VASXe6GKNA";
+  static token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImphZSIsImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE2MzM0OTI2Nzd9.3q_3zjN6wkRfT2LxaTAIuRj3wXqpAP-xX-NY0DojVSA";
   static async request(endpoint, data = {}, method = "get") {
     console.debug("API Call:", endpoint, data, method);
 
@@ -42,11 +42,6 @@ class Api {
   static async getCurrentUser(username) {
     const res = await this.request(`users/${username}`);
     return res.user;
-  }
-
-  static async sendMessage(currentUsername, toUsername, data) {
-    const res = await this.request(`messages/${currentUsername}/to/${toUsername}`, data, "POST");
-    return res.message;
   }
 
   static async createCalendarEvent(currentUsername, data) {
@@ -93,6 +88,11 @@ class Api {
   static async getMessages(roomId) {
     const res = await this.request("messages/"+roomId);
     return res.messages
+  };
+
+  static async sendMessage(data, currentUsername) {
+    const res = await this.request(`messages/${currentUsername}`, data, "POST");
+    return res.message;
   }
 }
 

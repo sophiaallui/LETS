@@ -7,18 +7,15 @@ const {
 
 class Message {
 
-  static async send(sent_by, msg) {
-
+  static async send(sent_by, data) {
     // the id, and created_at is auto-generated for us.
     const checkIfExists = await db.query(`SELECT username FROM users WHERE username = $1`, [sent_by]);
     if(!checkIfExists.rows[0]) {
       throw new NotFoundError(`User : ${sent_by} does not exist`)
     }
-    if(!msg || msg.length < 0 || typeof msg !== "string") throw new BadRequestError();
-    
     const results = await db.query(
       `INSERT INTO messages
-        (sent_by, sent_to, text)
+        (sent_by, text, room_id)
         VALUES
         ($1, $2, $3)
         RETURNING
@@ -27,7 +24,7 @@ class Message {
           text,
           created_at AS "createdAt",
           room_id AS "roomId"
-      `, [sent_by, sent_to, msg]
+      `, [sent_by, data.text, data.roomId]
     );
     const message = results.rows[0];
     return message;

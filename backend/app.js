@@ -2,13 +2,11 @@
 
 const express = require('express');
 const app = express();
-const wsExpress = require("express-ws")(app);
 const path = require("path");
 const cors = require('cors');
 const morgan = require("morgan");
 const { NotFoundError } = require("./ExpressError");
 const { authenticateJWT } = require("./middleware/auth");
-const { ChatUser } = require("./ChatUser");
 
 const multer = require("multer");
 const knexDB = require("./knexDB");
