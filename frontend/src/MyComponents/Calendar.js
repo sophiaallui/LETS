@@ -28,10 +28,10 @@ import UserContext from "UserContext";
 import Api from "api/api";
 let calendar;
 
-function CalendarView({ userEvents, addEvent }) {
+function CalendarView(prop) {
   const { currentUser } = useContext(UserContext);
   const { username } = currentUser;
-  const [events, setEvents] = React.useState(userEvents);
+  const [events, setEvents] = React.useState([]);
   const [alert, setAlert] = React.useState(null);
   const [modalAdd, setModalAdd] = React.useState(false);
   const [modalChange, setModalChange] = React.useState(false);
@@ -46,7 +46,19 @@ function CalendarView({ userEvents, addEvent }) {
   const [event, setEvent] = React.useState(null);
   const [currentDate, setCurrentDate] = React.useState(null);
   const calendarRef = React.useRef(null);
-
+  console.log(calendarRef.current)
+  React.useEffect(() => {
+    const getUserEvents = async () => {
+      try {
+        const events = await Api.getUserCalendarEvents(currentUser.username);
+        setEvents(events)
+      }
+      catch(e) {
+        console.error(e);
+      }
+    }
+    getUserEvents();
+  }, [currentUser.username])
 
   React.useEffect(() => {
     createCalendar();
@@ -65,7 +77,7 @@ function CalendarView({ userEvents, addEvent }) {
       initialView: "dayGridMonth",
       selectable: true,
       editable: true,
-      events: userEvents,
+      events,
       headerToolbar: "",
       // Add new event
       select: (info) => {
@@ -84,6 +96,10 @@ function CalendarView({ userEvents, addEvent }) {
         setModalChange(true);
       },
     });
+
+    console.log("Inside createCalendar=",calendar);
+    console.log(calendar.currentData.calendarOptions.events)
+    calendar.currentData.calendarOptions.events = events;
     calendar.render();
     setCurrentDate(calendar.view.title);
   };
@@ -94,16 +110,18 @@ function CalendarView({ userEvents, addEvent }) {
   };
 
   const addNewEvent = async () => {
-    await addEvent(username, {
+    const newEvent = await Api.createCalendarEvent(currentUser.username, {
       eventTitle,
-      eventDescription, 
+      eventDescription : eventDescription ? eventDescription : "something",
+      radios,
       startDate,
-      endDate,
-      radios
-    })
+      endDate
+    });
+    console.debug("Inside addNewEvent newEvnet=", newEvent);
 
-    setEvents(events => [ ...events, event ])
-    setEvent(event)
+    setEvents(events => [ ...events, { ...newEvent } ])
+
+    setEvent(newEvent)
     setModalAdd(false);
     setStartDate(undefined);
     setEndDate(undefined);
