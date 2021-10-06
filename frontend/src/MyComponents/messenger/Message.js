@@ -6,6 +6,8 @@ import {
   CardBody,
 } from "reactstrap";
 
+import { format } from "timeago.js";
+
 const TypingMessage = props => {
   return (
     <Row className="justify-content-start">
@@ -25,7 +27,7 @@ const TypingMessage = props => {
   )
 }
 
-const Message = ({ mine }) => {
+const Message = ({ mine, message }) => {
   
   return (
     <Row className={mine ? 'justify-content-end text-right' : 'justify-content-start'}>
@@ -33,13 +35,12 @@ const Message = ({ mine }) => {
       <Card className={mine ? 'bg-gradient-primary text-white' : ''}>
         <CardBody className="p-2">
           <p className="mb-1">
-            It contains a lot of good lessons about effective
-            practices
+            {message.text}
           </p>
           <div>
             <small className="opacity-60">
               <i className="far fa-clock"></i>
-              3:14am
+              {format(message.createdAt)}
             </small>
           </div>
         </CardBody>

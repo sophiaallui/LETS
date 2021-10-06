@@ -2,20 +2,20 @@
 
 const express = require("express");
 const router = express.Router();
-const { ensureCorrectUserOrAdmin, ensureAdmin} = require("../middleware/auth")
+const { ensureCorrectUserOrAdmin, ensureAdmin, ensureLoggedIn} = require("../middleware/auth")
 const Message = require("../models/message");
 const { BadRequestError } = require("../ExpressError");
+const db = require("../db");
 
-/** GET / =>  { messages : [{ id, sent_by, sent_to, text, created_at }] }
- *  Athorization required : admin.
- *  Returns { messages : [{ id, sent_by, sent_to, text, created_at }] }
- */ 
-router.get("/", ensureAdmin, async (req, res, next) => {
+// GET
+// /messages/:roomId/
+router.get("/:roomId", ensureLoggedIn, async (req, res, next) => {
   try {
-    const messages = await Message.getAll();
-    return res.json({ messages })
-  } catch(e) {
-    return next(e)
+    const messages = await Message.getByRoomId(req.params.roomId);
+    return res.json({ messages });
+  }
+  catch(e) {
+    return next(e);
   }
 })
 
@@ -33,19 +33,6 @@ router.get("/", ensureAdmin, async (req, res, next) => {
     return res.json({ message })
   } 
   catch(e) {
-    return next(e);
-  }
-});
-
-/** DELETE /[username]/messages/[messageId] => { deleted : messageId }
- *  Authorization required : admin or same-user-as:username
- */
-router.delete("/:username/delete/:messageId", ensureCorrectUserOrAdmin, async (req, res, next) => {
-  try {
-    const { messageId } = req.params;
-    await Message.delete(messageId);
-    return res.json({ deletedMessage : messageId });
-  } catch(e) {
     return next(e);
   }
 });

@@ -35,15 +35,11 @@ const Conversation = ({ conversation }) => {
           <img
             alt="..."
             className="avatar shadow"
-            src={require("assets/img/faces/team-5.jpg")}
+            src={require("assets/img/placeholder.jpg")}
           ></img>
           <Media body className="ml-2">
             <div className="justify-content-between align-items-center">
               {friendsUsername.map(uName => <h6 className="mb-0">{uName}</h6> )}
-              
-              <div>
-                <small className="text-muted">1 day ago</small>
-              </div>
             </div>
             <Col
               className="text-muted text-small p-0 text-truncate d-block"

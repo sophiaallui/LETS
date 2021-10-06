@@ -1,20 +1,31 @@
 import React from "react";
 import {
-  Row, Media, Col, Button, UncontrolledTooltip, DropdownMenu, DropdownItem, UncontrolledDropdown
+  Row, Media, Col, Button, UncontrolledTooltip, UncontrolledDropdown
 } from "reactstrap";
+import { Link } from "react-router-dom";
 
-const ChatHeader = (props) => {
+const ChatHeader = ({ members }) => {
   return (
     <Row>
       <Col md="10">
         <Media className="align-items-center">
-          <img
-            alt="..."
-            className="avatar shadow"
-            src={require("assets/img/faces/christian.jpg")}
-          ></img>
+          <div className="avatar-group">
+            {members.map(m => (
+              <>
+                <a className="avatar rounded-circle" tag={Link} id={m} href="/#" onClick={e => e.preventDefault()}>
+                  <img
+                    alt="..."
+                    src={require("assets/img/placeholder.jpg")}
+                  />
+                </a>
+                <UncontrolledTooltip delay={0} target={m}>
+                  {m}
+                </UncontrolledTooltip>
+              </>
+            ))}
+          </div>
           <Media body>
-            <h6 className="mb-0 d-block">Charlie Watson</h6>
+            {members.map(m => <h6 className="mb-0 d-block">{m}</h6>)}
           </Media>
         </Media>
       </Col>
@@ -46,29 +57,6 @@ const ChatHeader = (props) => {
           >
             <i className="ni ni-settings-gear-65"></i>
           </Button>
-          <DropdownMenu right>
-            <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
-              <i className="ni ni-single-02"></i>
-              Profile
-            </DropdownItem>
-            <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
-              <i className="ni ni-notification-70"></i>
-              Mute conversation
-            </DropdownItem>
-            <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
-              <i className="ni ni-key-25"></i>
-              Block
-            </DropdownItem>
-            <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
-              <i className="ni ni-button-power"></i>
-              Clear chat
-            </DropdownItem>
-            <DropdownItem divider></DropdownItem>
-            <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
-              <i className="ni ni-fat-remove"></i>
-              Delete chat
-            </DropdownItem>
-          </DropdownMenu>
         </UncontrolledDropdown>
       </Col>
     </Row>

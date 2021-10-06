@@ -84,9 +84,15 @@ class Api {
     return res.friendRequest;
   }
 
+  // MESSAGES
   static async getConversations(currentUsername) {
     const res = await this.request(`room/${currentUsername}`);
     return res.conversations;
+  };
+  
+  static async getMessages(roomId) {
+    const res = await this.request("messages/"+roomId);
+    return res.messages
   }
 }
 

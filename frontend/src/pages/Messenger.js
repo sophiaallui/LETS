@@ -47,6 +47,7 @@ function Messenger() {
   const [conversations, setConversations] = React.useState([]);
   const [currentChat, setCurrentChat] = React.useState(null);
   const [messages, setMessages] = React.useState(null);
+  const [message, setMessage] = React.useState("");
 
   React.useEffect(() => {
     const getConversations = async () => {
@@ -54,16 +55,38 @@ function Messenger() {
         const res = await Api.getConversations(username);
         setConversations(res);
       }
-      catch(e) {
+      catch (e) {
         console.error(e);
       }
     }
     getConversations();
   }, [username]);
-  
+
+  React.useEffect(() => {
+    const getMessages = async () => {
+      try {
+        const res = await Api.getMessages(currentChat?.id);
+        setMessages(res)
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    getMessages();
+  }, [currentChat]);
+
+  const handleSubmit = async e => {
+    try {
+      e.preventDefault();
+      console.log(message)
+    }
+    catch (e) {
+      console.error(e);
+    }
+  }
   console.debug(
     "Messenger conversations=", conversations,
-    "Messenger currentChat=", currentChat  
+    "Messenger currentChat=", currentChat,
+    "Messenger messages=", messages
   );
   return (
     <>
@@ -77,17 +100,19 @@ function Messenger() {
                   type="text"
                   onFocus={() => setSearchFocus("focused")}
                   onBlur={() => setSearchFocus("")}
-                ></Input>
+                />
+
                 <InputGroupAddon addonType="append">
                   <InputGroupText>
                     <i className="ni ni-zoom-split-in"></i>
                   </InputGroupText>
                 </InputGroupAddon>
+
               </InputGroup>
             </CardHeader>
 
             <ListGroup className="list-group-chat" flush tag="div">
-              {conversations.map(c => ( 
+              {conversations.map(c => (
                 <div onClick={() => setCurrentChat(c)}>
                   <Conversation conversation={c} />
                 </div>
@@ -102,40 +127,44 @@ function Messenger() {
           <Card>
             <CardHeader className="d-inline-block">
               {
-                currentChat ? <ChatHeader /> : null
+                currentChat ? <ChatHeader members={currentChat?.members} /> : null
               }
             </CardHeader>
             <CardBody>
               {
-                currentChat ? 
-                (
-                  <>
-                    <Message />
-                    <Message mine />
-                  </>
-                ) :
-                <span>Open a conversation to start a chat</span>
+                currentChat ?
+                  (
+                    messages?.map(m => (
+                      <Message message={m} mine={m.sentBy === username} />
+                    ))
+                  ) :
+                  <span>Open a conversation to start a chat</span>
               }
-              
-
-
             </CardBody>
+
             <CardFooter className="d-block">
-              <FormGroup className={messageFocus}>
-                <InputGroup className="mb-4">
-                  <Input
-                    placeholder="Your message"
-                    type="text"
-                    onFocus={() => setMessageFocus("focused")}
-                    onBlur={() => setMessageFocus("")}
-                  ></Input>
-                  <InputGroupAddon addonType="append">
-                    <InputGroupText>
-                      <i className="ni ni-send"></i>
-                    </InputGroupText>
-                  </InputGroupAddon>
-                </InputGroup>
-              </FormGroup>
+              
+              <Form onSubmit={handleSubmit}>
+                <FormGroup className={messageFocus}>
+                  <InputGroup className="mb-4">
+                    <Input
+                      placeholder="Your message"
+                      type="text"
+                      onFocus={() => setMessageFocus("focused")}
+                      onBlur={() => setMessageFocus("")}
+                      onChange={e => setMessage(e.target.value)}
+                      name="message"
+                      value={message}
+                    />
+                    <InputGroupAddon addonType="append">
+                      <InputGroupText>
+                        <i className="ni ni-send"></i>
+                      </InputGroupText>
+                    </InputGroupAddon>
+                  </InputGroup>
+                </FormGroup>
+              </Form>
+
             </CardFooter>
           </Card>
         </Col>
