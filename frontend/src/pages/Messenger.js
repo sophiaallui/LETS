@@ -23,8 +23,9 @@ import UserContext from "UserContext";
 import Api from "api/api";
 import Conversation from "MyComponents/messenger/Conversation";
 import ChatHeader from "MyComponents/messenger/ChatHeader";
+import { io } from "socket.io-client";
 /**
- * data : [
+ * conversations : [
  *  { 
  *     createdAt : date,
  *     updatedAt : date
@@ -37,6 +38,13 @@ import ChatHeader from "MyComponents/messenger/ChatHeader";
  *   }
  * ]
  * 
+ * currentChat = {
+ *   id : int,
+ *   members : ['username', 'username'],
+ *   name : string
+ * }
+ * 
+ * 
  */
 
 function Messenger() {
@@ -44,10 +52,40 @@ function Messenger() {
   const [messageFocus, setMessageFocus] = React.useState("");
   const { currentUser } = React.useContext(UserContext);
 
+
   const [conversations, setConversations] = React.useState([]);
   const [currentChat, setCurrentChat] = React.useState(null);
   const [messages, setMessages] = React.useState(null);
   const [message, setMessage] = React.useState("");
+  const [arrivalMessage, setArrivalMessage] = React.useState(null);
+
+  const scrollRef = React.useRef();
+  const socket = React.useRef();
+
+  React.useEffect(() => {
+    socket.current = io("ws://localhost:8900");
+    socket.current.on("getMessage", data => {
+      setArrivalMessage({
+        sender : data.senderUsername,
+        text : data.text,
+        createdAt : Date.now()
+      })
+    })
+  }, [])
+
+  React.useEffect(() => {
+    arrivalMessage && 
+      currentChat?.members.includes(arrivalMessage.sender) && 
+        setMessage(messages => [...messages, arrivalMessage])
+    console.debug("socket arrivalMessage=", arrivalMessage)
+  }, [arrivalMessage, currentChat])
+
+  React.useEffect(() => {
+    socket && socket.current.emit("addUser", currentUser.username);
+    socket && socket.current.on("getUsers", users => {
+      console.debug("socket users=",users)
+    })
+  }, [currentUser])
 
   React.useEffect(() => {
     const getConversations = async () => {
@@ -65,7 +103,7 @@ function Messenger() {
   React.useEffect(() => {
     const getMessages = async () => {
       try {
-        const res = await Api.getMessages(currentChat?.id);
+        const res = await Api.getMessages(currentChat.id);
         setMessages(res)
       } catch (e) {
         console.error(e);
@@ -77,19 +115,32 @@ function Messenger() {
   const handleSubmit = async e => {
     e.preventDefault();
     const messageBody = {
-      text : message,
-      roomId : currentChat.id
+      text: message,
+      roomId: currentChat?.id
     }
-    
+    const roomMembersExceptForMe = currentChat.members.filter(username => username !== currentUser.username);
+    for(const user of roomMembersExceptForMe) {
+      socket.current.emit("sendMessage", {
+        senderUsername : currentUser.username,
+        receiverUsername : user,
+        text : message    
+      });
+    }
+
+
     try {
       const message = await Api.sendMessage(messageBody, currentUser.username);
-      setMessages(messages => [ ...messages, message]);
+      setMessages(messages => [...messages, message]);
       setMessage("")
     }
     catch (e) {
       console.error(e);
     }
   }
+
+  React.useEffect(() => {
+    scrollRef.current && scrollRef.current.scrollIntoView({ behavior: "smooth" })
+  }, [messages]);
 
   console.debug(
     "Messengerconversations=", conversations,
@@ -100,7 +151,7 @@ function Messenger() {
   return (
     <>
       <Row className="flex-row chat">
-        <Col lg="4">
+        <Col lg="3">
           <Card className="bg-secondary">
             <CardHeader className={"mb-3 " + searchFocus}>
               <InputGroup className="input-group-alternative">
@@ -121,7 +172,7 @@ function Messenger() {
             </CardHeader>
 
             <ListGroup className="list-group-chat" flush tag="div">
-              {conversations.map(c => (
+              {conversations?.map(c => (
                 <div onClick={() => setCurrentChat(c)}>
                   <Conversation conversation={c} />
                 </div>
@@ -132,7 +183,7 @@ function Messenger() {
         </Col>
 
 
-        <Col lg="8">
+        <Col lg="7">
           <Card>
             <CardHeader className="d-inline-block">
               {
@@ -144,36 +195,35 @@ function Messenger() {
                 currentChat ?
                   (
                     messages?.map(m => (
-                      <Message message={m} mine={m.sentBy === currentUser.username} />
+                      <div ref={scrollRef}>
+                        <Message message={m} mine={m.sentBy === currentUser.username} />
+                      </div>
                     ))
                   ) :
                   <span>Open a conversation to start a chat</span>
               }
             </CardBody>
-
-            <CardFooter className="d-block">
-              
-              <Form onSubmit={handleSubmit} role="form">
-                <FormGroup className={messageFocus}>
-                  <InputGroup className="mb-4">
-                    <Input
-                      placeholder="Your message"
-                      type="text"
-                      onFocus={() => setMessageFocus("focused")}
-                      onBlur={() => setMessageFocus("")}
-                      onChange={e => setMessage(e.target.value)}
-                      value={message}
-                    />
-                    <InputGroupAddon addonType="append">
-                      <InputGroupText>
-                        <i className="ni ni-send"></i>
-                      </InputGroupText>
-                    </InputGroupAddon>
-                  </InputGroup>
-                </FormGroup>
-              </Form>
-
-            </CardFooter>
+          </Card>
+          <Card>
+            <Form onSubmit={handleSubmit} role="form">
+              <FormGroup className={messageFocus}>
+                <InputGroup className="mb-4">
+                  <Input
+                    placeholder="Your message"
+                    type="text"
+                    onFocus={() => setMessageFocus("focused")}
+                    onBlur={() => setMessageFocus("")}
+                    onChange={e => setMessage(e.target.value)}
+                    value={message}
+                  />
+                  <InputGroupAddon addonType="append">
+                    <InputGroupText>
+                      <i className="ni ni-send"></i>
+                    </InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+              </FormGroup>
+            </Form>
           </Card>
         </Col>
       </Row>
