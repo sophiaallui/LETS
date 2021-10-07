@@ -2,27 +2,34 @@
 
 const express = require('express');
 const app = express();
-const wsExpress = require("express-ws")(app);
+const path = require("path");
 const cors = require('cors');
 const morgan = require("morgan");
 const { NotFoundError } = require("./ExpressError");
 const { authenticateJWT } = require("./middleware/auth");
-const { ChatUser } = require("./ChatUser");
 
+const multer = require("multer");
+const knexDB = require("./knexDB");
+
+// ROUTES IMPORTS
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const messageRoutes = require("./routes/messagesRoutes");
 const friendsRoutes = require("./routes/userFriendsRoutes");
 const postCommentRoutes = require("./routes/postsCommentRoutes");
 const postRoutes = require("./routes/postRoutes");
-const imageRoutes = require("./routes/imagesRoutes");
 const goalRoutes = require("./routes/goalRoutes");
 const calendarRoutes = require("./routes/calendarEventRoutes");
+
+// ROUTES for chat + rooms
+const roomRoutes = require("./routes/roomRoutes");
 
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(authenticateJWT);
+
+app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
@@ -30,50 +37,29 @@ app.use("/messages", messageRoutes);
 app.use("/friends", friendsRoutes);
 app.use("/comments", postCommentRoutes);
 app.use("/posts", postRoutes);
-app.use("/images", imageRoutes);
 app.use("/goals", goalRoutes);
 app.use("/calendar-events", calendarRoutes);
 
+app.use("/room", roomRoutes);
 
-// Web socket routes
-/** Handle a persistent connection to /chat/[roomName]
- *
- * Note that this is only called *once* per client --- not every time
- * a particular websocket chat is sent.
- *
- * `ws` becomes the socket for the client; it is specific to that visitor.
- * The `ws.send` method is how we'll send messages back to that socket.
- */
-app.ws("/chat/:roomName", async (ws, req, next) => {
+const storage = multer.diskStorage({
+	destination : (req, file, cb) => {
+		cb(null, "public/images");
+	},
+	filename : (req, file, cb) => {
+		cb(null, req.body.name)
+	},
+});
+
+const upload = multer({ storage : storage });
+app.post("/api/upload", upload.single("file"), (req, res, next) => {
 	try {
-		const { roomName } = req.params;
-		const user = new ChatUser(ws.send.bind(ws), roomName);
-
-		// register handlers for message-received, connection-closed 
-		ws.on("message", async data => {
-			// called when message is recieved from browser
-			try {
-				user.handleMessage(data);
-			}
-			catch(e) {
-				console.error(e);
-			}
-		})
-
-		ws.on("close", () => {
-			// called when browser closes connection
-			try {
-				user.handleClose();
-			} catch(e) {
-				console.error(e);
-			}
-		})
-	} 
+		return;
+	}
 	catch(e) {
-		console.error(e)
+		return next(e);
 	}
 })
-
 
 
 /** Handle 404 errors -- this matches everything */

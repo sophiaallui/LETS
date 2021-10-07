@@ -44,11 +44,6 @@ class Api {
     return res.user;
   }
 
-  static async sendMessage(currentUsername, toUsername, data) {
-    const res = await this.request(`messages/${currentUsername}/to/${toUsername}`, data, "POST");
-    return res.message;
-  }
-
   static async createCalendarEvent(currentUsername, data) {
     const res = await this.request(`calendar-events/${currentUsername}`, data, "post");
     return res.event;
@@ -83,6 +78,23 @@ class Api {
     const res = await this.request(`friends/${currentUsername}/from/${theRequestorUsername}`, {}, "PUT")
     return res.friendRequest;
   }
+
+  // MESSAGES
+  static async getConversations(currentUsername) {
+    const res = await this.request(`room/${currentUsername}`);
+    return res.conversations;
+  };
+  
+  static async getMessages(roomId) {
+    const res = await this.request("messages/"+roomId);
+    return res.messages
+  };
+
+  static async sendMessage(data, currentUsername) {
+    const res = await this.request(`messages/${currentUsername}`, data, "POST");
+    return res.message;
+  }
 }
+
 
 export default Api;

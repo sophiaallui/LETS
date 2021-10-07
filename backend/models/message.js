@@ -7,32 +7,24 @@ const {
 
 class Message {
 
-  static async send(sent_by, sent_to, msg) {
-    /**
-     * 
-     * @param {String from req.params.username} sent_by 
-     * @param {String from req.params.toUsername} sent_to 
-     * @param {String from req.body.text} message 
-     * @returns { sentBy, sentTo, text, createdAt }
-     */
+  static async send(sent_by, data) {
     // the id, and created_at is auto-generated for us.
-    const checkIfExists = await db.query(`SELECT username FROM users WHERE username = $1`, [sent_to]);
+    const checkIfExists = await db.query(`SELECT username FROM users WHERE username = $1`, [sent_by]);
     if(!checkIfExists.rows[0]) {
-      throw new NotFoundError(`User : ${sent_to} does not exist`)
+      throw new NotFoundError(`User : ${sent_by} does not exist`)
     }
-    if(!msg || msg.length < 0) throw new BadRequestError();
     const results = await db.query(
       `INSERT INTO messages
-        (sent_by, sent_to, text)
+        (sent_by, text, room_id)
         VALUES
         ($1, $2, $3)
         RETURNING
           id,
           sent_by AS "sentBy",
-          sent_to AS "sentTo",
           text,
-          created_at AS "createdAt"
-      `, [sent_by, sent_to, msg]
+          created_at AS "createdAt",
+          room_id AS "roomId"
+      `, [sent_by, data.text, data.roomId]
     );
     const message = results.rows[0];
     return message;
@@ -55,11 +47,19 @@ class Message {
      }
    }
 
-   /** Get all messages from the db ordered by creation time.
-    */
-   static async getAll() {
-     const results = await db.query(`SELECT * FROM messages ORDER BY created_at`);
-     return results.rows;
+   static async getByRoomId(roomId) {
+     const res = await db.query(
+       `SELECT 
+          id,
+          sent_by AS "sentBy",
+          text,
+          created_at AS "createdAt",
+          room_id AS "roomId"
+           FROM messages WHERE
+             room_id = $1
+              ORDER BY created_at`, [roomId]
+     );
+     return res.rows;
    }
 };
 

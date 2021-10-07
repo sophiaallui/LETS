@@ -6,7 +6,16 @@ const db = require("../knexDb");
 const { NotFoundError } = require("../ExpressError");
 const { ensureLoggedIn } = require("../middleware/auth");
 
-const imageUpload = multer({ dest : "images" })
+const storage = multer.diskStorage({
+  destination : (req, file, cb) => {
+    cb(null, "public/images");
+  },
+  filename : (req, file, cb) => {
+    cb(null, req.body.name);
+  }
+})
+
+const upload = multer({ storage : storage });
 
 router.post("/", ensureLoggedIn, imageUpload.single("image"), async (req, res, next) => {
    try {

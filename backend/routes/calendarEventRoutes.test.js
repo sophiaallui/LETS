@@ -92,6 +92,7 @@ describe("POST /calendar-events/[username]", () => {
   test("works for admin:", async () => {
     const res = await request(app).post("/calendar-events/test22").send(data)
       .set("authorization", `Bearer ${adminToken}`);
+      
     expect(res.body).toEqual({
       event: {
         id: expect.any(Number),

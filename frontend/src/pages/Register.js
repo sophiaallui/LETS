@@ -78,7 +78,7 @@ function RegisterPage(props) {
     delete copied.confirmPassword;
     const res = await props.signup(copied);
     if(res.sucess) {
-      history.push("/profile")
+      history.push("/profile/"+ copied.username)
     } else {
       setErrors(res.errors)
     }
@@ -91,7 +91,7 @@ function RegisterPage(props) {
   )
   return (
     <>
-      {errors.length > 0 ? <ErrorModal /> : null}
+      {errors.length > 0 ? <ErrorModal title="error" messages={errors} /> : null}
       <div className="wrapper">
         <div className="page-header bg-default">
           <div

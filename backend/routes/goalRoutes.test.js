@@ -181,5 +181,28 @@ describe("PUT /goals/[username]/[goalId]", () => {
     }).set("authorization", `Bearer ${test2Token}`);
     expect(res.statusCode).toEqual(400)
   })
+});
+
+describe("DELETE /goals/[username]/[goalId]", () => {
+  test("works for admin: ", async function() {
+    const res = await request(app).delete("/goals/test22/3").set("authorization", `Bearer ${adminToken}`);
+    expect(res.body).toEqual({ deleted : "3" })
+  });
+  test("works for same-as-:username", async function() {
+    const res = await request(app).delete("/goals/test22/3").set("authorization", `Bearer ${test2Token}`);
+    expect(res.body).toEqual({ deleted : "3" })
+  });
+  test("Unauth for invalid users", async () => {
+    const res = await request(app).delete("/goals/test22/3").set("authorization", `Bearer ${test3Token}`);
+    expect(res.statusCode).toEqual(401)
+  });
+  test("Unauth for anons", async () => {
+    const res = await request(app).delete("/goals/test22/3");
+    expect(res.statusCode).toEqual(401)
+  });
+  test("NotFoundError for invalid goalId", async () => {
+    const res = await request(app).delete("/goals/test11/894897498").set("authorization", `Bearer ${adminToken}`);
+    expect(res.statusCode).toEqual(404)
+  })
 })
 

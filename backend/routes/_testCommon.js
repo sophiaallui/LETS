@@ -8,6 +8,7 @@ const { createToken } = require("../helpers/tokens");
 
 
 async function commonBeforeAll() {
+  await db.query("DELETE FROM room");
   await db.query("DELETE FROM users_friends")
   await db.query("DELETE FROM posts_comments_comments")
   await db.query("DELETE FROM posts_comments");
@@ -72,15 +73,23 @@ async function commonBeforeAll() {
     (2, 'test22', 69.0, 151.0, 16.0, 28.0, 31.0)`
   )
   
+  // SETUP room for testing.
+  await db.query(
+    `INSERT INTO room 
+    (id, name, members) VALUES
+    (1, 'gains', ARRAY ['test11', 'test22', 'test33']),
+    (2, 'something', ARRAY ['test11', 'test33']);`
+  )
+
   // SETUP Messages for testing.
   await db.query(
-    `INSERT INTO messages
-      (id, sent_by, sent_to, text) 
-      VALUES
-      (1, 'test11', 'test22', 'admin sending non-admin message'),
-      (2, 'test22', 'test33', 'regular user sending message'),
-      (3, 'test33', 'test22', 'testMsg'),
-      (4, 'test22', 'test33', 'something')`
+    `INSERT INTO messages 
+    (id, sent_by, text, room_id) VALUES
+    (1, 'test33', 'wsup', 2),
+    (2, 'test11', 'this shit sucks', 2),
+    (3, 'test22', 'I am admin', 1),
+    (4, 'test33', 'I know I made you', 1),
+    (5, 'test11', 'This calendar is stupid', 1);`
   );
 
   

@@ -79,7 +79,6 @@ function App() {
   const logout = () => {
     setToken(null);
     setCurrentUser(null);
-    history.push("/");
   };
 
   const addEvent = async (username, event) => {
