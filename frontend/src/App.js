@@ -10,13 +10,14 @@ import UserContext from "./UserContext";
 
 import NavBar from "MyComponents/Navbar";
 import Routes from "routes/Routes"
-
+import useLocalStorage from "./hooks/useLocalStorage";
 
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [token, setToken] = useState(Api.token);
+  const [localStorageToken, setLocalStorageToken] = useLocalStorage("token")
   const history = useHistory();
   console.debug(
     "App",
@@ -25,7 +26,8 @@ function App() {
     "token=",
     token,
     "currentUser",
-    currentUser
+    currentUser,
+    "localStorageToken=", localStorageToken
   );
 
   useEffect(() => {
@@ -37,6 +39,7 @@ function App() {
           const { username } = jwt.decode(token);
           // put the token on the Api class so we can use it to call the Api.d
           Api.token = token;
+          setLocalStorageToken(token)
           let currentUser = await Api.getCurrentUser(username);
           setCurrentUser(currentUser);
         } catch (e) {
