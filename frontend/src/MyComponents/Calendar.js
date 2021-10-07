@@ -268,7 +268,7 @@ export default function CalendarView({ userEvents }) {
                 <ModalFooter>
                     <Button color="primary" onClick={() => setConfirmEdit(true)}>Edit event</Button>
                     <Button color="red" onClick={deleteEvent}>Delete event</Button>
-                    <Button color="secondary" onClick={() => toggleAddEventModal(false)}>Cancel</Button>
+                    <Button color="secondary" onClick={() => toggleEditEventModal(false)}>Cancel</Button>
                 </ModalFooter>
             </Modal>
         </>
