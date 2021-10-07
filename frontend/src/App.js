@@ -79,6 +79,7 @@ function App() {
   const logout = () => {
     setToken(null);
     setCurrentUser(null);
+    setLocalStorageToken("token", null);
   };
 
   const addEvent = async (username, event) => {

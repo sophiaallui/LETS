@@ -43,7 +43,8 @@ class Api {
     const res = await this.request(`users/${username}`);
     return res.user;
   }
-
+  
+  /// Calendar stuff
   static async createCalendarEvent(currentUsername, data) {
     const res = await this.request(`calendar-events/${currentUsername}`, data, "post");
     return res.event;
@@ -54,6 +55,10 @@ class Api {
     return res.events;
   }
   
+  static async deleteCalendarEvent(currentUsername, eventId) {
+    const res = await this.request(`calendar-events/${currentUsername}/${eventId}`, {}, "DELETE")
+  }
+
   static async createPost(currentUsername, content) {
     const res = await this.request(`posts/${currentUsername}`, content, "POST");
     return res.post

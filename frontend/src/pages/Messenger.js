@@ -65,11 +65,8 @@ function Messenger() {
   React.useEffect(() => {
     socket.current = io("ws://localhost:8900");
     socket.current.on("getMessage", data => {
-      setArrivalMessage({
-        sender : data.senderUsername,
-        text : data.text,
-        createdAt : Date.now()
-      })
+      console.log(data)
+      setMessages(prev => [...prev, { sentBy : data.senderUsername, text : data.text}])
     })
   }, [])
 

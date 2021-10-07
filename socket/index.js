@@ -31,13 +31,16 @@ const io = require("socket.io")(8900, config);
 
 let users = [];
 
+
 const addUser = (username, socketId) => {
   !users.some(user => user.username === username) &&
     users.push({ username, socketId })
 };
+
 const removeUser = (socketId) => {
   users = users.filter(user => user.socketId !== socketId);
 };
+
 const getUser = username => {
   return users.find(user => user.username === username)
 };
@@ -65,6 +68,5 @@ io.on("connection", socket => {
     removeUser(socket.id);
     io.emit("getUsers", users);
   });
-
 
 });

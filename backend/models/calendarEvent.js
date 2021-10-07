@@ -11,8 +11,8 @@ class CalendarEvent {
         id,
         event_title AS "eventTitle",
         event_description AS "eventDescription",
-        start_date AS "startDate",
-        end_date AS "endDate",
+        start_date AS "start",
+        end_date AS "end",
         radios AS "className" 
           FROM calendar_event
          WHERE posted_by = $1
@@ -25,11 +25,11 @@ class CalendarEvent {
     const res = await db.query(
       `SELECT
         id,
-        event_title AS "eventTitle",
-        event_description AS "eventDescription",
-        start_date AS "startDate",
-        end_date AS "endDate",
-        radios AS "className" 
+        event_title AS "title",
+        event_description AS "description",
+        start_date AS "start",
+        end_date AS "end",
+        radios AS "backgroundColor" 
         FROM calendar_event
          WHERE id = $1
         `,
@@ -50,18 +50,18 @@ class CalendarEvent {
          ($1, $2, $3, $4, $5, $6)
           RETURNING
           id,
-          event_title AS "eventTitle",
-          event_description AS "eventDescription",
-          start_date AS "startDate",
-          end_date AS "endDate",
-          radios AS "className" `, 
+          event_title AS "title",
+          event_description AS "description",
+          start_date AS "start",
+          end_date AS "end",
+          radios AS "backgroundColor" `, 
           [
             username, 
-            data.eventTitle, 
-            data.eventDescription, 
-            data.startDate, 
-            data.endDate, 
-            data.radios
+            data.title, 
+            data.description, 
+            data.start, 
+            data.end, 
+            data.backgroundColor
           ]
     );
     const event = res.rows[0]
@@ -91,11 +91,11 @@ class CalendarEvent {
         WHERE id = ${idIndex}
         RETURNING
           id,
-          event_title AS "eventTitle",
-          event_description AS "eventDescription",
-          start_date AS "startDate",
-          end_date AS "endDate",
-          radios AS "className"`;
+          event_title AS "title",
+          event_description AS "description",
+          start_date AS "start",
+          end_date AS "end",
+          radios AS "backgroundColor"`;
 
     const res = await db.query(querySQL, [...values, id]);
     const event = res.rows[0];

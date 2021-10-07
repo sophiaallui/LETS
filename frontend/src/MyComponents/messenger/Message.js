@@ -27,8 +27,7 @@ const TypingMessage = props => {
   )
 }
 
-const Message = ({ mine, message, sender }) => {
-  
+const Message = ({ mine, message }) => {
   return (
     <Row className={mine ? 'justify-content-end text-right' : 'justify-content-start'}>
     <Col className="col-auto">

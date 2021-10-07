@@ -25,7 +25,7 @@ async function seedData() {
 
 		await db.query(
     		`INSERT INTO users_measurements
-    		( id, 
+    		(  
     		  created_by, 
     		  height_in_inches, 
     		  weight_in_pounds, 
@@ -34,49 +34,56 @@ async function seedData() {
     		  waist_in_inches
     		)
     		VALUES
-    		(1, 'charles', 68.0, 150.0, 15.0, 27.0, 30.0),
-    		(2, 'jae', 69.0, 151.0, 16.0, 28.0, 31.0);
+    		('charles', 68.0, 150.0, 15.0, 27.0, 30.0),
+    		('jae', 69.0, 151.0, 16.0, 28.0, 31.0);
 
     		INSERT INTO room 
-    		(id, name, members) VALUES
-    		(1, 'gains', ARRAY ['charles', 'jae', 'admin']),
-    		(2, 'something', ARRAY ['charles', 'jae']);
+    		(name, members) VALUES
+    		('gains', ARRAY ['charles', 'jae', 'admin']),
+    		('something', ARRAY ['charles', 'jae']);
 
+				INSERT INTO users_friends 
+    		(user_from, user_to, confirmed)
+     		 VALUES
+        ('admin', 'charles', 1),
+        ('jae', 'charles', 1),
+        ('jae', 'admin', 1),
+        ('charles', 'admin',  1);
 
     		INSERT INTO messages 
-    		 (id, sent_by, text, room_id) VALUES
-    		 (1, 'charles', 'wsup', 2),
-    		 (2, 'jae', 'this shit sucks', 2),
-    		 (3, 'admin', 'I am admin', 1),
-    		 (4, 'jae', 'I know I made you', 1),
-    		 (5, 'charles', 'This calendar is stupid', 1);
+    		 (sent_by, text, room_id) VALUES
+    		 ('charles', 'wsup', 2),
+    		 ('jae', 'this shit sucks', 2),
+    		 ('admin', 'I am admin', 1),
+    		 ('jae', 'I know I made you', 1),
+    		 ('charles', 'This calendar is stupid', 1);
 
     		INSERT INTO goals
-     		(id, created_by, content, due_date, is_complete) VALUES
-     		(1, 'charles', 'testing content', '2021/11/1', 'FALSE'),
-     		(2, 'charles', 'testing content2', '2021/12/1', 'FALSE'),
-     		(3, 'jae', 		'bleh', '2021/10/9', 'TRUE');
+     		(created_by, content, due_date, is_complete) VALUES
+     		('charles', 'testing content', '2021/11/1', 'FALSE'),
+     		('charles', 'testing content2', '2021/12/1', 'FALSE'),
+     		('jae', 		'bleh', '2021/10/9', 'TRUE');
 
      		INSERT INTO calendar_event
-		      (id, posted_by, event_title, start_date, end_date, radios)
+		      (posted_by, event_title, start_date, end_date, radios)
 		        VALUES  
-		      (1, 'charles', 'Charles title', '2021/10/31', '2021/11/1', 'bg-info'),
-		      (2, 'jae', 	 'Jae title',     '2021/10/31', '2021/11/1', 'bg-danger');
+		      ('charles', 'Charles title', '2021/10/31', '2021/11/1', 'bg-info'),
+		      ('jae', 	 'Jae title',     '2021/10/31', '2021/11/1', 'bg-danger');
 
 		    INSERT INTO posts 
-			  (id, posted_by, content) 
+			  (posted_by, content) 
 			    VALUES
-			   (1, 'charles', 'testContent1'),
-			   (2, 'charles', 'testContent2'),
-			   (3, 'jae', 'testContent3'),
-			   (4, 'jae', 'testContent4');
+			   ('charles', 'testContent1'),
+			   ('charles', 'testContent2'),
+			   ('jae', 'testContent3'),
+			   ('jae', 'testContent4');
 
 			INSERT INTO posts_comments
-		    	(id, post_id, posted_by, content) 
+		    	(post_id, posted_by, content) 
 		    	VALUES
-		    (1, 1, 'jae', 'this post sucks'),
-		    (2, 1, 'charles', 'yours suck too'),
-		    (3, 3, 'charles', 'testing comment');
+		    (1, 'jae', 'this post sucks'),
+		    (1, 'charles', 'yours suck too'),
+		    (3, 'charles', 'testing comment');
     		`
   		);
 	}

@@ -14,11 +14,12 @@ const Conversation = ({ conversation }) => {
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const usersArray = [];
-        for(const uName of friendsUsername) {
-          const res = await Api.getCurrentUser(uName);
-          usersArray.push(res)
-        };
+        const allPromise = Promise.all(friendsUsername.map(uName => Api.getCurrentUser(uName)))
+        const usersArray = await allPromise;
+        // for(const uName of friendsUsername) {
+        //   const res = await Api.getCurrentUser(uName);
+        //   usersArray.push(res)
+        // };
         setUsers(usersArray);
       } catch (e) {
         console.error(e);
