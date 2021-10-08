@@ -58,8 +58,10 @@ function Messenger() {
   const [currentChat, setCurrentChat] = React.useState(null);
   const [messages, setMessages] = React.useState(null);
   const [message, setMessage] = React.useState("");
+  
   const [arrivalMessage, setArrivalMessage] = React.useState(null);
-
+  const [onlineUsers, setOnlineUsers] = React.useState([])
+  
   const scrollRef = React.useRef();
   const socket = React.useRef();
 
@@ -68,15 +70,15 @@ function Messenger() {
   React.useEffect(() => {
     socket.current = io("ws://localhost:8900");
     socket.current.on("getMessage", data => {
-      console.log(data)
+      console.log(data);
       setArrivalMessage({ sentBy : data.senderUsername, text : data.text })
-      setMessages(prev => [...prev, arrivalMessage])
+      // setMessages(prev => [...prev, { sentBy : data.senderUsername, text : data.text }])
     })
   }, [])
 
   React.useEffect(() => {
     arrivalMessage && 
-      currentChat?.members.includes(arrivalMessage.sender) && 
+      currentChat?.members.includes(arrivalMessage.sentBy) && 
         setMessage(messages => [...messages, arrivalMessage])
     console.debug("socket arrivalMessage=", arrivalMessage)
   }, [arrivalMessage, currentChat])
@@ -84,7 +86,7 @@ function Messenger() {
   React.useEffect(() => {
     socket && socket.current.emit("addUser", currentUser.username);
     socket && socket.current.on("getUsers", users => {
-      console.debug("socket users=",users)
+      setOnlineUsers(users) // [{ username, socketId }, { username, socketId }]
     })
   }, [currentUser])
 
@@ -228,7 +230,7 @@ function Messenger() {
           </Card>
         </Col>
         <Col lg="3">
-          <OnlineFriends friendsUsernames={friendsUsernames} />
+          <OnlineFriends friendsUsernames={friendsUsernames} onlineUsers={onlineUsers} setCurrentChat={setCurrentChat} />
         </Col>
       </Row>
     </>

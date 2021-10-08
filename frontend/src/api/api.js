@@ -99,6 +99,11 @@ class Api {
     const res = await this.request(`messages/${currentUsername}`, data, "POST");
     return res.message;
   }
+
+  static async createRoom(currentUsername, receiverUsername) {
+    const res = await this.request(`room/sender/${currentUsername}`, { receiverUsername }, "POST");
+    return res.conversation;
+  }
 }
 
 

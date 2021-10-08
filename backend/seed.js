@@ -7,6 +7,7 @@ async function seedData() {
 		const adminHashedPW = await bcrypt.hash("admin", BCRYPT_WORK_FACTOR);
 		const charlesHashedPW = await bcrypt.hash("charles", BCRYPT_WORK_FACTOR);
 		const jaeHashedPW = await bcrypt.hash("cjp0116", BCRYPT_WORK_FACTOR);
+		const testHashedPW = await bcrypt.hash('testPW', BCRYPT_WORK_FACTOR);
     	
     	const dueDate = new Date(2021, 10, 17, 3, 24, 0);
   		const dueDate2 = new Date(2022, 10, 17, 3, 24, 0);
@@ -18,9 +19,10 @@ async function seedData() {
    			VALUES 
    			('admin',   'admin@test.com',     $1, 'admin FirstName', 'admin LastName', true),
    			('charles','charles@test.com',   $2, 'Charles',         'Park',          false),
-   			('jae',    'jae@test.com',       $3, 'Jae',             'Cho',           false)
+   			('jae',    'jae@test.com',       $3, 'Jae',             'Cho',           false),
+				 ('test', 'test@test.com', $4, 'firstName', 'lastName', false)
    			 RETURNING username`,
-   		[adminHashedPW, charlesHashedPW, jaeHashedPW]
+   		[adminHashedPW, charlesHashedPW, jaeHashedPW, testHashedPW]
   		);
 
 		await db.query(
@@ -48,7 +50,7 @@ async function seedData() {
         ('admin', 'charles', 1),
         ('jae', 'charles', 1),
         ('jae', 'admin', 1),
-        ('charles', 'admin',  1);
+				('test', 'jae', 1);
 
     		INSERT INTO messages 
     		 (sent_by, text, room_id) VALUES

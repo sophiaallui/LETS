@@ -39,7 +39,7 @@ router.post("/sender/:username", async (req, res, next) => {
 					receiverUsername
 				]
 		);
-		return res.json({ conversations : room.rows })
+		return res.json({ conversation : room.rows[0] })
 	}
 	catch(e) {
 		return next(e);
@@ -66,9 +66,11 @@ router.get("/find/:username/:secondUsername", async (req, res, next) => {
 	try {
 		const { username, secondUsername } = req.params;
 		const roomResults = await db.query(
-			`SELECT * FROM room WHERE $1 = ANY (members) OR $2 = ANY (members)`, [username, secondUsername]
+			`SELECT * FROM room WHERE 
+			  $1 = ANY (members) OR $2 = ANY (members)`,
+			[username, secondUsername]
 		);
-		return res.json({ conversations : roomResults.rows })
+		return res.json({ conversation : roomResults.rows })
 	}
 	catch(e) {
 		return next(e);
