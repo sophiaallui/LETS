@@ -9,7 +9,7 @@ import Api from "api/api";
 import MessageModal from "MyComponents/common/MessageModal";
 import ImageUpload from "MyComponents/common/ImageUpload";
 import SendFriendRequestButton from "./SendFriendRequestButton";
-import OnlineFriends from "./Friends";
+
 
 function ProfileCard({ username }) {
   const [loadedUser, setLoadedUser] = useState({});

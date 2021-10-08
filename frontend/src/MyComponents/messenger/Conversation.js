@@ -4,7 +4,8 @@ import UserContext from "UserContext";
 import Api from "api/api";
 
 // conversation : { name, members : [ username, username ] }
-const Conversation = ({ conversation }) => {
+const Conversation = ({ conversation, active }) => {
+
   const { currentUser } = useContext(UserContext);
   const [users, setUsers] = useState(null);
   const friendsUsername = conversation?.members?.filter((m) => m !== currentUser.username);
@@ -16,10 +17,6 @@ const Conversation = ({ conversation }) => {
       try {
         const allPromise = Promise.all(friendsUsername.map(uName => Api.getCurrentUser(uName)))
         const usersArray = await allPromise;
-        // for(const uName of friendsUsername) {
-        //   const res = await Api.getCurrentUser(uName);
-        //   usersArray.push(res)
-        // };
         setUsers(usersArray);
       } catch (e) {
         console.error(e);
@@ -31,7 +28,7 @@ const Conversation = ({ conversation }) => {
 
   return (
     <>
-      <ListGroupItem>
+      <ListGroupItem className={active ? 'active bg-gradient-primary' : ''}>
         <Media>
           <img
             alt="..."

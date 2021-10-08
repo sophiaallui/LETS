@@ -6,7 +6,6 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   FormGroup,
   Input,
   InputGroupAddon,
@@ -23,7 +22,7 @@ import UserContext from "UserContext";
 import Api from "api/api";
 import Conversation from "MyComponents/messenger/Conversation";
 import ChatHeader from "MyComponents/messenger/ChatHeader";
-import OnlineFriends from "MyComponents/Friends";
+import OnlineFriends from "MyComponents/messenger/MessengerFriends";
 import { io } from "socket.io-client";
 /**
  * conversations : [
@@ -58,27 +57,31 @@ function Messenger() {
   const [currentChat, setCurrentChat] = React.useState(null);
   const [messages, setMessages] = React.useState(null);
   const [message, setMessage] = React.useState("");
-  
+  const [typing, setTyping] = React.useState(null);
+
   const [arrivalMessage, setArrivalMessage] = React.useState(null);
   const [onlineUsers, setOnlineUsers] = React.useState([])
-  
+
   const scrollRef = React.useRef();
   const socket = React.useRef();
 
-  const friendsUsernames = currentUser.friends.map(f=> f.user_from === currentUser.username ? f.user_to : f.user_from);
+  const friendsUsernames = currentUser.friends.map(f => f.user_from === currentUser.username ? f.user_to : f.user_from);
+
   console.debug(friendsUsernames)
   React.useEffect(() => {
     socket.current = io("ws://localhost:8900");
     socket.current.on("getMessage", data => {
       console.log(data);
-      setArrivalMessage({ sentBy : data.senderUsername, text : data.text })
-    })
+      setArrivalMessage({ sentBy: data.senderUsername, text: data.text })
+    });
+    socket.current.on("getTyping", bool => setTyping(bool));
+    socket.current.on("done-typing", bool => setTyping(bool))
   }, [])
 
   React.useEffect(() => {
-    arrivalMessage && 
-      currentChat?.members.includes(arrivalMessage.sentBy) && 
-        setMessages(messages => [...messages, arrivalMessage])
+    arrivalMessage &&
+      currentChat?.members.includes(arrivalMessage.sentBy) &&
+      setMessages(messages => [...messages, arrivalMessage])
     console.debug("socket arrivalMessage=", arrivalMessage)
   }, [arrivalMessage, currentChat])
 
@@ -115,6 +118,17 @@ function Messenger() {
     getMessages();
   }, [currentChat]);
 
+  const handleChange = e => {
+    setMessage(e.target.value)
+    const roomMembersExceptForMe = currentChat.members.filter(username => username !== currentUser.username);
+    for (const user of roomMembersExceptForMe) {
+      socket.current.emit("typing", {
+        senderUsername: currentUser.username,
+        receiverUsername: user
+      });
+    }
+  }
+
   const handleSubmit = async e => {
     e.preventDefault();
     const messageBody = {
@@ -122,11 +136,11 @@ function Messenger() {
       roomId: currentChat?.id
     }
     const roomMembersExceptForMe = currentChat.members.filter(username => username !== currentUser.username);
-    for(const user of roomMembersExceptForMe) {
+    for (const user of roomMembersExceptForMe) {
       socket.current.emit("sendMessage", {
-        senderUsername : currentUser.username,
-        receiverUsername : user,
-        text : message    
+        senderUsername: currentUser.username,
+        receiverUsername: user,
+        text: message
       });
     }
 
@@ -140,6 +154,12 @@ function Messenger() {
       console.error(e);
     }
   }
+
+  React.useEffect(() => {
+    message.length === 0 &&
+      socket.current.emit("done-typing", currentUser.username)
+
+  }, [message]);
 
   React.useEffect(() => {
     scrollRef.current && scrollRef.current.scrollIntoView({ behavior: "smooth" })
@@ -177,7 +197,7 @@ function Messenger() {
 
             <ListGroup className="list-group-chat" flush tag="div">
               {conversations?.map(c => (
-                <div onClick={() => setCurrentChat(c)}>
+                <div onClick={() => { setCurrentChat(c) }}>
                   <Conversation conversation={c} />
                 </div>
               ))}
@@ -200,7 +220,7 @@ function Messenger() {
                   (
                     messages?.map(m => (
                       <div ref={scrollRef}>
-                        <Message message={m} mine={m.sentBy === currentUser.username} />
+                        <Message message={m} mine={m.sentBy === currentUser.username} typing={typing} />
                       </div>
                     ))
                   ) :
@@ -209,33 +229,37 @@ function Messenger() {
             </CardBody>
           </Card>
           <Card>
-            <Form onSubmit={handleSubmit} role="form">
-              <FormGroup className={messageFocus}>
-                <InputGroup className="mb-4">
-                  <Input
-                    placeholder="Your message"
-                    type="text"
-                    onFocus={() => setMessageFocus("focused")}
-                    onBlur={() => setMessageFocus("")}
-                    onChange={e => setMessage(e.target.value)}
-                    value={message}
-                  />
-                  <InputGroupAddon addonType="append">
-                    <InputGroupText>
-                      <i className="ni ni-send"></i>
-                    </InputGroupText>
-                  </InputGroupAddon>
-                </InputGroup>
-              </FormGroup>
-            </Form>
+            {
+              currentChat ? (
+                <Form onSubmit={handleSubmit} role="form">
+                  <FormGroup className={messageFocus}>
+                    <InputGroup className="mb-4">
+                      <Input
+                        placeholder="Your message"
+                        type="text"
+                        onFocus={() => setMessageFocus("focused")}
+                        onBlur={() => setMessageFocus("")}
+                        onChange={handleChange}
+                        value={message}
+                      />
+                      <InputGroupAddon addonType="append">
+                        <InputGroupText>
+                          <i className="ni ni-send"></i>
+                        </InputGroupText>
+                      </InputGroupAddon>
+                    </InputGroup>
+                  </FormGroup>
+                </Form>
+              ) : null
+            }
+
           </Card>
         </Col>
         <Col lg="3">
-          <OnlineFriends 
-            friendsUsernames={friendsUsernames} 
-            onlineUsers={onlineUsers} 
-            setCurrentChat={setCurrentChat} 
-            
+          <OnlineFriends
+            friendsUsernames={friendsUsernames}
+            onlineUsers={onlineUsers}
+            setCurrentChat={setCurrentChat}
           />
         </Col>
       </Row>

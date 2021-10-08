@@ -32,12 +32,17 @@ function NavbarOrange({ logout }) {
         </NavItem>
         <NavItem>
           <NavLink tag={Link} to="/messenger">
-            Messages
+            Chat
           </NavLink>
         </NavItem>
         <NavItem>
           <NavLink tag={Link} to="/schedules">
             My Schedule
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink tag={Link} to="/friends">
+            Friends
           </NavLink>
         </NavItem>
         <UncontrolledDropdown>

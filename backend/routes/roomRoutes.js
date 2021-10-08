@@ -65,6 +65,7 @@ router.get("/:username", async (req, res, next) => {
 router.get("/find/:username/:secondUsername", async (req, res, next) => {
 	try {
 		const { username, secondUsername } = req.params;
+		
 		const roomResults = await db.query(
 			`SELECT * FROM room WHERE 
 			  $1 = ANY (members) OR $2 = ANY (members)`,
