@@ -23,6 +23,7 @@ import UserContext from "UserContext";
 import Api from "api/api";
 import Conversation from "MyComponents/messenger/Conversation";
 import ChatHeader from "MyComponents/messenger/ChatHeader";
+import OnlineFriends from "MyComponents/Friends";
 import { io } from "socket.io-client";
 /**
  * conversations : [
@@ -62,11 +63,14 @@ function Messenger() {
   const scrollRef = React.useRef();
   const socket = React.useRef();
 
+  const friendsUsernames = currentUser.friends.map(f=> f.user_from === currentUser.username ? f.user_to : f.user_from);
+  console.debug(friendsUsernames)
   React.useEffect(() => {
     socket.current = io("ws://localhost:8900");
     socket.current.on("getMessage", data => {
       console.log(data)
-      setMessages(prev => [...prev, { sentBy : data.senderUsername, text : data.text}])
+      setArrivalMessage({ sentBy : data.senderUsername, text : data.text })
+      setMessages(prev => [...prev, arrivalMessage])
     })
   }, [])
 
@@ -180,7 +184,7 @@ function Messenger() {
         </Col>
 
 
-        <Col lg="7">
+        <Col lg="6">
           <Card>
             <CardHeader className="d-inline-block">
               {
@@ -222,6 +226,9 @@ function Messenger() {
               </FormGroup>
             </Form>
           </Card>
+        </Col>
+        <Col lg="3">
+          <OnlineFriends friendsUsernames={friendsUsernames} />
         </Col>
       </Row>
     </>

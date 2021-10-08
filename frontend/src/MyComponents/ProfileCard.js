@@ -9,6 +9,7 @@ import Api from "api/api";
 import MessageModal from "MyComponents/common/MessageModal";
 import ImageUpload from "MyComponents/common/ImageUpload";
 import SendFriendRequestButton from "./SendFriendRequestButton";
+import OnlineFriends from "./Friends";
 
 function ProfileCard({ username }) {
   const [loadedUser, setLoadedUser] = useState({});
@@ -16,8 +17,9 @@ function ProfileCard({ username }) {
   const [errors, setErrors] = useState([])
   const [friendRequest, setFriendRequest] = useState(null);
   const { currentUser } = useContext(UserContext);
-  
-  const myFriendsUsernames = currentUser.friends.map(f => f.user_from === currentUser.username ? f.user_to : f.user_from)
+
+  const myFriendsUsernames = currentUser.friends.map(f => f.user_from === currentUser.username ? f.user_to : f.user_from);
+  console.debug("myFriendsUsernames=", myFriendsUsernames);
   useEffect(() => {
     setInfoLoaded(false);
     getLoadedUser()
@@ -27,8 +29,8 @@ function ProfileCard({ username }) {
     try {
       const user = await Api.getCurrentUser(username);
       setLoadedUser(user)
-    } 
-    catch(e) {
+    }
+    catch (e) {
       console.error("ProfileCard getLoadedUser Error", e);
       setLoadedUser({});
       setErrors(e)
@@ -52,8 +54,8 @@ function ProfileCard({ username }) {
           <Row className="justify-content-center">
             <Col className="order-lg-2" lg="1">
               <div className="card-profile-image">
-             
-               <ImageUpload avatar addBtnClasses="mt-8" />
+
+                <ImageUpload avatar addBtnClasses="mt-8" />
 
                 {/* <a onClick={(e) => e.preventDefault()}>
                   <img
@@ -70,15 +72,15 @@ function ProfileCard({ username }) {
             >
               {currentUser.username !== loadedUser?.username ?
                 (
-                <div className="card-profile-actions py-4 mt-lg-0">
-                  <SendFriendRequestButton 
-                    targetUsername={loadedUser?.username}
-                    setFriendRequest={setFriendRequest}
-                    setErrors={setErrors} 
-                  />
-                  <MessageModal sendTo={loadedUser?.username} />
-                </div>
-                ) : 
+                  <div className="card-profile-actions py-4 mt-lg-0">
+                    <SendFriendRequestButton
+                      targetUsername={loadedUser?.username}
+                      setFriendRequest={setFriendRequest}
+                      setErrors={setErrors}
+                    />
+                    <MessageModal sendTo={loadedUser?.username} />
+                  </div>
+                ) :
                 (
                   <div className="card-profile-actions py-4 mt-lg-0">
                     <Button
@@ -106,7 +108,7 @@ function ProfileCard({ username }) {
                   <span className="heading">{loadedUser?.friends?.length}</span>
                   <span className="description">Friends</span>
                 </div>
-                
+
                 <div>
                   <span className="heading">{loadedUser?.goals?.length}</span>
                   <span className="description">Goals</span>
@@ -130,7 +132,7 @@ function ProfileCard({ username }) {
           <div className="mt-5 py-5 border-top text-center">
             <Row className="justify-content-center">
               <Col lg="12">
-                <ProfileTabs 
+                <ProfileTabs
                   progress={loadedUser?.progress}
                   posts={loadedUser?.posts}
                   goals={loadedUser?.goals}
@@ -138,7 +140,7 @@ function ProfileCard({ username }) {
               </Col>
             </Row>
           </div>
-          
+
         </div>
       </Card>
     </>
