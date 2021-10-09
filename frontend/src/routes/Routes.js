@@ -9,6 +9,7 @@ import LandingPage from "pages/Landing";
 import PrivateRoute from "./PrivateRoute";
 import EditProfile from "pages/EditProfile";
 import Goal from "pages/Goal";
+import Friends from "pages/Friends";
 /** Site-wide routes.
  *
  * Parts of site should only be visitable when logged in. Those routes are
@@ -31,11 +32,15 @@ const Routes = ({ signup, events, login, addEvent }) => {
         
       </Route>
       
-      <PrivateRoute path="/schedules">
+      <PrivateRoute path="/friends" exact>
+        <Friends />
+      </PrivateRoute>
+
+      <PrivateRoute path="/schedules" exact>
         <Goal events={events} addEvent={addEvent} />
       </PrivateRoute>
 
-      <PrivateRoute path="/edit-profile">
+      <PrivateRoute path="/edit-profile" exact>
         <EditProfile />
       </PrivateRoute>
 

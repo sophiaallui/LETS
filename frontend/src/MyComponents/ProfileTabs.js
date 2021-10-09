@@ -13,6 +13,7 @@ import {
 } from "reactstrap";
 import Charts from "MyComponents/Charts";
 import NewPostFormModal from "./NewPostFormModal";
+import Post from "MyComponents/Posts"
 
 const ProfileTabs = ({ progress, posts, goals }) => {
   const [hTabsIcons, setHTabsIcons] = useState("hTabsIcons-1");
@@ -90,27 +91,32 @@ const ProfileTabs = ({ progress, posts, goals }) => {
             <CardBody>
               <TabContent id="myTabContent" activeTab={hTabsIcons}>
                 <TabPane tabId="hTabsIcons-1" role="tabpanel">
-                {
-                      goals?.length === 0 ?
-                        <div className="description">
-                          <h2>You have no goals</h2>
-                          <Button>Post One</Button>
-                        </div> :
-                        // Do the Goals HERE
-                        null
-                    }
+                  {
+                    goals?.length === 0 ?
+                      <div className="description">
+                        <h2>You have no goals</h2>
+                        <Button>Post One</Button>
+                      </div> :
+                      // Do the Goals HERE
+                      null
+                  }
                 </TabPane>
 
                 <TabPane tabId="hTabsIcons-2" role="tabpanel">
                   {
-                      posts?.length === 0 ?
+                    posts?.length === 0 ?
+                      (<div className="description">
+                        <h2>You have no posts</h2>
+                        <NewPostFormModal buttonText="Post one" />
+                      </div>) : (
                         <div className="description">
-                          <h2>You have no posts</h2>
-                          <NewPostFormModal buttonText="Post one"/>
-                        </div> :
-                        // Do the Posts HERE
-                        null
-                    }
+                          <NewPostFormModal buttonText="New post" />
+                          {posts?.map(p => (
+                            <Post type="Posts" post={p} />
+                          ))}
+                        </div>
+                      )
+                  }
                 </TabPane>
 
                 <TabPane tabId="hTabsIcons-3" role="tabpanel">
@@ -121,7 +127,7 @@ const ProfileTabs = ({ progress, posts, goals }) => {
 
                 <TabPane tabId="hTabsIcons-4" role="tabpanel">
                   <div className="description">
-                    
+
                   </div>
                 </TabPane>
               </TabContent>

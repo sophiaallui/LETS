@@ -62,6 +62,8 @@ io.on("connection", socket => {
     io.to(user.socketId).emit("getMessage", { senderUsername, text })
   })  
 
+
+
   // when disconnect
   socket.on("disconnect", () => {
     console.log("a user disconnected");
@@ -69,4 +71,17 @@ io.on("connection", socket => {
     io.emit("getUsers", users);
   });
 
+  socket.on("typing", ({ senderUsername, receiverUsername }) => {
+    console.log(`${senderUsername} is typing`);
+    
+    const user = getUser(receiverUsername);
+    if(!user) return;
+
+    io.to(user.socketId).emit("getTyping", true)
+  })
+
+  socket.on("done-typing", (typer) => {
+    console.log(typer);
+    io.emit("done-typing", false)
+  })
 });
