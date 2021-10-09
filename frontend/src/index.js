@@ -1,17 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+
+import "assets/css/nucleo-svg.css";
+import "assets/css/nucleo-icons.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "assets/scss/argon-design-system.scss?v1.0.0";
+import "assets/css/argon-dashboard-pro-react.css";
+// import "react-notification-alert/dist/animate.css";
+
+// import "assets/vendor/fullcalendar/dist/fullcalendar.min.css";
+// import "assets/vendor/sweetalert2/dist/sweetalert2.min.css";
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+
+  <App />
+  ,
   document.getElementById('root')
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

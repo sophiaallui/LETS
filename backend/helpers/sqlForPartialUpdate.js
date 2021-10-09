@@ -25,4 +25,34 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   }
 };
 
-module.exports = { sqlForPartialUpdate };
+const userMeasurementsJsToSql = {
+  createdBy : 'created_by',
+  heightInInches : 'height_in_inches',
+  weightInPounds : 'weight_in_pounds',
+  armsInInches : 'arms_in_inches',
+  legsInInches : 'legs_in_inches',
+  waistInInches : 'waist_in_inches'
+}
+
+function sqlForInsert(dataToInsert, jsToSql, tableName) {
+  let baseQuery = `INSERT INTO ${tableName} `
+  const keys = Object.keys(dataToInsert);
+  if(keys.length === 0) throw new BadRequestError("No data");
+  const colsArray = keys.map((colName, idx) => `${jsToSql[colName] || colName}`);
+  const cols = colsArray.join(", ");
+
+  baseQuery = baseQuery + "(" + cols + ") VALUES "
+  const valuesArray = Object.values(dataToInsert).map((ele, idx) => `$${idx + 1}`);
+  const valuesQueryString = valuesArray.join(", ");
+
+  const returningArray = keys.map((colName) => `${jsToSql[colName] || colName} AS ${colName}`);
+  const returningQuery = returningArray.join(", ")
+  baseQuery = baseQuery + "(" + valuesQueryString + ")"
+  return {
+    baseQuery,
+    values : Object.values(dataToInsert),
+    returningQuery
+  }
+}
+
+module.exports = { sqlForPartialUpdate, sqlForInsert, userMeasurementsJsToSql};

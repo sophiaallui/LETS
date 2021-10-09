@@ -13,6 +13,11 @@
       "minLength": 5,
       "maxLength": 20
     },
+    "confirmPassword" : {
+      "type" : "string",
+      "minLength" : 5,
+      "maxLength" : 20
+    },
     "firstName": {
       "type": "string",
       "minLength": 1,
@@ -28,6 +33,9 @@
       "minLength": 6,
       "maxLength": 60,
       "format": "email"
+    },
+    "isAdmin" : {
+      "type" : "boolean"
     }
   },
   "additionalProperties": false,

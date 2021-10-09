@@ -20,7 +20,7 @@ function authenticateJWT(req, res, next) {
     }
     return next();
   } catch(e) {
-    return next(e);
+    return next();
   }
 }
 
@@ -63,6 +63,7 @@ function ensureCorrectUserOrAdmin(req, res, next) {
     if(!(user && (user.isAdmin || user.username === req.params.username))) {
       throw new UnauthorizedError();
     }
+    return next();
   } catch(e) {
     return next(e);
   }

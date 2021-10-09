@@ -1,27 +1,54 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
+  "name": "GAINS",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^4.12.3",
-    "@testing-library/react": "^11.2.7",
-    "@testing-library/user-event": "^12.8.3",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-router-dom": "^5.2.1",
-    "react-scripts": "4.0.3",
-    "web-vitals": "^1.1.2"
+    "@fortawesome/fontawesome-free": "5.14.0",
+    "@fullcalendar/daygrid": "^5.9.0",
+    "@fullcalendar/interaction": "^5.9.0",
+    "@fullcalendar/react": "^5.9.0",
+    "@fullcalendar/timegrid": "^5.9.0",
+    "@glidejs/glide": "3.4.1",
+    "@testing-library/jest-dom": "4.2.4",
+    "@testing-library/react": "9.3.2",
+    "@testing-library/user-event": "7.1.2",
+    "axios": "^0.21.4",
+    "chart.js": "2.9.4",
+    "choices.js": "9.0.1",
+    "gulp": "4.0.2",
+    "gulp-append-prepend": "1.0.8",
+    "headroom.js": "0.11.0",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "2.27.0",
+    "node-sass": "4.14.1",
+    "nouislider": "14.6.0",
+    "prop-types": "15.7.2",
+    "react": "16.13.1",
+    "react-bootstrap-sweetalert": "5.2.0",
+    "react-chartjs-2": "2.11.1",
+    "react-datetime": "2.16.3",
+    "react-dom": "16.13.1",
+    "react-github-button": "0.1.11",
+    "react-google-maps": "9.4.5",
+    "react-notification-alert": "0.0.13",
+    "react-router-dom": "5.2.0",
+    "react-scripts": "3.4.1",
+    "reactstrap": "8.5.1",
+    "socket.io-client": "^4.2.0",
+    "timeago.js": "^4.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && gulp licenses",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm start",
+    "compile-sass": "node-sass src/assets/scss/argon-design-system.scss src/assets/css/argon-design-system.css",
+    "minify-sass": "node-sass src/assets/scss/argon-design-system.scss src/assets/css/argon-design-system.min.css --output-style compressed",
+    "map-sass": "node-sass src/assets/scss/argon-design-system.scss src/assets/css/argon-design-system.css --source-map true"
   },
   "eslintConfig": {
-    "extends": [
-      "react-app"
-    ]
+    "extends": "react-app"
   },
   "browserslist": {
     "production": [
@@ -34,5 +61,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "optionalDependencies": {
+    "@types/googlemaps": "3.39.11",
+    "@types/markerclustererplus": "2.1.33",
+    "typescript": "3.9.7"
   }
 }
