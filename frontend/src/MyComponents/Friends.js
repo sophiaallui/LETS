@@ -13,11 +13,12 @@ import {
 import UserContext from "UserContext";
 import { Link } from "react-router-dom";
 
-const OnlineFriends = ({ friendsUsernames, setCurrentChat, onlineUsers }) => {
+const OnlineFriends = ({ friendsUsernames, setCurrentChat, onlineUsers, setConversations }) => {
   const [friends, setFriends] = useState(null);
   const [onlineFriends, setOnlineFriends] = useState([]);
 
   const { currentUser } = useContext(UserContext);
+  const [test, setTest] = useState(null);
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -46,17 +47,25 @@ const OnlineFriends = ({ friendsUsernames, setCurrentChat, onlineUsers }) => {
     try {
       const foundConversations = await Api.getConversations(friendUsername);
       if(!foundConversations.length) {
-        const newRoom = await Api.createRoom(friendUsername)
-        setCurrentChat(newRoom)  
+        const newRoom = await Api.createRoom(currentUser.username, friendUsername);
+        setCurrentChat(newRoom)
+        setConversations(convos => [...convos, newRoom])
       }
-      setCurrentChat(foundConversations[0])
+      let allUniqueMembers = [];
+      for(const convo of foundConversations) {
+        for(const member of convo.members) {
+          allUniqueMembers.push(member)
+        }
+      }
+      setTest([ ...new Set(allUniqueMembers)])      
+      // setCurrentChat(foundConversations[0])
     }
     catch(e) {
       console.error(e)
     }
   }
 
-  console.debug("onlineFriends=", onlineFriends)
+  console.debug("onlineFriends=", onlineFriends, "test", test)
   return (
     <Card>
       <CardHeader>

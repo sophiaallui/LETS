@@ -235,7 +235,7 @@ function Messenger() {
             friendsUsernames={friendsUsernames} 
             onlineUsers={onlineUsers} 
             setCurrentChat={setCurrentChat} 
-            
+            setConversations={setConversations}
           />
         </Col>
       </Row>
