@@ -6,10 +6,13 @@ const db = require("../db");
 // CREATE TABLE room (
 //   id SERIAL PRIMARY KEY,
 //   name VARCHAR(34),
-//   type BOOLEAN,
-// 	 members TEXT []
 // );
 
+// CREATE TABLE participants (
+//   id SERIAL PRIMARY KEY,
+//   username varchar(25) REFERENCES users(username) ON DELETE CASCADE,
+//   room_id INT REFERENCES room(id) ON DELETE CASCADE
+// );
 
 // CREATE TABLE messages (
 //   id SERIAL PRIMARY KEY,
@@ -23,23 +26,33 @@ const db = require("../db");
 
 // new convo
 // so new room is created, and adds participants
+/**
+ * conversation : {
+ *   id, name, members : [username, username]
+ * }
+ */
 router.post("/sender/:username", async (req, res, next) => {
 	try {
 		const { username } = req.params;
 		const {receiverUsername } = req.body;
-		const room = await db.query(
-			`INSERT INTO room (name, members) VALUES
-				(
-					$1,
-					ARRAY [$2, $3]
-				) RETURNING *;`,
-				[
-					receiverUsername,
-					username,
-					receiverUsername
-				]
+		const roomResults = await db.query(
+			`INSERT INTO room (name) VALUES ($1) RETURNING *`, [receiverUsername]
 		);
-		return res.json({ conversation : room.rows[0] })
+		const room = roomResults.rows[0];
+		const participantsResults = await db.query(
+			`INSERT INTO participants 
+			(username, room_id) 
+			VALUES ($1, $2), ($3, $4)
+			  RETURNING username`,
+			[username, room.id, receiverUsername, room.id]
+		);
+
+		const finalResults = {
+			roomId : room.id,
+			name : room.name,
+			members : participantsResults.rows.map(r => r.username)
+		}
+		return res.json({ conversation : finalResults  })
 	}
 	catch(e) {
 		return next(e);
@@ -52,8 +65,9 @@ router.get("/:username", async (req, res, next) => {
 	try {
 		const { username } = req.params;
 		const roomResults = await db.query(
-			`SELECT * FROM room WHERE $1 = ANY (members)`, [username]
+			`SELECT * FROM room WHERE name = $1`, [username]
 		);
+		
 		return res.json({ conversations : roomResults.rows })
 	}
 	catch(e) {
