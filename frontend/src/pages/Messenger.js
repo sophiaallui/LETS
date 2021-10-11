@@ -62,31 +62,6 @@ function Messenger() {
 	const scrollRef = useRef();
 	const socket = useRef();
 
-	React.useEffect(() => {
-		const getConversations = async () => {
-			try {
-				const res = await Api.getConversations(currentUser.username);
-				console.log(res)
-				setConversations(res);
-			}
-			catch (e) {
-				console.error(e);
-			}
-		}
-		getConversations();
-	}, [currentUser.username]);
-
-	React.useEffect(() => {
-		const getMessages = async () => {
-			try {
-				const res = await Api.getMessages(currentChat?.roomId);
-				setMessages(res)
-			} catch (e) {
-				console.error(e);
-			}
-		};
-		getMessages();
-	}, [currentChat]);
 
 	useEffect(() => {
 		socket.current = io('ws://localhost:8900');
