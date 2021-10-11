@@ -13,11 +13,12 @@ import {
 import UserContext from "UserContext";
 import { Link } from "react-router-dom";
 
-const OnlineFriends = ({ friendsUsernames, setCurrentChat, onlineUsers }) => {
+const OnlineFriends = ({ friendsUsernames, setCurrentChat, onlineUsers, setConversations }) => {
   const [friends, setFriends] = useState(null);
   const [onlineFriends, setOnlineFriends] = useState([]);
 
   const { currentUser } = useContext(UserContext);
+  const [test, setTest] = useState(null);
 
   useEffect(() => {
     const fetchFriends = async () => {

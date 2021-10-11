@@ -13,27 +13,26 @@ const db = require("../db");
 // }
 router.post("/:username", async (req, res, next) => {
 	try {
-		const { recieverUsername } = req.body;
 		const { username } = req.params;
-		const newRoomResults = await db.query(
-			`INSERT INTO rooms (name, created_by) VALUES ($1, $2) RETURNING *`, 
-			[recieverUsername, username]
+		const {receiverUsername } = req.body;
+		const roomResults = await db.query(
+			`INSERT INTO rooms (name, created_by) VALUES ($1, $2) RETURNING *`, [receiverUsername, username]
 		);
-		const newRoom = newRoomResults.rows[0];
+		const room = roomResults.rows[0];
 		const participantsResults = await db.query(
 			`INSERT INTO participants 
-				(username, room_id) 
-					VALUES ($1, $2), ($3, $4) RETURNING *`,
-			[username, newRoom.id, recieverUsername, newRoom.id]
-		)
+			(username, room_id) 
+			VALUES ($1, $2), ($3, $4)
+			  RETURNING username`,
+			[username, room.id, receiverUsername, room.id]
+		);
 
 		const finalResults = {
-			roomId: newRoom.id,
-			name: newRoom.name,
-			createdBy : newRoom.created_by,
-			members: participantsResults.rows.map(p => p.username)
-		};
-		return res.json({ conversation: finalResults })
+			roomId : room.id,
+			name : room.name,
+			members : participantsResults.rows.map(r => r.username)
+		}
+		return res.json({ conversation : finalResults  })
 	}
 	catch (e) {
 		return next(e);
