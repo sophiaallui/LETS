@@ -27,7 +27,7 @@ export const TypingMessage = props => {
   )
 }
 
-const Message = ({ mine, message, typing }) => {
+const Message = ({ mine, message }) => {
   return (
     <>
       <Row className={mine ? 'justify-content-end text-right' : 'justify-content-start'}>
@@ -47,7 +47,6 @@ const Message = ({ mine, message, typing }) => {
           </Card>
         </Col>
       </Row>
-      {typing ? <TypingMessage /> : null }
     </>
   )
 }
