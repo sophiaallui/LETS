@@ -100,8 +100,13 @@ class Api {
     return res.message;
   }
 
-  static async createRoom(currentUsername, receiverUsername) {
-    const res = await this.request(`room/sender/${currentUsername}`, { receiverUsername }, "POST");
+  static async createRoom(currentUsername, data) {
+    const res = await this.request(`room/${currentUsername}`, data, "POST");
+    return res.conversation;
+  }
+
+  static async findRoom(currentUsername, secondUsername) {
+    const res = await this.request(`room/find/${currentUsername}/${secondUsername}`);
     return res.conversation;
   }
 }

@@ -8,7 +8,7 @@ async function seedData() {
 		const charlesHashedPW = await bcrypt.hash("charles", BCRYPT_WORK_FACTOR);
 		const jaeHashedPW = await bcrypt.hash("cjp0116", BCRYPT_WORK_FACTOR);
 		const testHashedPW = await bcrypt.hash('testPW', BCRYPT_WORK_FACTOR);
-    	
+  
     	const dueDate = new Date(2021, 10, 17, 3, 24, 0);
   		const dueDate2 = new Date(2022, 10, 17, 3, 24, 0);
   		const dueDate3 = new Date(2022, 11, 17, 3, 24, 0);
@@ -39,10 +39,29 @@ async function seedData() {
     		('charles', 68.0, 150.0, 15.0, 27.0, 30.0),
     		('jae', 69.0, 151.0, 16.0, 28.0, 31.0);
 
-    		INSERT INTO room 
-    		(name, members) VALUES
-    		('gains', ARRAY ['charles', 'jae', 'admin']),
-    		('something', ARRAY ['charles', 'jae']);
+    		INSERT INTO rooms
+    		(name, created_by) VALUES
+				('something', 'admin'),
+				('gains', 'jae');
+
+				INSERT INTO participants 
+				(username, room_id)
+				VALUES
+				('admin', 1),
+				('jae', 1),
+				('charles', 1),
+				('test', 1),
+
+				('charles', 2),
+				('jae', 2);
+
+				INSERT INTO messages 
+				(sent_by,   text, room_id) VALUES
+				('charles', 'wsup', 2),
+				('jae', 'this shit sucks', 2),
+				('admin', 'I am admin', 1),
+				('jae', 'I know I made you', 1),
+				('charles', 'This calendar is stupid', 1);
 
 				INSERT INTO users_friends 
     		(user_from, user_to, confirmed)
@@ -51,14 +70,6 @@ async function seedData() {
         ('jae', 'charles', 1),
         ('jae', 'admin', 1),
 				('test', 'jae', 1);
-
-    		INSERT INTO messages 
-    		 (sent_by, text, room_id) VALUES
-    		 ('charles', 'wsup', 2),
-    		 ('jae', 'this shit sucks', 2),
-    		 ('admin', 'I am admin', 1),
-    		 ('jae', 'I know I made you', 1),
-    		 ('charles', 'This calendar is stupid', 1);
 
     		INSERT INTO goals
      		(created_by, content, due_date, is_complete) VALUES

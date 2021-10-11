@@ -17,7 +17,7 @@ import {
   Form
 } from "reactstrap";
 
-import Message from "MyComponents/messenger/Message";
+import Message, { TypingMessage } from "MyComponents/messenger/Message";
 import UserContext from "UserContext";
 import Api from "api/api";
 import Conversation from "MyComponents/messenger/Conversation";
@@ -97,6 +97,7 @@ function Messenger() {
     const getConversations = async () => {
       try {
         const res = await Api.getConversations(currentUser.username);
+        console.log(res)
         setConversations(res);
       }
       catch (e) {
@@ -109,7 +110,7 @@ function Messenger() {
   React.useEffect(() => {
     const getMessages = async () => {
       try {
-        const res = await Api.getMessages(currentChat.id);
+        const res = await Api.getMessages(currentChat?.roomId);
         setMessages(res)
       } catch (e) {
         console.error(e);
@@ -133,7 +134,7 @@ function Messenger() {
     e.preventDefault();
     const messageBody = {
       text: message,
-      roomId: currentChat?.id
+      roomId: currentChat?.roomId
     }
     const roomMembersExceptForMe = currentChat.members.filter(username => username !== currentUser.username);
     for (const user of roomMembersExceptForMe) {
@@ -220,11 +221,14 @@ function Messenger() {
                   (
                     messages?.map(m => (
                       <div ref={scrollRef}>
-                        <Message message={m} mine={m.sentBy === currentUser.username} typing={typing} />
+                        <Message message={m} mine={m.sentBy === currentUser.username} />
                       </div>
                     ))
                   ) :
                   <span>Open a conversation to start a chat</span>
+              }
+              {
+                typing ? <TypingMessage /> : null
               }
             </CardBody>
           </Card>

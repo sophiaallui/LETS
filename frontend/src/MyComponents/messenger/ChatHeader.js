@@ -15,7 +15,7 @@ const ChatHeader = ({ members }) => {
       <Col md="10">
         <Media className="align-items-center">
           <div className="avatar-group">
-            {members.map((m) => (
+            {members?.map((m) => (
               <>
                 <a
                   className="avatar rounded-circle"
@@ -33,7 +33,7 @@ const ChatHeader = ({ members }) => {
             ))}
           </div>
           <Media body>
-            {members.map((m) => (
+            {members?.map((m) => (
               <h6 key={m} className="mb-0 d-block">
                 {m}
               </h6>

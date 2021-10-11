@@ -7,15 +7,11 @@ CREATE TABLE users (
   is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
--- CREATE TABLE room (
---   id SERIAL PRIMARY KEY,
---   name VARCHAR(34),
---   members TEXT []
--- );
 
 CREATE TABLE rooms (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(34)
+  name VARCHAR(34),
+  created_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE
 );
 
 CREATE TABLE participants (
@@ -28,7 +24,7 @@ CREATE TABLE messages (
   id SERIAL PRIMARY KEY,
   sent_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE,
   text TEXT NOT NULL,
-  room_id INT REFERENCES room(id) ON DELETE CASCADE,
+  room_id INT REFERENCES rooms(id) ON DELETE CASCADE,
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 

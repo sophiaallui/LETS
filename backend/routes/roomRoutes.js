@@ -16,7 +16,8 @@ router.post("/:username", async (req, res, next) => {
 		const { recieverUsername } = req.body;
 		const { username } = req.params;
 		const newRoomResults = await db.query(
-			`INSERT INTO rooms (name) VALUES ($1) RETURNING *`, [recieverUsername]
+			`INSERT INTO rooms (name, created_by) VALUES ($1, $2) RETURNING *`, 
+			[recieverUsername, username]
 		);
 		const newRoom = newRoomResults.rows[0];
 		const participantsResults = await db.query(
@@ -25,13 +26,14 @@ router.post("/:username", async (req, res, next) => {
 					VALUES ($1, $2), ($3, $4) RETURNING *`,
 			[username, newRoom.id, recieverUsername, newRoom.id]
 		)
-		
+
 		const finalResults = {
-			roomId : newRoom.id,
-			name : newRoom.name,
-			members : participantsResults.rows.map(p => p.username)
+			roomId: newRoom.id,
+			name: newRoom.name,
+			createdBy : newRoom.created_by,
+			members: participantsResults.rows.map(p => p.username)
 		};
-		return res.json({ conversation : finalResults })
+		return res.json({ conversation: finalResults })
 	}
 	catch (e) {
 		return next(e);
@@ -43,10 +45,19 @@ router.post("/:username", async (req, res, next) => {
 router.get("/:username", async (req, res, next) => {
 	try {
 		const { username } = req.params;
-		const participantsResults = await db.query(
-			`SELECT * FROM `
-		)
-		return res.json({ conversations: roomResults.rows })
+		const results = await db.query(
+			`SELECT DISTINCT room_id AS "roomId" FROM participants
+			 JOIN rooms ON rooms.id = participants.room_id
+			 WHERE username = $1`, [username]
+		);
+		for (const row of results.rows) {
+			const { roomId } = row;
+			const res = await db.query(
+				`SELECT username FROM participants WHERE room_id = $1`, [roomId]
+			);
+			row.members = res.rows.map(obj => obj.username)
+		}
+		return res.json({ conversations: results.rows })
 	}
 	catch (e) {
 		return next(e);
@@ -57,13 +68,29 @@ router.get("/:username", async (req, res, next) => {
 router.get("/find/:username/:secondUsername", async (req, res, next) => {
 	try {
 		const { username, secondUsername } = req.params;
-
-		const roomResults = await db.query(
-			`SELECT * FROM room WHERE 
-			  $1 = ANY (members) OR $2 = ANY (members)`,
-			[username, secondUsername]
+		const results = await db.query(
+			`SELECT DISTINCT room_id AS "roomId"  
+			   FROM participants
+			 JOIN rooms ON rooms.id = participants.room_id
+			 WHERE username = $1`, [username]
 		);
-		return res.json({ conversation: roomResults.rows })
+		for (const row of results.rows) {
+			const { roomId } = row;
+			const res = await db.query(
+				`SELECT id, username FROM participants WHERE room_id = $1`, [roomId]
+			);
+			row.members = res.rows.map(obj => obj.username)
+		}
+		let found = {};
+		for(const row of results.rows) {
+			const { members } = row;
+			if(members.length === 2 && members.includes(secondUsername)) {
+				found = { ...row }
+			}
+		}
+
+		return res.json({ conversation : found })
+	
 	}
 	catch (e) {
 		return next(e);
@@ -73,8 +100,8 @@ router.get("/find/:username/:secondUsername", async (req, res, next) => {
 // delete room based on roomId.
 router.delete("/:roomId", async (req, res, next) => {
 	try {
-		const res = await db.query(
-			`DELETE FROM room WHERE id = $1`, [req.params.roomId]
+		const results = await db.query(
+			`DELETE FROM rooms WHERE id = $1`, [req.params.roomId]
 		);
 		return res.json({ deleted: req.params.roomId });
 	}
