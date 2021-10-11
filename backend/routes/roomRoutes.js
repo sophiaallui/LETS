@@ -64,9 +64,12 @@ router.post("/sender/:username", async (req, res, next) => {
 router.get("/:username", async (req, res, next) => {
 	try {
 		const { username } = req.params;
-		const roomResults = await db.query(
-			`SELECT * FROM room WHERE name = $1`, [username]
+		const participantsResults = await db.query(
+			`SELECT DISTINCT room_id, username FROM participants WHERE username = $1`, [username]
 		);
+		
+		const roomResultsPromise = participantsResults.rows.map(p => db.query(`SELECT * FROM room WHERE id = $1`, [p.room_id]))
+		const roomResults = await roomResultsPromise;
 		
 		return res.json({ conversations : roomResults.rows })
 	}
