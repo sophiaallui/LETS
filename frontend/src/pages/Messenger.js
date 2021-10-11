@@ -99,7 +99,10 @@ function Messenger() {
 		setFriendsList(friendsUsernames);
 	}, []);
 
-
+	useEffect(() => {
+		arrivalMessage && currentChat?.members.includes(arrivalMessage.sentBy) && setMessages(messages => [...messages, arrivalMessage]);
+		console.debug("socket arrivalMessage", arrivalMessage)
+	}, [currentChat, arrivalMessage])
 
 	useEffect(() => {
 		socket && socket.current.emit('addUser', currentUser.username);
@@ -206,55 +209,49 @@ function Messenger() {
 	);
 	return (
 		<>
-			<Col lg="6">
-				<Card>
-					<CardHeader className="d-inline-block">
-						{
-							currentChat ? <ChatHeader members={currentChat?.members} /> : null
-						}
-					</CardHeader>
-					<CardBody>
-						{
-							currentChat ?
-								(
-									messages?.map(m => (
-										<div ref={scrollRef}>
-											<Message message={m} mine={m.sentBy === currentUser.username} />
-										</div>
-									))
-								) :
-								<span>Open a conversation to start a chat</span>
-						}
-						{
-							typing ? <TypingMessage /> : null
-						}
-					</CardBody>
-				</Card>
-				<Card>
-					{
-						currentChat ? (
-							<Form onSubmit={handleSubmit} role="form">
-								<FormGroup className={messageFocus}>
-									<InputGroup className="mb-4">
-										<Input
-											placeholder="Your message"
-											type="text"
-											onFocus={() => setMessageFocus("focused")}
-											onBlur={() => setMessageFocus("")}
-											onChange={handleChange}
-											value={message}
-										/>
-										<InputGroupAddon addonType="append">
-											<InputGroupText>
-												<i className="ni ni-send"></i>
-											</InputGroupText>
-										</InputGroupAddon>
-									</InputGroup>
-								</FormGroup>
-							</Form>
-						) : null
-					}
-				</Card>
+			<Row className='flex-row chat'>
+				<Col lg='3'>
+					<Card className='bg-secondary'>
+						<CardHeader className={'mb-3 ' + searchFocus}>
+							<InputGroup className='input-group-alternative'>
+								<Input
+									placeholder='Search contact'
+									type='text'
+									onChange={(text) =>
+										setSearchFriendText(text)
+									}
+									onFocus={() => setSearchFocus('focused')}
+									onBlur={() => setSearchFocus('')}
+								/>
+							</InputGroup>
+							<ListGroup>
+								{friendsUsernames.map((friend) => {
+									return (
+										<ListGroupItem className='lgi'>{friend}</ListGroupItem>
+									);
+								})}
+							</ListGroup>
+						</CardHeader>
+                        <CardBody>
+                            <InputGroupAddon addonType='append'>
+									<Button type= 'button'>Button</Button>
+							</InputGroupAddon>
+                        </CardBody>
+                        
+						<ListGroup className='list-group-chat' flush tag='div'>
+							{conversations?.map((c) => (
+								<div
+									onClick={() => {
+										setCurrentChat(c);
+									}}
+								>
+									<Conversation conversation={c} />
+								</div>
+							))}
+						</ListGroup>
+					</Card>
+				</Col>
+
 				<Col lg='6'>
 					<Card>
 						<CardHeader className='d-inline-block'>
@@ -278,7 +275,7 @@ function Messenger() {
 							) : (
 								<span>Open a conversation to start a chat</span>
 							)}
-							{typing ? <TypingMessage /> : null}
+                            {typing?<TypingMessage/>:null}
 						</CardBody>
 					</Card>
 					<Card>
@@ -314,7 +311,7 @@ function Messenger() {
 						setCurrentChat={setCurrentChat}
 					/>
 				</Col>
-			</Col>
+			</Row>
 		</>
 	);
 }
