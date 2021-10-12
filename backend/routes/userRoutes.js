@@ -17,6 +17,7 @@ const { createToken } = require("../helpers/tokens");
 const userNewSchema = require("../schemas/userRegisterSchema.json");
 const userUpdateSchema = require("../schemas/userUpdate.json");
 const userMeasurementSchema = require("../schemas/userMeasurementsNew.json");
+const userSearchSchema = require("../schemas/userSearch.json");
 const router = express.Router();
 
 /**
@@ -48,9 +49,15 @@ router.post("/", ensureAdmin, async (req, res, next) => {
  * Returns list of all users.
  * Authorization required : admin
  */
-router.get("/", ensureAdmin, async (req, res, next) => {
+router.get("/", ensureLoggedIn, async (req, res, next) => {
   try {
-    const users = await User.findAll();
+    const q = req.query;
+    const validator = jsonschema.validate(q, userSearchSchema);
+    if(!validator.valid) {
+      const errors = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errors)
+    }
+    const users = await User.findAll(q);
     return res.json({ users });
   } catch (e) {
     return next(e);

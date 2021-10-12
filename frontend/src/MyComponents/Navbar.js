@@ -15,6 +15,7 @@ import {
   DropdownMenu
 } from "reactstrap";
 import AuthContext from "UserContext";
+import Search from "MyComponents/Search";
 
 function NavbarOrange({ logout }) {
   const { currentUser } = useContext(AuthContext);
@@ -25,6 +26,9 @@ function NavbarOrange({ logout }) {
   const loggedInNav = () => {
     return (
       <Nav className="ml-lg-auto" navbar>
+        <NavItem>
+          <Search />
+        </NavItem>
         <NavItem>
           <NavLink tag={Link} to={`/profile/${currentUser.username}`}>
             Profile
@@ -45,9 +49,10 @@ function NavbarOrange({ logout }) {
             Friends
           </NavLink>
         </NavItem>
+
         <UncontrolledDropdown>
           <DropdownToggle color="transparent" role="button">
-            <span style={{ color : "white"}}>
+            <span style={{ color: "white" }}>
               <i className="ni ni-single-02" />{" "}
               {currentUser.username}
             </span>

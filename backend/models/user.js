@@ -73,12 +73,34 @@ class User {
   /** Find all users.
    * Returns [{ username, firstName, lastName, email, isAdmin}, ...]
    */
-  static async findAll() {
-    const results = await db.query(
-      `SELECT username, email, first_name AS "firstName", last_name AS "lastName", is_admin AS "isAdmin"
-      FROM users
-      ORDER BY username`
-    );
+  static async findAll(q) {
+    let baseQuery = `SELECT username, email, first_name AS "firstName", last_name AS "lastName" FROM users`;
+    let whereExpressions = [];
+    let queryValues = [];
+
+    // for each possible search term, add to whereExpressions and queryValues so we can generate SQL
+    if(q.username) {
+      queryValues.push(q.username)
+      whereExpressions.push(`username ILIKE $${q.username}`)
+    }
+    if(q.firstName) {
+      queryValues.push(q.firstName);
+      whereExpressions.push(`first_name ILIKE $${q.firstName}`)
+    }
+    if(q.lastName) {
+      queryValues.push(q.lastName);
+      whereExpressions.push(`lastName ILIKE $${q.lastName}`)
+    }
+    if(q.email) {
+      queryValues.push(q.email);
+      whereExpressions.push(`email ILIKE $${q.email}`)
+    }
+    if(whereExpressions.length > 0) {
+      baseQuery += " WHERE "
+    }
+
+    const finalQuery = baseQuery + whereExpressions.join(" AND ")
+    const results = await db.query(finalQuery, queryValues);
     return results.rows;
   }
 
