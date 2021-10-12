@@ -80,26 +80,26 @@ class User {
 
     // for each possible search term, add to whereExpressions and queryValues so we can generate SQL
     if(q.username) {
-      queryValues.push(q.username)
-      whereExpressions.push(`username ILIKE $${q.username}`)
+      queryValues.push(`%${q.username}%`)
+      whereExpressions.push(`username ILIKE $${queryValues.length}`)
     }
     if(q.firstName) {
-      queryValues.push(q.firstName);
-      whereExpressions.push(`first_name ILIKE $${q.firstName}`)
+      queryValues.push(`%${q.firstName}%`);
+      whereExpressions.push(`first_name ILIKE $${queryValues.length}`)
     }
     if(q.lastName) {
-      queryValues.push(q.lastName);
-      whereExpressions.push(`lastName ILIKE $${q.lastName}`)
+      queryValues.push(`%${q.lastName}%`);
+      whereExpressions.push(`last_name ILIKE $${queryValues.length}`)
     }
     if(q.email) {
-      queryValues.push(q.email);
-      whereExpressions.push(`email ILIKE $${q.email}`)
+      queryValues.push(`%${q.email}%`);
+      whereExpressions.push(`email ILIKE $${queryValues.length}`)
     }
     if(whereExpressions.length > 0) {
       baseQuery += " WHERE "
     }
 
-    const finalQuery = baseQuery + whereExpressions.join(" AND ")
+    const finalQuery = baseQuery + whereExpressions.join(" OR ")
     const results = await db.query(finalQuery, queryValues);
     return results.rows;
   }

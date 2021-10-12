@@ -17,8 +17,7 @@
     },
     "email" : {
       "type" : "string",
-      "minLength" : 1,
-      "format": "email"
+      "minLength" : 1
     }
   },
   "additionalProperties": false,
