@@ -7,18 +7,24 @@ CREATE TABLE users (
   is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-CREATE TABLE room (
+
+CREATE TABLE rooms (
   id SERIAL PRIMARY KEY,
   name VARCHAR(34),
-  members TEXT []
+  created_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE
 );
 
+CREATE TABLE participants (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE,
+  room_id INT REFERENCES rooms(id) ON DELETE CASCADE
+);
 
 CREATE TABLE messages (
   id SERIAL PRIMARY KEY,
   sent_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE,
   text TEXT NOT NULL,
-  room_id INT REFERENCES room(id) ON DELETE CASCADE,
+  room_id INT REFERENCES rooms(id) ON DELETE CASCADE,
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
