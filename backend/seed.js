@@ -7,22 +7,33 @@ async function seedData() {
 		const adminHashedPW = await bcrypt.hash("admin", BCRYPT_WORK_FACTOR);
 		const charlesHashedPW = await bcrypt.hash("charles", BCRYPT_WORK_FACTOR);
 		const jaeHashedPW = await bcrypt.hash("cjp0116", BCRYPT_WORK_FACTOR);
-		const testHashedPW = await bcrypt.hash('testPW', BCRYPT_WORK_FACTOR);
-  
+        const testHashedPW = await bcrypt.hash('testPW', BCRYPT_WORK_FACTOR);
+		const sarahHashedPW = await bcrypt.hash("sarah", BCRYPT_WORK_FACTOR);
+        const charlieHashedPW  = await bcrypt.hash("charlie", BCRYPT_WORK_FACTOR)
+
     	const dueDate = new Date(2021, 10, 17, 3, 24, 0);
   		const dueDate2 = new Date(2022, 10, 17, 3, 24, 0);
   		const dueDate3 = new Date(2022, 11, 17, 3, 24, 0);
 
 		await db.query(
    			`INSERT INTO users 
-   			(username, email, password, first_name, last_name, is_admin)
+   			(username,    email, password, first_name, last_name, is_admin)
    			VALUES 
    			('admin',   'admin@test.com',     $1, 'admin FirstName', 'admin LastName', true),
-   			('charles','charles@test.com',   $2, 'Charles',         'Park',          false),
-   			('jae',    'jae@test.com',       $3, 'Jae',             'Cho',           false),
-				 ('test', 'test@test.com', $4, 'firstName', 'lastName', false)
+   			('charles', 'charles@test.com',   $2, 'Charles',         'Park',          false),
+   			('jae',     'jae@test.com',       $3, 'Jae',             'Cho',           false),
+            ('test',    'test@test.com',      $4, 'firstName', 'lastName', false),
+            ('sarah',   'sarah@test.com',     $5, 'sarah', 'kim', false),
+            ('charlie', 'charlie@test.com',   $6, 'charlie', 'Doe', false)
    			 RETURNING username`,
-   		[adminHashedPW, charlesHashedPW, jaeHashedPW, testHashedPW]
+   		[
+            adminHashedPW, 
+            charlesHashedPW, 
+            jaeHashedPW, 
+            testHashedPW, 
+            sarahHashedPW, 
+            charlieHashedPW
+        ]
   		);
 
 		await db.query(
@@ -110,4 +121,6 @@ async function seedData() {
 seedData().then(() => {
 	console.log("successfully seeded db");
 	process.exit();
-});
+}).catch(e => {
+    console.error(e.stack)
+})
