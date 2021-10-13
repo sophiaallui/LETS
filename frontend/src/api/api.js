@@ -86,6 +86,11 @@ class Api {
   }
 
   // MESSAGES
+  static async findConversationWithUser(currentUsername, secondUsername) {
+      const res = await this.request(`room/find/${currentUsername}/${secondUsername}`);
+      return res.conversation
+  }
+
   static async getConversations(currentUsername) {
     const res = await this.request(`room/${currentUsername}`);
     return res.conversations;
