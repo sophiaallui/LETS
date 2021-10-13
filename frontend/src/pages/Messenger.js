@@ -60,7 +60,7 @@ function Messenger() {
 	const [arrivalMessage, setArrivalMessage] = useState(null);
 	const [onlineUsers, setOnlineUsers] = useState([]);
 	const [loading, setLoading] = useState(false);
-	const [friendsList, setFriendsList] = useState(null);
+	const [hideSearchResults, setHideSearchResults] = useState(false);
 
 	const { currentUser } = useContext(UserContext);
 
@@ -201,7 +201,6 @@ function Messenger() {
 			}
 		})
 		.map((name) => {
-			console.log(name);
 			return <ListGroupItem>{name}</ListGroupItem>;
 		});
 
@@ -220,6 +219,8 @@ function Messenger() {
 								placeholder='Search contact'
 								type='text'
 								value={searchFriendText}
+								onFocus={() => setHideSearchResults(false)}
+								onBlur={() => setHideSearchResults(true)}
 								onChange={(e) => {
 									setLoading(true);
 									setSearchFriendText(e.target.value);
@@ -238,9 +239,20 @@ function Messenger() {
 							</InputGroupAddon>
 						</InputGroup>
 					</Card>
-					<div className='list-group-container'>
+					<div
+						className={`${
+							hideSearchResults
+								? 'hide-list-group-container'
+								: 'list-group-container'
+						}`}
+					>
 						<ListGroup className='friend-search-result'>
-							{filteredFriendsList}
+							{filteredFriendsList.length === 0 &&
+							searchFriendText.length > 0 ? (
+								<ListGroupItem>No Match</ListGroupItem>
+							) : (
+								filteredFriendsList
+							)}
 						</ListGroup>
 					</div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from "react-router-dom";
 import useDebounce from 'hooks/useDebounce';
 import {
 	Form,
@@ -28,6 +29,7 @@ const Search = (props) => {
     const [hideSearchResults, setHideSearchResults] = useState(false);
 	const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
+    const history=useHistory();
 	useEffect(() => {
 		const handleSearch = async () => {
 			try {
@@ -112,7 +114,7 @@ const Search = (props) => {
 									key={user.username}
 								>
 									<Col className='img'>
-										<Link to={`/profile/${user.username}`}>
+										<Link onMouseDown={()=>history.push(`/profile/${user.username}`)} to={`/profile/${user.username}`}>
 											<img
 												alt='...'
 												src={

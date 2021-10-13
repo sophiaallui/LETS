@@ -18,4 +18,7 @@
     z-index: 1;
     width: 100%;
 }
+.hide-list-group-container{
+    display: none;
+}
 
