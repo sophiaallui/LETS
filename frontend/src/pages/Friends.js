@@ -1,9 +1,21 @@
 import React, { useState, useEffect, useContext } from "react";
 import Api from "api/api";
-import UserContext from "UserContext";
+import UserContext from "../UserContext";
 import { Row, Col, Container, Nav, NavItem, NavLink, TabPane, TabContent, Button } from "reactstrap";
 
 import FriendCard from "MyComponents/FriendCard";
+
+const FriendsFetch = props => {
+  const [friends, setFriends] = useState(null);
+  const [pendingUsers, setPendingUsers] = useState(null);
+  const [myRequets, setMyRequests] = useState(null);
+  
+  return (
+    <>
+    </>
+  )
+};
+
 
 const Friends = props => {
   const [myFriends, setMyFriends] = useState([])

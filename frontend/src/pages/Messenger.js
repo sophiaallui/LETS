@@ -49,7 +49,7 @@ import './design/messengerDesign.css';
  */
 
 function Messenger() {
-	const [searchFocus, setSearchFocus] = useState('');
+
 	const [messageFocus, setMessageFocus] = useState('');
 	const [conversations, setConversations] = useState([]);
 	const [currentChat, setCurrentChat] = useState(null);
