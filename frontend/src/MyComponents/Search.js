@@ -18,7 +18,7 @@ import {
 } from 'reactstrap';
 import Api from 'api/api';
 import { Link } from 'react-router-dom';
-import './Search.css'
+import './searchDesign.css'
 
 const Search = (props) => {
 	const [searchTerm, setSearchTerm] = useState('');
@@ -90,7 +90,7 @@ const Search = (props) => {
 						</InputGroupText>
 					</InputGroupAddon>
 				</InputGroup>
-				{isSearching ? <Spinner size ='sm'color='primary' /> : null}
+				{isSearching ? <Spinner className ='main-search'size ='sm'color='primary' /> : null}
 
 				{results &&
 					results.map((user) => (

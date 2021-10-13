@@ -12,6 +12,7 @@ import {
 	InputGroup,
 	ListGroup,
     ListGroupItem,
+    Spinner,
 	Row,
 	Col,
 	Form,
@@ -49,17 +50,18 @@ import { io } from 'socket.io-client';
 function Messenger() {
 	const [searchFocus, setSearchFocus] = useState('');
 	const [messageFocus, setMessageFocus] = useState('');
-	const { currentUser } = useContext(UserContext);
-
 	const [conversations, setConversations] = useState([]);
 	const [currentChat, setCurrentChat] = useState(null);
 	const [messages, setMessages] = useState(null);
 	const [message, setMessage] = useState('');
 	const [typing, setTyping] = useState(null);
     const [searchFriendText, setSearchFriendText]= useState('');
-
 	const [arrivalMessage, setArrivalMessage] = useState(null);
 	const [onlineUsers, setOnlineUsers] = useState([]);
+    const [loading, setLoading]=useState(false);
+    const [friendsList, setFriendsList]=useState(null);
+
+    const { currentUser } = useContext(UserContext);
 
 	const scrollRef = useRef();
 	const socket = useRef();
@@ -112,14 +114,27 @@ function Messenger() {
 	useEffect(() => {
 		const getMessages = async () => {
 			try {
-				const res = await Api.getMessages(currentChat?.roomId);
-				setMessages(res);
+                if(currentChat) {
+                    const res = await Api.getMessages(currentChat.roomId);
+                    setMessages(res);
+                }
+
 			} catch (e) {
 				console.error(e);
 			}
 		};
 		getMessages();
 	}, [currentChat]);
+
+    useEffect(() => {
+		message.length === 0 &&
+			socket.current.emit('done-typing', currentUser.username);
+	}, [message]);
+
+	useEffect(() => {
+		scrollRef.current &&
+			scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+	}, [messages]);
 
 	const handleChange = (e) => {
 		setMessage(e.target.value);
@@ -163,17 +178,6 @@ function Messenger() {
 		}
 	};
 
-	useEffect(() => {
-		message.length === 0 &&
-			socket.current.emit('done-typing', currentUser.username);
-	}, [message]);
-
-	useEffect(() => {
-		scrollRef.current &&
-			scrollRef.current.scrollIntoView({ behavior: 'smooth' });
-	}, [messages]);
-    
-
 	console.debug(
 		'MessengerConversations=',
 		conversations,
@@ -193,31 +197,38 @@ function Messenger() {
         } else if(friend.toLowerCase().includes(searchFriendText.toLowerCase())){
             return friend
         }
+    }).map((friend)=>{
+        return <ListGroupItem>{friend}</ListGroupItem>
     })
+
 	return (
 		<>
 			<Row>
 				<Col lg='3'>
-					<InputGroup className='input-group-alternative'>
-						<Input
-							placeholder='Search contact'
-							type='search'
-                            value={searchFriendText}
-                            onChange={(e)=>setSearchFriendText(e.target.value)}
-							onFocus={() => setSearchFocus('focused')}
-							onBlur={() => setSearchFocus('')}
-						/>
-						<InputGroupAddon addonType='append'>
-							<InputGroupText>
-								{/*add search bar pic*/}
-							</InputGroupText>
-						</InputGroupAddon>
-					</InputGroup>
-
+                    <Card>
+                        <InputGroup>
+                            <Input
+                                placeholder='Search contact'
+                                type='text'
+                                value={searchFriendText}
+                                onChange={(e)=>{
+                                    setLoading(true)
+                                    setSearchFriendText(e.target.value)}}
+                            />
+                            <InputGroupAddon addonType='append'>
+                                <InputGroupText>
+                                    {<i
+                                        onClick={() => {
+                                            console.log('x clicked');
+                                            setSearchFriendText('');
+                                        }}
+                                        className='ni ni-fat-remove'/>}
+                                </InputGroupText>
+                            </InputGroupAddon>
+                        </InputGroup>
+                    </Card>
                     <ListGroup >
-                        {filteredFriendsList.map((friend)=>{
-                            return <ListGroupItem>{friend}</ListGroupItem>
-                        })}
+                        {filteredFriendsList}
                     </ListGroup>
 
 					<ListGroup>
