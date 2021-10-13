@@ -2,9 +2,35 @@ import React from "react";
 
 // reactstrap components
 import { Button, Card, CardHeader, CardBody, Row } from "reactstrap";
-import { Link  } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 
-function FriendCard({ user }) {
+function FriendCard({ user, type }) {
+  let button;
+  if (type === "pending") {
+    button = (
+      <>
+        <Button className="mr-4 mt-3" color="danger" size="sm">Delete</Button>
+        <Button
+          className="float-right mt-3"
+          color="info"
+          size="sm"
+        >
+          Confirm
+        </Button> </>
+    )
+  } else if(type === "sent") {
+    button = (
+      <>
+        <Button className="mr-4 mt-3" color="danger" size="sm">Cancel</Button>
+        <Button
+          className="float-right mt-3"
+          color="info"
+          size="sm"
+        >
+          Message
+        </Button> </>
+    )
+  }
   return (
     <>
       <Card className="card-profile">
@@ -21,8 +47,8 @@ function FriendCard({ user }) {
                 className="img img-raised rounded-circle"
                 src={
                   user.profileImage ?
-                  require("assets/img/faces/team-4.jpg") :
-                  require("assets/img/placeholder.jpg")
+                    require("assets/img/faces/team-4.jpg") :
+                    require("assets/img/placeholder.jpg")
                 }
               />
             </a>
@@ -30,22 +56,7 @@ function FriendCard({ user }) {
         </CardHeader>
         <CardBody className="pt-0">
           <div className="d-flex justify-content-between">
-            <Button
-              className="mr-4 mt-3"
-              color="info"
-              onClick={(e) => e.preventDefault()}
-              size="sm"
-            >
-              Connect
-            </Button>
-            <Button
-              className="float-right mt-3"
-              color="default"
-              onClick={(e) => e.preventDefault()}
-              size="sm"
-            >
-              Message
-            </Button>
+              {button}
           </div>
           <Row>
             <div className="col">

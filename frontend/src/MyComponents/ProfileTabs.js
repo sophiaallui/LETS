@@ -15,7 +15,7 @@ import Charts from "MyComponents/Charts";
 import NewPostFormModal from "./NewPostFormModal";
 import Post from "MyComponents/Posts"
 
-const ProfileTabs = ({ progress, posts, goals }) => {
+const ProfileTabs = ({  posts, goals }) => {
   const [hTabsIcons, setHTabsIcons] = useState("hTabsIcons-1");
   return (
     <>
