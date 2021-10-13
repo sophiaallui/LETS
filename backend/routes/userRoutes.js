@@ -49,7 +49,7 @@ router.post("/", ensureAdmin, async (req, res, next) => {
  * Returns list of all users.
  * Authorization required : admin
  */
-router.get("/", async (req, res, next) => {
+router.get("/", ensureLoggedIn, async (req, res, next) => {
   try {
     const q = req.query;
     const validator = jsonschema.validate(q, userSearchSchema);

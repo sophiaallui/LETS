@@ -12,7 +12,7 @@ const BASE_URL= process.env.REACT_APP_BASE_URL || "http://localhost:3001";
 
 class Api {
   static token = localStorage.getItem("token")
-  
+
   static async request(endpoint, data = {}, method = "get") {
     console.debug("API Call:", endpoint, data, method);
 
@@ -109,6 +109,12 @@ class Api {
   static async findRoom(currentUsername, secondUsername) {
     const res = await this.request(`room/find/${currentUsername}/${secondUsername}`);
     return res.conversation;
+  }
+
+  // POSTS & COMMENTS ENDPOINTS
+  static async getCommentsForPostId(postId) {
+      const res = await this.request(`comments/${postId}`);
+      return res.comments;
   }
 }
 
