@@ -81,7 +81,7 @@ class User {
     // for each possible search term, add to whereExpressions and queryValues so we can generate SQL
     if(q.username) {
       queryValues.push(`%${q.username}%`)
-      whereExpressions.push(`username ILIKE $${queryValues.length}`)
+      whereExpressions.push(`username ILIKE $${queryValues.length}`) // select * from users where username ilike %char% 
     }
     if(q.firstName) {
       queryValues.push(`%${q.firstName}%`);

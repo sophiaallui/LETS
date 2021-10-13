@@ -41,7 +41,7 @@ router.post("/:username", async (req, res, next) => {
 
 // get conversations of a user
 // GET room/:username
-router.get("/:username", async (req, res, next) => {
+router.get("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
 	try {
 		const { username } = req.params;
 		const results = await db.query(
@@ -64,7 +64,7 @@ router.get("/:username", async (req, res, next) => {
 })
 
 // get conversation which includes two usernames
-router.get("/find/:username/:secondUsername", async (req, res, next) => {
+router.get("/find/:username/:secondUsername", ensureCorrectUserOrAdmin, async (req, res, next) => {
 	try {
 		const { username, secondUsername } = req.params;
 		const results = await db.query(

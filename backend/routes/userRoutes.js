@@ -66,7 +66,7 @@ router.get("/", ensureLoggedIn, async (req, res, next) => {
 
 /** GET /[username] => { user }
  * Returns { username, email, firstName, lastName, isAdmin }
- * Authorization required : admin or same-as-:username
+ * Authorization required : must be signed-in
  */
 router.get("/:username", ensureLoggedIn, async (req, res, next) => {
   try {
