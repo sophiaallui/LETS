@@ -69,21 +69,21 @@ const Friends = props => {
               <Nav pills roles="tablist" className="nav-fill flex-column flex-md-row">
                 <NavItem>
                   <NavLink 
-                    onClick={setHTabsIcons("hTabsIcons-1")}
+                    onClick={()=>setHTabsIcons("hTabsIcons-1")}
                     className={`mb-sm-3 mb-md-0 ` + (hTabsIcons === "hTabsIcons-1" ? "active" : "")}>
                       Your Friends
                   </NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink 
-                    onClick={setHTabsIcons("hTabsIcons-2")}
+                    onClick={()=>setHTabsIcons("hTabsIcons-2")}
                     className={`mb-sm-3 mb-md-0 ` + (hTabsIcons === "hTabsIcons-2" ? "active" : "")}>
                       Friend Requests
                   </NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink 
-                    onClick={setHTabsIcons("hTabsIcons-3")}
+                    onClick={()=>setHTabsIcons("hTabsIcons-3")}
                     className={`mb-sm-3 mb-md-0 ` + (hTabsIcons === "hTabsIcons-2" ? "active" : "")}>
                       Still Waiting On
                   </NavLink>
