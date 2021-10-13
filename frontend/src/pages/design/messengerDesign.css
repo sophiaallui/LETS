@@ -1,4 +1,4 @@
-.card-body{
+.chat-box.card-body{
     overflow: auto;
     max-height: 400px;
 }
@@ -17,6 +17,5 @@
     max-height: 350px;
     z-index: 1;
     width: 100%;
-    overflow: auto;
 }
 
