@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, useHistory } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import "./App.css";
 
 import { Spinner } from "reactstrap";
@@ -18,7 +18,7 @@ function App() {
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [token, setToken] = useState(Api.token);
   const [localStorageToken, setLocalStorageToken] = useLocalStorage("token")
-  const history = useHistory();
+
   console.debug(
     "App",
     "infoLoaded=",

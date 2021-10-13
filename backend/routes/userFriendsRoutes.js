@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const UserFriend = require("../models/userFriend");
-const { ensureCorrectUserOrAdmin, ensureLoggedIn } = require("../middleware/auth")
+const { ensureCorrectUserOrAdmin, ensureLoggedIn } = require("../middleware/auth");
+const db = require("../db");
 
 
 // GET friends/[username]
@@ -25,12 +26,24 @@ router.get("/:username/pending", ensureCorrectUserOrAdmin, async (req, res, next
   try {
     const { username } = req.params;
     const requests = await UserFriend.getAllPending(username);
-    return res.json({ requests })
+    return res.json({ requests : requests.map(u => u.user_from) })
   } catch(e) {
     return next(e);
   }
 })
 
+// get friends/[username]/sent
+// gets a list of users that :username sent a friend req to.
+router.get("/:username/sent", ensureLoggedIn, async (req, res, next) => {
+  try {
+    const { username } = req.params;
+    const byMe = await UserFriend.getAllBy(username)
+    return res.json({ myRequests : byMe.map(u => u.user_to) })
+  }
+  catch(e) {
+    return next(e);
+  }
+})
 
 // POST friends/[username]/to/[username2]
 // Sending a friend request from same-as-:username to username2

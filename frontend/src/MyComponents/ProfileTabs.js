@@ -112,7 +112,7 @@ const ProfileTabs = ({ progress, posts, goals }) => {
                         <div className="description">
                           <NewPostFormModal buttonText="New post" />
                           {posts?.map(p => (
-                            <Post type="Posts" post={p} />
+                            <Post type="Posts" post={p} key={p.id} />
                           ))}
                         </div>
                       )

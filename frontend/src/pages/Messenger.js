@@ -259,6 +259,7 @@ function Messenger() {
 					<ListGroup>
 						{conversations?.map((c) => (
 							<div
+								key={c.roomId}
 								onClick={() => {
 									setCurrentChat(c);
 								}}
@@ -279,7 +280,7 @@ function Messenger() {
 						<CardBody className='chat-box'>
 							{currentChat ? (
 								messages?.map((m) => (
-									<div ref={scrollRef}>
+									<div ref={scrollRef} key={m.id}>
 										<Message
 											message={m}
 											mine={

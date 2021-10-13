@@ -18,7 +18,7 @@ const OnlineFriends = ({ friendsUsernames, setCurrentChat, onlineUsers, setConve
   const [onlineFriends, setOnlineFriends] = useState([]);
 
   const { currentUser } = useContext(UserContext);
-  const [test, setTest] = useState(null);
+
 
   useEffect(() => {
     const fetchFriends = async () => {
