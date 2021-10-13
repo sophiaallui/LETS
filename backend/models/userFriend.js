@@ -21,7 +21,7 @@ class UserFriend {
 
   static async getAllBy(username) {
     const res = await db.query(
-      `SELECT * FROM users_friends
+      `SELECT user_to FROM users_friends
       WHERE user_from = $1
        AND confirmed = 0`
        ,[username]

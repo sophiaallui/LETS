@@ -199,7 +199,7 @@ function Messenger() {
             return friend
         }
     }).map((friend)=>{
-        return <ListGroupItem>{friend}</ListGroupItem>
+        return <ListGroupItem key={friend}>{friend}</ListGroupItem>
     })
 
 	return (
@@ -235,6 +235,7 @@ function Messenger() {
 					<ListGroup>
 						{conversations?.map((c) => (
 							<div
+								key={c.roomId}
 								onClick={() => {
 									setCurrentChat(c);
 								}}
@@ -255,7 +256,7 @@ function Messenger() {
 						<CardBody>
 							{currentChat ? (
 								messages?.map((m) => (
-									<div ref={scrollRef}>
+									<div ref={scrollRef} key={m.id}>
 										<Message
 											message={m}
 											mine={

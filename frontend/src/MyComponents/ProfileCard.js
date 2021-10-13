@@ -18,8 +18,6 @@ function ProfileCard({ username }) {
   const [friendRequest, setFriendRequest] = useState(null);
   const { currentUser } = useContext(UserContext);
 
-  const myFriendsUsernames = currentUser.friends.map(f => f.user_from === currentUser.username ? f.user_to : f.user_from);
-  console.debug("myFriendsUsernames=", myFriendsUsernames);
   useEffect(() => {
     setInfoLoaded(false);
     getLoadedUser()

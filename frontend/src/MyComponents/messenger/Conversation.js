@@ -37,7 +37,7 @@ const Conversation = ({ conversation, active }) => {
           />
           <Media body className="ml-2">
             <div className="justify-content-between align-items-center">
-              {friendsUsername.map(uName => <h6 className="mb-0">{uName}</h6> )}
+              {friendsUsername.map(uName => <h6 key={uName} className="mb-0">{uName}</h6> )}
             </div>
             <Col
               className="text-muted text-small p-0 text-truncate d-block"

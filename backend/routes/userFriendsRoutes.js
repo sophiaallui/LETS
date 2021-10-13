@@ -26,7 +26,7 @@ router.get("/:username/pending", ensureCorrectUserOrAdmin, async (req, res, next
   try {
     const { username } = req.params;
     const requests = await UserFriend.getAllPending(username);
-    return res.json({ requests })
+    return res.json({ requests : requests.map(u => u.user_from) })
   } catch(e) {
     return next(e);
   }
@@ -38,7 +38,7 @@ router.get("/:username/sent", ensureLoggedIn, async (req, res, next) => {
   try {
     const { username } = req.params;
     const byMe = await UserFriend.getAllBy(username)
-    return res.json({ myRequests : byMe })
+    return res.json({ myRequests : byMe.map(u => u.user_to) })
   }
   catch(e) {
     return next(e);

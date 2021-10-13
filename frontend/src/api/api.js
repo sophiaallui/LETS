@@ -70,6 +70,7 @@ class Api {
     return res.post;
   }
   
+  // Friends Endpoints
   static async sendFriendRequest(currentUsername, targetUsername) {
     const res = await this.request(`friends/${currentUsername}/to/${targetUsername}`, {}, "POST");
     return res.friendRequest;

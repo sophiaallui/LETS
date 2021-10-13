@@ -2,10 +2,9 @@ import React from "react";
 
 // reactstrap components
 import { Button, Card, CardHeader, CardBody, Row } from "reactstrap";
+import { Link  } from "react-router-dom"; 
 
-// Core Components
-
-function ProfileCard2() {
+function FriendCard({ user }) {
   return (
     <>
       <Card className="card-profile">
@@ -16,12 +15,16 @@ function ProfileCard2() {
           }}
         >
           <div className="card-avatar">
-            <a href="#pablo" onClick={(e) => e.preventDefault()}>
+            <a onClick={(e) => e.preventDefault()} tag={Link} to={`profile/${user.username}`}>
               <img
                 alt="..."
                 className="img img-raised rounded-circle"
-                src={require("assets/img/faces/team-4.jpg")}
-              ></img>
+                src={
+                  user.profileImage ?
+                  require("assets/img/faces/team-4.jpg") :
+                  require("assets/img/placeholder.jpg")
+                }
+              />
             </a>
           </div>
         </CardHeader>
@@ -48,24 +51,20 @@ function ProfileCard2() {
             <div className="col">
               <div className="card-profile-stats d-flex justify-content-center">
                 <div>
-                  <span className="heading">22</span>
+                  <span className="heading">{user.friends.length}</span>
                   <span className="description">Friends</span>
                 </div>
                 <div>
-                  <span className="heading">10</span>
-                  <span className="description">Photos</span>
-                </div>
-                <div>
-                  <span className="heading">89</span>
-                  <span className="description">Comments</span>
+                  <span className="heading">{user.posts.length}</span>
+                  <span className="description">Posts</span>
                 </div>
               </div>
             </div>
           </Row>
           <div className="text-center">
             <h5 className="h4">
-              Daisy Paisley
-              <span className="font-weight-light">, 28</span>
+              {user.firstName} {user.lastName}
+              <span className="font-weight-light">, {user.email}</span>
             </h5>
           </div>
         </CardBody>
@@ -74,4 +73,4 @@ function ProfileCard2() {
   );
 }
 
-export default ProfileCard2;
+export default FriendCard;
