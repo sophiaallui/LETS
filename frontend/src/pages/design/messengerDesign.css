@@ -1,5 +1,8 @@
-.chat.card-body{
+.card-body{
     overflow: auto;
     max-height: 400px;
 }
 
+.card{
+    margin-bottom:0px !important;
+}

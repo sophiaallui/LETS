@@ -24,6 +24,7 @@ import Conversation from 'MyComponents/messenger/Conversation';
 import ChatHeader from 'MyComponents/messenger/ChatHeader';
 import OnlineFriends from 'MyComponents/messenger/MessengerFriends';
 import { io } from 'socket.io-client';
+import './design/messengerDesign.css';
 /**
  * conversations : [
  *  {
@@ -192,7 +193,7 @@ function Messenger() {
 	);
 
     let filteredFriendsList = friendsUsernames.filter((friend)=>{
-        if(searchFriendText===''){
+        if(searchFriendText ===''){
             return null;
         } else if(friend.toLowerCase().includes(searchFriendText.toLowerCase())){
             return friend
@@ -205,7 +206,7 @@ function Messenger() {
 		<>
 			<Row>
 				<Col lg='3'>
-                    <Card>
+                    <Card >
                         <InputGroup>
                             <Input
                                 placeholder='Search contact'
