@@ -198,15 +198,16 @@ function Messenger() {
         } else if(friend.toLowerCase().includes(searchFriendText.toLowerCase())){
             return friend
         }
-    }).map((friend)=>{
-        return <ListGroupItem>{friend}</ListGroupItem>
+    }).map((name)=>{
+        console.log(name)
+        return <ListGroupItem>{name}</ListGroupItem>
     })
 
 	return (
 		<>
 			<Row>
 				<Col lg='3'>
-                    <Card >
+                    <Card className='messenger-search'>
                         <InputGroup>
                             <Input
                                 placeholder='Search contact'
@@ -218,19 +219,22 @@ function Messenger() {
                             />
                             <InputGroupAddon addonType='append'>
                                 <InputGroupText>
-                                    {<i
+                                    <i
                                         onClick={() => {
                                             console.log('x clicked');
                                             setSearchFriendText('');
                                         }}
-                                        className='ni ni-fat-remove'/>}
+                                        className='ni ni-fat-remove'/>
                                 </InputGroupText>
                             </InputGroupAddon>
                         </InputGroup>
                     </Card>
-                    <ListGroup >
-                        {filteredFriendsList}
-                    </ListGroup>
+                    <div className='list-group-container'>
+                        <ListGroup className='friend-search-result'>
+                            {filteredFriendsList}
+                        </ListGroup>
+                    </div>
+                    
 
 					<ListGroup>
 						{conversations?.map((c) => (
