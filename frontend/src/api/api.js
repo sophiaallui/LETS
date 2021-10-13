@@ -69,10 +69,15 @@ class Api {
     const res = await this.request(`posts/${currentUsername}`, content, "put");
     return res.post;
   }
-
+  
   static async sendFriendRequest(currentUsername, targetUsername) {
     const res = await this.request(`friends/${currentUsername}/to/${targetUsername}`, {}, "POST");
     return res.friendRequest;
+  }
+  
+  static async getMyRequests(currentUsername) {
+    const res = await this.request(`friends/${currentUsername}/sent`);
+    return res.myRequests;
   }
 
   static async getPendingFriendRequests(currentUsername) {

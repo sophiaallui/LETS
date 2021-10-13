@@ -19,6 +19,16 @@ class UserFriend {
     return res.rows;
   }
 
+  static async getAllBy(username) {
+    const res = await db.query(
+      `SELECT * FROM users_friends
+      WHERE user_from = $1
+       AND confirmed = 0`
+       ,[username]
+    );
+    return res.rows;
+  }
+
   // Gets all friend requests that are pending username's confirmation.
   static async getAllPending(username) {
     const res = await db.query(
