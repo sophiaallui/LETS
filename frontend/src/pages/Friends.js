@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import Api from "api/api";
 import UserContext from "../UserContext";
-import { Row, Col, Container, Nav, NavItem, NavLink, TabPane, TabContent, Card } from "reactstrap";
+import { Row, Col, Container, Nav, NavItem, NavLink, TabPane, TabContent, Card, CardBody } from "reactstrap";
 
 import FriendCard from "MyComponents/FriendCard";
-import CardBody from "reactstrap/lib/CardBody";
+import Sidebar from "MyComponents/sidebar/Sidebar";
 
 const Friends = props => {
   const [myFriends, setMyFriends] = useState([])
@@ -65,6 +65,9 @@ const Friends = props => {
     <>
       <Container fluid>
         <Row className="d-flex justify-content-end mb-3">
+          <Col lg="3">
+            <Sidebar />
+          </Col>
           <Col lg="9">
             <div className="nav-wrapper">
               <Nav pills roles="tablist" className="nav-fill flex-column flex-md-row">
