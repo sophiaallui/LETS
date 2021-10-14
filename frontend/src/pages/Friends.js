@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import Api from "api/api";
-import UserContext from "UserContext";
-import { Row, Col, Container, Nav, NavItem, NavLink, TabPane, TabContent, Button } from "reactstrap";
+import UserContext from "../UserContext";
+import { Row, Col, Container, Nav, NavItem, NavLink, TabPane, TabContent, Card } from "reactstrap";
 
 import FriendCard from "MyComponents/FriendCard";
+import CardBody from "reactstrap/lib/CardBody";
 
 const Friends = props => {
   const [myFriends, setMyFriends] = useState([])
@@ -20,82 +21,126 @@ const Friends = props => {
         const myFriendsPromise = Promise.all(friendsUsernames.map(username => Api.getCurrentUser(username)));
         const myFriendsData = await myFriendsPromise;
         setMyFriends(myFriendsData);
-      }catch(e) {
+      } catch (e) {
         console.error(e);
       }
     }
-    
+
     const getUsersWaitingForMyConfirmation = async () => {
       try {
         const usersWaitingUsernames = await Api.getPendingFriendRequests(currentUser.username);
-        if(!usersAwaitingMyConfirmation.length) {
+        if (!usersAwaitingMyConfirmation.length) {
           return;
         }
         const usersWaitingPromise = Promise.all(usersWaitingUsernames?.map(username => Api.getCurrentUser(username)));
         const usersWaitingData = await usersWaitingPromise;
         setUsersAwaitingMyConfirmation(usersWaitingData);
       }
-      catch(e) {
+      catch (e) {
         console.error(e);
       }
     }
 
     const getMySentRequests = async () => {
-      try{
+      try {
         const myRequestsUsernames = await Api.getMySentRequests(currentUser.username);
-        if(!myRequestsUsernames.length) {
+        if (!myRequestsUsernames.length) {
           return;
         }
         const myRequestsPromise = Promise.all(myRequestsUsernames?.map(username => Api.getCurrentUser(username)));
         const myRequestsData = await myRequestsPromise;
         setMySentRequests(myRequestsData)
       }
-      catch(e) {
+      catch (e) {
         console.error(e);
       }
     }
     getCurrentFriends();
     getUsersWaitingForMyConfirmation();
     getMySentRequests();
-  }, [currentUser?.username, friendsUsernames]);
+  }, [currentUser.username]);
 
-  console.debug("usersAwaitingMyConfirmation=", usersAwaitingMyConfirmation, "mySentRequests",mySentRequests, "myFriends=", myFriends);
+  console.debug("usersAwaitingMyConfirmation=", usersAwaitingMyConfirmation, "mySentRequests", mySentRequests, "myFriends=", myFriends);
   return (
     <>
       <Container fluid>
-        <Row className="flex-row">
-          <Col lg="8">
+        <Row className="d-flex justify-content-end mb-3">
+          <Col lg="9">
             <div className="nav-wrapper">
               <Nav pills roles="tablist" className="nav-fill flex-column flex-md-row">
                 <NavItem>
-                  <NavLink 
-                    onClick={()=>setHTabsIcons("hTabsIcons-1")}
+                  <NavLink
+                    onClick={() => setHTabsIcons("hTabsIcons-1")}
                     className={`mb-sm-3 mb-md-0 ` + (hTabsIcons === "hTabsIcons-1" ? "active" : "")}>
-                      Your Friends
+                    Your Friends
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink 
-                    onClick={()=>setHTabsIcons("hTabsIcons-2")}
+                  <NavLink
+                    onClick={() => setHTabsIcons("hTabsIcons-2")}
                     className={`mb-sm-3 mb-md-0 ` + (hTabsIcons === "hTabsIcons-2" ? "active" : "")}>
-                      Friend Requests
+                    Friend Requests
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink 
-                    onClick={()=>setHTabsIcons("hTabsIcons-3")}
-                    className={`mb-sm-3 mb-md-0 ` + (hTabsIcons === "hTabsIcons-2" ? "active" : "")}>
-                      Still Waiting On
+                  <NavLink
+                    onClick={() => setHTabsIcons("hTabsIcons-3")}
+                    className={`mb-sm-3 mb-md-0 ` + (hTabsIcons === "hTabsIcons-3" ? "active" : "")}>
+                    Still Waiting On
                   </NavLink>
                 </NavItem>
               </Nav>
             </div>
-            {myFriends?.map(user => (
-              <FriendCard key={user.username} user={user} />
-            ))}
+            <Card className="shadow">
+              <CardBody>
+                <TabContent id="myTabContent" activeTab={hTabsIcons}>
+
+                  <TabPane tabId="hTabsIcons-1">
+                    <div className="description">
+                      <h5>Friends ({myFriends.length})</h5>
+                      <Row>
+                        {myFriends?.map(user => (
+                          <Col lg="2" md="6">
+                            <FriendCard type="currentFriends" key={user.username} user={user} />
+                          </Col>
+                        ))}
+                      </Row>
+                    </div>
+                  </TabPane>
+
+                  <TabPane tabId="hTabsIcons-2">
+                    <div className="description">
+                      <h5>Friend Requests ({usersAwaitingMyConfirmation.length})</h5>
+                      <Row>
+                        {usersAwaitingMyConfirmation.length > 0 &&
+                          usersAwaitingMyConfirmation.map(user => (
+                            <Col lg="2" md="6">
+                              <FriendCard type="pending" key={user.username} user={user} />
+                            </Col>
+                          ))}
+                      </Row>
+                    </div>
+                  </TabPane>
+
+                  <TabPane tabId="hTabsIcons-3">
+                    <div className="description">
+                      <h5>Still waiting on</h5>
+                      {mySentRequests.length > 0 && mySentRequests.map(user => (
+                        <Col lg="2" md="6">
+                          <FriendCard type="sent" key={user.username} user={user} />
+                        </Col>
+                      ))}
+                    </div>
+                  </TabPane>
+                </TabContent>
+              </CardBody>
+            </Card>
+
           </Col>
         </Row>
       </Container>
+
+
     </>
   )
 };

@@ -49,7 +49,7 @@ import './design/messengerDesign.css';
  */
 
 function Messenger() {
-	const [searchFocus, setSearchFocus] = useState('');
+
 	const [messageFocus, setMessageFocus] = useState('');
 	const [conversations, setConversations] = useState([]);
 	const [currentChat, setCurrentChat] = useState(null);
@@ -114,10 +114,11 @@ function Messenger() {
 	useEffect(() => {
 		const getMessages = async () => {
 			try {
-				if (currentChat) {
-					const res = await Api.getMessages(currentChat.roomId);
-					setMessages(res);
-				}
+                if(currentChat) {
+                    const res = await Api.getMessages(currentChat?.roomId);
+                    setMessages(res);
+                }
+
 			} catch (e) {
 				console.error(e);
 			}

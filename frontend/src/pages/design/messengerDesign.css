@@ -1,7 +1,11 @@
+<<<<<<< HEAD
 .chat-box.card-body{
+=======
+/* .card-body{
+>>>>>>> 08b87fb0c3b9bc39dea710353af63a7ecc14decb
     overflow: auto;
     max-height: 400px;
-}
+} */
 
 .messenger-search.card{
     margin-bottom:0px;
