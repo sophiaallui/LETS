@@ -9,8 +9,11 @@ import ProfileCard from "MyComponents/ProfileCard";
 import Api from "api/api";
 import UserContext from "UserContext";
 
+//
+//
+// 
 function UserProfile(props) {
-  const { username } = useParams();
+  const { username } = usieParams();
   const { currentUser } = 
   const [loadedUser, setLoadedUser] = useState(null)
  useEffect(() => {
