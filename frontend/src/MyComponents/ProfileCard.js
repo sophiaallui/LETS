@@ -47,7 +47,7 @@ function ProfileCard({ username }) {
       {
         errors.length > 0 ? <h1>Something wen't wrong</h1> : null
       }
-      <Card className="card-profile shadow mt--300">
+      
         <div className="px-4">
           <Row className="justify-content-center">
             <Col className="order-lg-2" lg="1">
@@ -140,7 +140,7 @@ function ProfileCard({ username }) {
           </div>
 
         </div>
-      </Card>
+        
     </>
   );
 }

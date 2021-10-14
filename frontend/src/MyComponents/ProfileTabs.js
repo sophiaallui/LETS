@@ -15,6 +15,27 @@ import Charts from "MyComponents/Charts";
 import NewPostFormModal from "./NewPostFormModal";
 import Post from "MyComponents/Posts"
 
+const Posts=({posts})=>{
+    return(
+        <TabPane tabId="hTabsIcons-2" role="tabpanel">
+            {
+            posts?.length === 0 ?
+                (<div className="description">
+                <h2>You have no posts</h2>
+                <NewPostFormModal buttonText="Post one" />
+                </div>) : (
+                <div className="description">
+                    <NewPostFormModal buttonText="New post" />
+                    {posts?.map(p => (
+                    <Post type="Posts" post={p} key={p.id} />
+                    ))}
+                </div>
+                )
+            }
+        </TabPane>
+    )
+}
+
 const ProfileTabs = ({  posts, goals }) => {
   const [hTabsIcons, setHTabsIcons] = useState("hTabsIcons-1");
   return (
@@ -23,7 +44,7 @@ const ProfileTabs = ({  posts, goals }) => {
         <Col lg="10">
           <div className="mb-3">
           </div>
-          <div className="nav-wrapper">
+          
             <Nav pills roles="tablist" className="nav-fill flex-column flex-md-row">
               <NavItem>
                 <NavLink
@@ -85,8 +106,7 @@ const ProfileTabs = ({  posts, goals }) => {
                 </NavLink>
               </NavItem>
             </Nav>
-          </div>
-
+          
           <Card className="shadow">
             <CardBody>
               <TabContent id="myTabContent" activeTab={hTabsIcons}>
@@ -118,7 +138,6 @@ const ProfileTabs = ({  posts, goals }) => {
                       )
                   }
                 </TabPane>
-
                 <TabPane tabId="hTabsIcons-3" role="tabpanel">
                   <div className="description">
                     <Charts />
