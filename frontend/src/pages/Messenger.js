@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext ,useRef}from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 // reactstrap components
 import {
 	Card,
@@ -11,8 +11,8 @@ import {
 	InputGroupText,
 	InputGroup,
 	ListGroup,
-    ListGroupItem,
-    Spinner,
+	ListGroupItem,
+	Spinner,
 	Row,
 	Col,
 	Form,
@@ -56,13 +56,13 @@ function Messenger() {
 	const [messages, setMessages] = useState(null);
 	const [message, setMessage] = useState('');
 	const [typing, setTyping] = useState(null);
-    const [searchFriendText, setSearchFriendText]= useState('');
+	const [searchFriendText, setSearchFriendText] = useState('');
 	const [arrivalMessage, setArrivalMessage] = useState(null);
 	const [onlineUsers, setOnlineUsers] = useState([]);
-    const [loading, setLoading]=useState(false);
-    const [friendsList, setFriendsList]=useState(null);
+	const [loading, setLoading] = useState(false);
+	const [hideSearchResults, setHideSearchResults] = useState(false);
 
-    const { currentUser } = useContext(UserContext);
+	const { currentUser } = useContext(UserContext);
 
 	const scrollRef = useRef();
 	const socket = useRef();
@@ -71,7 +71,6 @@ function Messenger() {
 		f.user_from === currentUser.username ? f.user_to : f.user_from
 	);
 
-    
 	console.debug(friendsUsernames);
 	useEffect(() => {
 		socket.current = io('ws://localhost:8900');
@@ -127,7 +126,7 @@ function Messenger() {
 		getMessages();
 	}, [currentChat]);
 
-    useEffect(() => {
+	useEffect(() => {
 		message.length === 0 &&
 			socket.current.emit('done-typing', currentUser.username);
 	}, [message]);
@@ -192,45 +191,71 @@ function Messenger() {
 		onlineUsers
 	);
 
-    let filteredFriendsList = friendsUsernames.filter((friend)=>{
-        if(searchFriendText ===''){
-            return null;
-        } else if(friend.toLowerCase().includes(searchFriendText.toLowerCase())){
-            return friend
-        }
-    }).map((friend)=>{
-        return <ListGroupItem key={friend}>{friend}</ListGroupItem>
-    })
+	let filteredFriendsList = friendsUsernames
+		.filter((friend) => {
+			if (searchFriendText === '') {
+				return null;
+			} else if (
+				friend.toLowerCase().includes(searchFriendText.toLowerCase())
+			) {
+				return friend;
+			}
+		})
+		.map((name) => {
+			return <ListGroupItem>{name}</ListGroupItem>;
+		});
 
 	return (
 		<>
 			<Row>
 				<Col lg='3'>
-                    <Card >
-                        <InputGroup>
-                            <Input
-                                placeholder='Search contact'
-                                type='text'
-                                value={searchFriendText}
-                                onChange={(e)=>{
-                                    setLoading(true)
-                                    setSearchFriendText(e.target.value)}}
-                            />
-                            <InputGroupAddon addonType='append'>
-                                <InputGroupText>
-                                    {<i
-                                        onClick={() => {
-                                            console.log('x clicked');
-                                            setSearchFriendText('');
-                                        }}
-                                        className='ni ni-fat-remove'/>}
-                                </InputGroupText>
-                            </InputGroupAddon>
-                        </InputGroup>
-                    </Card>
-                    <ListGroup >
-                        {filteredFriendsList}
-                    </ListGroup>
+					<Card className='messenger-search'>
+						<InputGroup>
+							<InputGroupAddon addonType='prepend'>
+								<InputGroupText>
+									<i className='fas fa-search' />
+								</InputGroupText>
+							</InputGroupAddon>
+							<Input
+								placeholder='Search contact'
+								type='text'
+								value={searchFriendText}
+								onFocus={() => setHideSearchResults(false)}
+								onBlur={() => setHideSearchResults(true)}
+								onChange={(e) => {
+									setLoading(true);
+									setSearchFriendText(e.target.value);
+								}}
+							/>
+							<InputGroupAddon addonType='append'>
+								<InputGroupText>
+									<i
+										onClick={() => {
+											console.log('x clicked');
+											setSearchFriendText('');
+										}}
+										className='ni ni-fat-remove'
+									/>
+								</InputGroupText>
+							</InputGroupAddon>
+						</InputGroup>
+					</Card>
+					<div
+						className={`${
+							hideSearchResults
+								? 'hide-list-group-container'
+								: 'list-group-container'
+						}`}
+					>
+						<ListGroup className='friend-search-result'>
+							{filteredFriendsList.length === 0 &&
+							searchFriendText.length > 0 ? (
+								<ListGroupItem>No Match</ListGroupItem>
+							) : (
+								filteredFriendsList
+							)}
+						</ListGroup>
+					</div>
 
 					<ListGroup>
 						{conversations?.map((c) => (
@@ -253,7 +278,7 @@ function Messenger() {
 								<ChatHeader members={currentChat?.members} />
 							) : null}
 						</CardHeader>
-						<CardBody>
+						<CardBody className='chat-box'>
 							{currentChat ? (
 								messages?.map((m) => (
 									<div ref={scrollRef} key={m.id}>

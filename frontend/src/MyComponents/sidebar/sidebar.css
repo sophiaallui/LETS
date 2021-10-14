@@ -18,6 +18,7 @@
 
 .sidebarWrapper {
   padding : 20px;
+  background-color: black;
 }
 
 .sidebarList {
@@ -66,4 +67,8 @@
   border-radius: 50%;
   object-fit: cover;
   margin-right: 10px;
+}
+
+.sidebarFriend{
+    color:black
 }

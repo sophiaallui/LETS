@@ -1,8 +1,24 @@
 /* .card-body{
     overflow: auto;
     max-height: 400px;
-} */
+}  */
 
-.card{
-    margin-bottom:0px !important;
+.messenger-search.card{
+    margin-bottom:0px;
 }
+
+.list-group-container{
+    position: relative; 
+}
+
+.friend-search-result.list-group{
+    position: absolute;
+    overflow: auto;
+    max-height: 350px;
+    z-index: 1;
+    width: 100%;
+}
+.hide-list-group-container{
+    display: none;
+}
+
