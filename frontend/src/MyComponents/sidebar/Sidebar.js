@@ -33,15 +33,19 @@ const Sidebar = ({ currentPage = "profile", setCurrentTab, currentTab }) => {
         listItems = (
             <>
                 <li className={`sidebarListItem ${currentTab === "Goals" ? "active" : ""}`} onClick={() => setCurrentTab("Goals")}>
+                    <i className="ni ni-check-bold mr-2" />
                     <span className="sidebarListItemText">Goals</span>
                 </li>
                 <li className={`sidebarListItem ${currentTab === "Posts" ? "active" : ""}`} onClick={() => setCurrentTab("Posts")}>
+                    <i className="ni ni-collection mr-2" />
                     <span className="sidebarListItemText">Posts</span>
                 </li>
                 <li className={`sidebarListItem ${currentTab === "Progress" ? "active" : ""}`} onClick={() => setCurrentTab("Progress")}>
+                    <i class="fas fa-chart-line mr-2" />
                     <span className="sidebarListItemText">Progress</span>
                 </li>
                 <li className={`sidebarListItem ${currentTab === "Feed" ? "active" : ""}`} onClick={() => setCurrentTab("Feed")}>
+                    <i class="fas fa-th-list mr-2" />
                     <span className="sidebarListItemText">Feed</span>
                 </li>
             </>
@@ -52,12 +56,15 @@ const Sidebar = ({ currentPage = "profile", setCurrentTab, currentTab }) => {
         listItems = (
             <>
                 <li className={`sidebarListItem ${currentTab === "Friends" ? "active" : ""}`} onClick={() => setCurrentTab("Friends")}>
+                    <i class="fas fa-user-friends mr-2" />
                     <span className="sidebarListItemText">Friends</span>
                 </li>
                 <li className={`sidebarListItem ${currentTab === "Friend Requests" ? "active" : ""}`} onClick={() => setCurrentTab("Friend Requests")}>
+                    <i className="ni ni-check-bold mr-2" />
                     <span className="sidebarListItemText">Friend Requests</span>
                 </li>
                 <li className={`sidebarListItem ${currentTab === "Stiill Waiting On" ? "active" : ""}`} onClick={() => setCurrentTab("Still Waiting On")}>
+                    <i class="far fa-clock mr-2" />
                     <span className="sidebarListItemText">Still Waiting On</span>
                 </li>
             </>
@@ -86,7 +93,7 @@ const Sidebar = ({ currentPage = "profile", setCurrentTab, currentTab }) => {
 
                 <ul className="sidebarFriendList">
                     {friends?.map((user) => (
-                        <Link to={`/profile/${user.username}`}>
+                        <Link to={`/profile/${user.username}`} key={user.username}>
                             <li className="sidebarFriend" key={user.username}>
                                 <img
                                     className="sidebarFriendImg"

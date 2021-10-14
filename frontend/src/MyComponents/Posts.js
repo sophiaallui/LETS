@@ -22,7 +22,7 @@ import UserContext from "UserContext";
 
 import { format } from "timeago.js";
 
-function ActivityFeed({ type, post }) {
+function Post({ type, post }) {
   const { currentUser } = useContext(UserContext);
   return (
     <>
@@ -238,4 +238,4 @@ function ActivityFeed({ type, post }) {
   );
 }
 
-export default ActivityFeed;
+export default Post;

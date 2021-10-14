@@ -51,7 +51,7 @@ class ImageUpload extends React.Component {
     return (
       <div className="fileinput text-center">
         <input type="file" onChange={this.handleImageChange} ref="fileInput" />
-        <div className={"card-profile-image" + (this.props.avatar ? " img-circle" : "")}>
+        <div className={(this.props.avatar ? " img-circle" : "")}>
           <img src={this.state.imagePreviewUrl} alt="..." className="rounded-circle" />
         </div>
         <div>

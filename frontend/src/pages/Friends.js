@@ -81,8 +81,8 @@ const Friends = props => {
                       <h5>Friends ({myFriends.length})</h5>
                       <Row>
                         {myFriends?.map(user => (
-                          <Col lg="2" md="6">
-                            <FriendCard type="currentFriends" key={user.username} user={user} />
+                          <Col lg="3" md="6" key={user.username} >
+                            <FriendCard type="currentFriends" user={user} />
                           </Col>
                         ))}
                       </Row>
@@ -95,7 +95,7 @@ const Friends = props => {
                       <Row>
                         {usersAwaitingMyConfirmation.length > 0 &&
                           usersAwaitingMyConfirmation.map(user => (
-                            <Col lg="2" md="6">
+                            <Col lg="3" md="6">
                               <FriendCard type="pending" key={user.username} user={user} />
                             </Col>
                           ))}
@@ -107,8 +107,8 @@ const Friends = props => {
                     <div className="description">
                       <h5>Still Waiting On ({mySentRequests.length})</h5>
                       {mySentRequests.length > 0 && mySentRequests.map(user => (
-                        <Col lg="2" md="6">
-                          <FriendCard type="sent" key={user.username} user={user} />
+                        <Col lg="3" md="6"  key={user.username} >
+                          <FriendCard type="sent"user={user} />
                         </Col>
                       ))}
                     </div>

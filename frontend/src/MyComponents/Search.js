@@ -2,18 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from "react-router-dom";
 import useDebounce from 'hooks/useDebounce';
 import {
-	Form,
-	FormGroup,
 	InputGroup,
 	InputGroupAddon,
 	InputGroupText,
 	Input,
-	Card,
-	CardHeader,
-	CardBody,
-	CardFooter,
-	ListGroup,
-	ListGroupItem,
 	Spinner,
 	Row,
 	Col,
@@ -26,10 +18,10 @@ const Search = (props) => {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [results, setResults] = useState(null);
 	const [isSearching, setIsSearching] = useState(false);
-    const [hideSearchResults, setHideSearchResults] = useState(false);
+	const [hideSearchResults, setHideSearchResults] = useState(false);
 	const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-    const history=useHistory();
+	const history = useHistory();
 	useEffect(() => {
 		const handleSearch = async () => {
 			try {
@@ -77,8 +69,8 @@ const Search = (props) => {
 					type='text'
 					value={searchTerm}
 					onChange={handleChange}
-                    onFocus={()=>setHideSearchResults(false)}
-                    onBlur={()=>setHideSearchResults(true)}
+					onFocus={() => setHideSearchResults(false)}
+					onBlur={() => setHideSearchResults(true)}
 				/>
 				<InputGroupAddon addonType='append'>
 					<InputGroupText>
@@ -100,7 +92,7 @@ const Search = (props) => {
 					</InputGroupText>
 				</InputGroupAddon>
 			</InputGroup>
-			<div className={`${hideSearchResults?'hide-row-container':'row-container'}`}>
+			<div className={`${hideSearchResults ? 'hide-row-container' : 'row-container'}`}>
 				<div className='inner-row-container'>
 					{results ? (
 						results.length == 0 ? (
@@ -114,7 +106,7 @@ const Search = (props) => {
 									key={user.username}
 								>
 									<Col className='img'>
-										<Link onMouseDown={()=>history.push(`/profile/${user.username}`)} to={`/profile/${user.username}`}>
+										<Link onMouseDown={() => history.push(`/profile/${user.username}`)} to={`/profile/${user.username}`}>
 											<img
 												alt='...'
 												src={

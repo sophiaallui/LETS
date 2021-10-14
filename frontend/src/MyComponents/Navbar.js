@@ -31,21 +31,25 @@ function NavbarOrange({ logout }) {
         </NavItem>
         <NavItem>
           <NavLink tag={Link} to={`/profile/${currentUser.username}`}>
+            <i className="ni ni-circle-08" />
             Profile
           </NavLink>
         </NavItem>
         <NavItem>
           <NavLink tag={Link} to="/messenger">
+            <i className="ni ni-chat-round" />
             Chat
           </NavLink>
         </NavItem>
         <NavItem>
           <NavLink tag={Link} to="/schedules">
+            <i className="ni ni-calendar-grid-58" />
             My Schedule
           </NavLink>
         </NavItem>
         <NavItem>
           <NavLink tag={Link} to="/friends">
+            <i class="fas fa-users"></i>
             Friends
           </NavLink>
         </NavItem>

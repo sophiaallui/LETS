@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
 // reactstrap components
-import { Button, Row, Col, Card, CardBody, TabContent, TabPane} from "reactstrap";
+import { Button, Row, Col, Card, CardBody, TabContent, TabPane } from "reactstrap";
 import Sidebar from "MyComponents/sidebar/Sidebar";
 // Core Components
 import Api from "api/api";
@@ -59,7 +59,6 @@ function UserProfile(props) {
         </Col>
         <Col lg="9">
           <div className="px-4">
-
             <Row className="justify-content-center">
               <Col className="order-lg-2" lg="1">
                 <div className="card-profile-image">
@@ -84,7 +83,7 @@ function UserProfile(props) {
                       targetUsername={loadedUser?.username}
                     />
                   )}
-                  
+
                 </div>
               </Col>
 
@@ -129,8 +128,8 @@ function UserProfile(props) {
                           {
                             loadedUser?.goals?.length === 0 ?
                               <div className="description">
-                                  <h2>No goals</h2>
-                                  <Button>Post One</Button>
+                                <h2>No goals</h2>
+                                {currentUser.username === loadedUser?.username && <Button>Post One</Button>}
                               </div> :
                               // Do the Goals HERE
                               <div className="description">
@@ -148,8 +147,9 @@ function UserProfile(props) {
                             loadedUser?.posts?.length === 0 ?
                               (<div className="description">
                                 <h2>No posts</h2>
-                                <NewPostFormModal buttonText="Post one" />
-                              </div>) : (
+                                {currentUser.username === loadedUser?.username && <NewPostFormModal buttonText="Post one" />}
+                              </div>)
+                              : (
                                 <div className="description">
                                   <NewPostFormModal buttonText="New post" />
                                   {loadedUser?.posts?.map(p => (
