@@ -12,7 +12,6 @@ import {
 	InputGroup,
 	ListGroup,
 	ListGroupItem,
-	Spinner,
 	Row,
 	Col,
 	Form,

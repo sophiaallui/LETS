@@ -4,7 +4,7 @@ import Api from "api/api";
 import UserContext from "UserContext";
 import { Link } from "react-router-dom";
 
-const Sidebar = ({ currentPage }) => {
+const Sidebar = ({ currentPage, setCurrentTab }) => {
     const [ friends, setFriends ] = useState([]);
     const { currentUser } = useContext(UserContext);
     const friendsUsernames = currentUser.friends.map((f) =>
@@ -14,7 +14,7 @@ const Sidebar = ({ currentPage }) => {
 
     useEffect(() => {
         const fetchFriends = async () => {
-            try {
+            try {pp
                 const allPromise = Promise.all(
                     friendsUsernames.map((username) => Api.getCurrentUser(username))
                 );
@@ -27,6 +27,7 @@ const Sidebar = ({ currentPage }) => {
 
         fetchFriends();
     }, [ currentUser.username ]);
+
     let listItems;
     if (currentPage === "profile") {
         listItems = (
