@@ -12,7 +12,7 @@ import {
   Button
 } from "reactstrap";
 import Charts from "MyComponents/Charts";
-import NewPostFormModal from "./NewPostFormModal";
+import NewPostFormModal from "../NewPostFormModal";
 import Post from "MyComponents/Posts"
 
 const Posts=({posts})=>{

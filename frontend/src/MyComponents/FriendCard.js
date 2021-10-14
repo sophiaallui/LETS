@@ -28,7 +28,8 @@ function FriendCard({ user, type }) {
           size="sm"
         >
           Message
-        </Button> </>
+        </Button> 
+      </>
     )
   }
   return (

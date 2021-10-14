@@ -2,20 +2,22 @@ import React, { useEffect, useContext, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
 // reactstrap components
-import { Button, Row, Col, } from "reactstrap";
+import { Button, Row, Col, Card, CardBody, TabContent, TabPane} from "reactstrap";
 import Sidebar from "MyComponents/sidebar/Sidebar";
 // Core Components
-import ProfileCard from "MyComponents/ProfileCard";
 import Api from "api/api";
 import UserContext from "UserContext";
 import SendFriendRequestButton from "MyComponents/SendFriendRequestButton";
 import ImageUpload from "MyComponents/common/ImageUpload";
+import Charts from "MyComponents/Charts";
+import Post from "MyComponents/Posts";
+import NewPostFormModal from "MyComponents/NewPostFormModal";
 
 function UserProfile(props) {
   const { username } = useParams();
   const { currentUser } = useContext(UserContext);
   const [loadedUser, setLoadedUser] = useState(null);
-  const [currentTab, setCurrentTab] = useState(null);
+  const [currentTab, setCurrentTab] = useState("Goals");
 
   const friendsUsernames = currentUser.friends.map((f) =>
     f.user_from === currentUser.username ? f.user_to : f.user_from
@@ -47,7 +49,13 @@ function UserProfile(props) {
     <>
       <Row>
         <Col lg="3">
-          <Sidebar currentPage="profile" posts={loadedUser?.posts} goals={loadedUser?.goals} setCurrentTab={handleSideBarClick} />
+          <Sidebar
+            currentPage="profile"
+            posts={loadedUser?.posts}
+            goals={loadedUser?.goals}
+            setCurrentTab={handleSideBarClick}
+            currentTab={currentTab}
+          />
         </Col>
         <Col lg="9">
           <div className="px-4">
@@ -70,11 +78,13 @@ function UserProfile(props) {
                       Edit Profile
                     </Button>
                   )}
+
                   {currentUser.username !== loadedUser?.username && !friendsUsernames.includes(loadedUser?.username) && (
                     <SendFriendRequestButton
                       targetUsername={loadedUser?.username}
                     />
                   )}
+                  
                 </div>
               </Col>
 
@@ -103,9 +113,6 @@ function UserProfile(props) {
             <div className="text-center mt-5">
               <h3>
                 {loadedUser?.firstName} {loadedUser?.lastName}
-                <span className="font-weight-light">
-                  , {loadedUser?.age || 27}
-                </span>
               </h3>
 
               <div className="h6 font-weight-300">{loadedUser?.email}</div>
@@ -114,7 +121,60 @@ function UserProfile(props) {
             <div className="mt-5 py-5 border-top text-center">
               <Row className="justify-content-center">
                 <Col lg="12">
-                    {/* The ProfileTab was here */}
+                  {/* The ProfileTab was here */}
+                  <Card className="shadow">
+                    <CardBody>
+                      <TabContent id="myTabContent" activeTab={currentTab}>
+                        <TabPane tabId="Goals" role="tabpanel">
+                          {
+                            loadedUser?.goals?.length === 0 ?
+                              <div className="description">
+                                  <h2>No goals</h2>
+                                  <Button>Post One</Button>
+                              </div> :
+                              // Do the Goals HERE
+                              <div className="description">
+                                {loadedUser?.goals?.map(goal => (
+                                  <div key={goal.id}>
+                                    {goal.id}
+                                  </div>
+                                ))}
+                              </div>
+                          }
+                        </TabPane>
+
+                        <TabPane tabId="Posts" role="tabpanel">
+                          {
+                            loadedUser?.posts?.length === 0 ?
+                              (<div className="description">
+                                <h2>No posts</h2>
+                                <NewPostFormModal buttonText="Post one" />
+                              </div>) : (
+                                <div className="description">
+                                  <NewPostFormModal buttonText="New post" />
+                                  {loadedUser?.posts?.map(p => (
+                                    <Post type="Posts" post={p} key={p.id} />
+                                  ))}
+                                </div>
+                              )
+                          }
+                        </TabPane>
+
+                        <TabPane tabId="Progress" role="tabpanel">
+                          <div className="description">
+                            <Charts />
+                          </div>
+                        </TabPane>
+
+                        <TabPane tabId="Feed" role="tabpanel">
+                          <div className="description">
+
+                          </div>
+                        </TabPane>
+                      </TabContent>
+
+                    </CardBody>
+                  </Card>
                 </Col>
               </Row>
             </div>

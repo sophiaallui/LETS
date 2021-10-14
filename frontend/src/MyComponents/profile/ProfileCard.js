@@ -8,7 +8,7 @@ import ProfileTabs from "MyComponents/ProfileTabs";
 import Api from "api/api";
 import MessageModal from "MyComponents/common/MessageModal";
 import ImageUpload from "MyComponents/common/ImageUpload";
-import SendFriendRequestButton from "./SendFriendRequestButton";
+import SendFriendRequestButton from "../SendFriendRequestButton";
 
 
 function ProfileCard({ username }) {
@@ -54,14 +54,6 @@ function ProfileCard({ username }) {
               <div className="card-profile-image">
 
                 <ImageUpload avatar addBtnClasses="mt-8" />
-
-                {/* <a onClick={(e) => e.preventDefault()}>
-                  <img
-                    alt="..."
-                    className="rounded-circle"
-                    src={require("assets/img/faces/team-4.jpg")}
-                  ></img>
-                </a> */}
               </div>
             </Col>
             <Col

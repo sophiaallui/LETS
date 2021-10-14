@@ -4,17 +4,17 @@ import Api from "api/api";
 import UserContext from "UserContext";
 import { Link } from "react-router-dom";
 
-const Sidebar = ({ currentPage, setCurrentTab }) => {
-    const [ friends, setFriends ] = useState([]);
+const Sidebar = ({ currentPage = "profile", setCurrentTab, currentTab }) => {
+    const [friends, setFriends] = useState([]);
     const { currentUser } = useContext(UserContext);
     const friendsUsernames = currentUser.friends.map((f) =>
         f.user_from === currentUser.username ? f.user_to : f.user_from
     );
-    const [currentTab, setCurrentTab] = useState(null);
+
 
     useEffect(() => {
         const fetchFriends = async () => {
-            try {pp
+            try {
                 const allPromise = Promise.all(
                     friendsUsernames.map((username) => Api.getCurrentUser(username))
                 );
@@ -26,7 +26,7 @@ const Sidebar = ({ currentPage, setCurrentTab }) => {
         };
 
         fetchFriends();
-    }, [ currentUser.username ]);
+    }, [currentUser.username]);
 
     let listItems;
     if (currentPage === "profile") {
@@ -46,6 +46,21 @@ const Sidebar = ({ currentPage, setCurrentTab }) => {
                 </li>
             </>
 
+        )
+    }
+    else if (currentPage === "friends") {
+        listItems = (
+            <>
+                <li className={`sidebarListItem ${currentTab === "Friends" ? "active" : ""}`} onClick={() => setCurrentTab("Friends")}>
+                    <span className="sidebarListItemText">Friends</span>
+                </li>
+                <li className={`sidebarListItem ${currentTab === "Friend Requests" ? "active" : ""}`} onClick={() => setCurrentTab("Friend Requests")}>
+                    <span className="sidebarListItemText">Friend Requests</span>
+                </li>
+                <li className={`sidebarListItem ${currentTab === "Stiill Waiting On" ? "active" : ""}`} onClick={() => setCurrentTab("Still Waiting On")}>
+                    <span className="sidebarListItemText">Still Waiting On</span>
+                </li>
+            </>
         )
     }
     return (
@@ -71,7 +86,7 @@ const Sidebar = ({ currentPage, setCurrentTab }) => {
 
                 <ul className="sidebarFriendList">
                     {friends?.map((user) => (
-                        <Link to={`profile/${user.username}`}>
+                        <Link to={`/profile/${user.username}`}>
                             <li className="sidebarFriend" key={user.username}>
                                 <img
                                     className="sidebarFriendImg"
