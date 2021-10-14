@@ -63,81 +63,83 @@ const Friends = props => {
   console.debug("usersAwaitingMyConfirmation=", usersAwaitingMyConfirmation, "mySentRequests", mySentRequests, "myFriends=", myFriends);
   return (
     <>
+      <Container fluid>
+        <Row className="d-flex justify-content-end mb-3">
+          <Col lg="9">
+            <div className="nav-wrapper">
+              <Nav pills roles="tablist" className="nav-fill flex-column flex-md-row">
+                <NavItem>
+                  <NavLink
+                    onClick={() => setHTabsIcons("hTabsIcons-1")}
+                    className={`mb-sm-3 mb-md-0 ` + (hTabsIcons === "hTabsIcons-1" ? "active" : "")}>
+                    Your Friends
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink
+                    onClick={() => setHTabsIcons("hTabsIcons-2")}
+                    className={`mb-sm-3 mb-md-0 ` + (hTabsIcons === "hTabsIcons-2" ? "active" : "")}>
+                    Friend Requests
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink
+                    onClick={() => setHTabsIcons("hTabsIcons-3")}
+                    className={`mb-sm-3 mb-md-0 ` + (hTabsIcons === "hTabsIcons-3" ? "active" : "")}>
+                    Still Waiting On
+                  </NavLink>
+                </NavItem>
+              </Nav>
+            </div>
+            <Card className="shadow">
+              <CardBody>
+                <TabContent id="myTabContent" activeTab={hTabsIcons}>
 
-      <Row>
-        <Col lg="10">
-          <div className="nav-wrapper">
-            <Nav pills roles="tablist" className="nav-fill flex-column flex-md-row">
-              <NavItem>
-                <NavLink
-                  onClick={() => setHTabsIcons("hTabsIcons-1")}
-                  className={`mb-sm-3 mb-md-0 ` + (hTabsIcons === "hTabsIcons-1" ? "active" : "")}>
-                  Your Friends
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink
-                  onClick={() => setHTabsIcons("hTabsIcons-2")}
-                  className={`mb-sm-3 mb-md-0 ` + (hTabsIcons === "hTabsIcons-2" ? "active" : "")}>
-                  Friend Requests
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink
-                  onClick={() => setHTabsIcons("hTabsIcons-3")}
-                  className={`mb-sm-3 mb-md-0 ` + (hTabsIcons === "hTabsIcons-3" ? "active" : "")}>
-                  Still Waiting On
-                </NavLink>
-              </NavItem>
-            </Nav>
-          </div>
-          <Card className="shadow">
-            <CardBody>
-              <TabContent id="myTabContent" activeTab={hTabsIcons}>
-
-                <TabPane tabId="hTabsIcons-1">
-                  <div className="description">
-                    <h5>Friends ({myFriends.length})</h5>
-                    <Row>
-                      {myFriends?.map(user => (
-                        <Col lg="2" md="6">
-                          <FriendCard type="currentFriends" key={user.username} user={user} />
-                        </Col>
-                      ))}
-                    </Row>
-                  </div>
-                </TabPane>
-
-                <TabPane tabId="hTabsIcons-2">
-                  <div className="description">
-                    <h5>Friend Requests ({usersAwaitingMyConfirmation.length})</h5>
-                    <Row>
-                      {usersAwaitingMyConfirmation.length > 0 &&
-                        usersAwaitingMyConfirmation.map(user => (
+                  <TabPane tabId="hTabsIcons-1">
+                    <div className="description">
+                      <h5>Friends ({myFriends.length})</h5>
+                      <Row>
+                        {myFriends?.map(user => (
                           <Col lg="2" md="6">
-                            <FriendCard type="pending" key={user.username} user={user} />
+                            <FriendCard type="currentFriends" key={user.username} user={user} />
                           </Col>
                         ))}
-                    </Row>
-                  </div>
-                </TabPane>
+                      </Row>
+                    </div>
+                  </TabPane>
 
-                <TabPane tabId="hTabsIcons-3">
-                  <div className="description">
-                    <h5>Still waiting on</h5>
-                    {mySentRequests.length > 0 && mySentRequests.map(user => (
-                      <Col lg="2" md="6">
-                        <FriendCard type="sent" key={user.username} user={user} />
-                      </Col>
-                    ))}
-                  </div>
-                </TabPane>
-              </TabContent>
-            </CardBody>
-          </Card>
+                  <TabPane tabId="hTabsIcons-2">
+                    <div className="description">
+                      <h5>Friend Requests ({usersAwaitingMyConfirmation.length})</h5>
+                      <Row>
+                        {usersAwaitingMyConfirmation.length > 0 &&
+                          usersAwaitingMyConfirmation.map(user => (
+                            <Col lg="2" md="6">
+                              <FriendCard type="pending" key={user.username} user={user} />
+                            </Col>
+                          ))}
+                      </Row>
+                    </div>
+                  </TabPane>
 
-        </Col>
-      </Row>
+                  <TabPane tabId="hTabsIcons-3">
+                    <div className="description">
+                      <h5>Still waiting on</h5>
+                      {mySentRequests.length > 0 && mySentRequests.map(user => (
+                        <Col lg="2" md="6">
+                          <FriendCard type="sent" key={user.username} user={user} />
+                        </Col>
+                      ))}
+                    </div>
+                  </TabPane>
+                </TabContent>
+              </CardBody>
+            </Card>
+
+          </Col>
+        </Row>
+      </Container>
+
 
     </>
   )

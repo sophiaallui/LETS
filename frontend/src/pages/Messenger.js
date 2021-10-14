@@ -116,7 +116,7 @@ function Messenger() {
 		const getMessages = async () => {
 			try {
                 if(currentChat) {
-                    const res = await Api.getMessages(currentChat.roomId);
+                    const res = await Api.getMessages(currentChat?.roomId);
                     setMessages(res);
                 }
 
