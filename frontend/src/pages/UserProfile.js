@@ -45,6 +45,7 @@ function UserProfile(props) {
   const handleSideBarClick = (tab) => {
     setCurrentTab(tab)
   }
+
   return (
     <>
       <Row>
@@ -62,12 +63,25 @@ function UserProfile(props) {
             <Row className="justify-content-center">
               <Col className="order-lg-2" lg="1">
                 <div className="card-profile-image">
-                  <ImageUpload avatar addBtnClasses="mt-7" />
+                  <img 
+                    src={
+                      loadedUser?.profileImage ?
+                      loadedUser?.profileImage :
+                      require("assets/img/placeholder.jpg")
+                    }
+                  />
+                  {
+                    loadedUser?.username === 
+                      currentUser.username && 
+                        !currentUser.profileImage && 
+                      <ImageUpload avatar addBtnClasses="mt-7" />
+                  }
                 </div>
               </Col>
               <Col className="order-lg-3 text-lg-right" lg="5">
                 <div className="card-profile-actions py-4 mt-lg-0">
-                  {currentUser.username === loadedUser?.username && (
+                  {currentUser.username === 
+                    loadedUser?.username && (
                     <Button
                       className="float-right"
                       color="info"
@@ -78,7 +92,10 @@ function UserProfile(props) {
                     </Button>
                   )}
 
-                  {currentUser.username !== loadedUser?.username && !friendsUsernames.includes(loadedUser?.username) && (
+                  {currentUser.username !== 
+                    loadedUser?.username && 
+                      !friendsUsernames.includes(loadedUser?.username) 
+                    && (
                     <SendFriendRequestButton
                       targetUsername={loadedUser?.username}
                     />
@@ -149,13 +166,12 @@ function UserProfile(props) {
                                 <h2>No posts</h2>
                                 {currentUser.username === loadedUser?.username && <NewPostFormModal buttonText="Post one" />}
                               </>
-
                               )
                               : (
                                 <>
                                   <NewPostFormModal buttonText="New post" />
                                   {loadedUser?.posts?.map(p => (
-                                    <Post type="Posts" post={p} key={p.id} />
+                                    <Post profileImage={loadedUser?.profileImage} type="Posts" post={p} key={p.id} />
                                   ))}
                                 </>
                               )

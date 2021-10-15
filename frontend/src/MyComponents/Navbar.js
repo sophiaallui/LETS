@@ -49,7 +49,7 @@ function NavbarOrange({ logout }) {
         </NavItem>
         <NavItem>
           <NavLink tag={Link} to="/friends">
-            <i class="fas fa-users"></i>
+            <i className="fas fa-users"></i>
             Friends
           </NavLink>
         </NavItem>

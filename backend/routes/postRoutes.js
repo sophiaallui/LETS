@@ -30,10 +30,10 @@ router.get("/:postId", ensureLoggedIn, async (req, res, next) => {
 
 // POST /posts/:username
 // Accepts { content }
-// returns => { id, postedBy, content, createdAt }
+// returns => { id, postedBy, content, createdAt, image }
 router.post("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
   try {
-    const newPost = await Post.create(req.params.username, req.body.content);
+    const newPost = await Post.create(req.params.username, req.body);
     return res.json({ post : newPost });
   } catch(e) {
     return next(e);

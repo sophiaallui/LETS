@@ -6,7 +6,7 @@ const path = require("path");
 const cors = require('cors');
 const morgan = require("morgan");
 const { NotFoundError } = require("./ExpressError");
-const { authenticateJWT } = require("./middleware/auth");
+const { authenticateJWT, ensureLoggedIn } = require("./middleware/auth");
 
 const multer = require("multer");
 const knexDB = require("./knexDB");
@@ -23,6 +23,7 @@ const calendarRoutes = require("./routes/calendarEventRoutes");
 
 // ROUTES for chat + rooms
 const roomRoutes = require("./routes/roomRoutes");
+const db = require('./knexDB');
 
 app.use(cors());
 app.use(express.json());
@@ -47,20 +48,50 @@ const storage = multer.diskStorage({
 		cb(null, "public/images");
 	},
 	filename : (req, file, cb) => {
-		cb(null, req.body.name)
+		cb(null, req.body.name) // public/images/req.body.name
 	},
 });
 
 const upload = multer({ storage : storage });
-app.post("/api/upload", upload.single("file"), (req, res, next) => {
+app.post("/api/images", upload.single("file"), async (req, res, next) => {
 	try {
-		return;
+		console.log(req.file)
+		const { filename, mimetype, size } = req.file;
+		const { username } = res.locals.user
+		const filepath = req.file.path;
+		
+		const fileResult = await knexDB.insert({ 
+			filename, 
+			filepath, 
+			mimetype, 
+			size,
+			username,
+		}).into("image_files");
+
+		return res.json({ success : true, filename })
 	}
 	catch(e) {
 		return next(e);
 	}
 })
 
+app.get("/api/images/:filename", (req, res) => {
+	const { filename } = req.params;
+	db.select("*")
+		.from("image_files")
+		.where({ filename })
+		.then(images => {
+			if(images[0]) {
+				const dirname = path.resolve();
+				const fullfilepath = path.join(dirname, images[0].filepath);
+				return res.type(images[0].mimetype).sendFile(fullfilepath)
+			}
+			return Promise.reject(new NotFoundError())
+		})
+		.catch(e => {
+			throw new NotFoundError(e.stack)
+		})
+})
 
 /** Handle 404 errors -- this matches everything */
 app.use((req, res, next) => {

@@ -7,23 +7,12 @@ import {
   CardBody,
   FormGroup,
   Form,
-  TextArea,
-  Input,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
   Modal,
 } from "reactstrap";
 import UserContext from "UserContext";
-import ImageUpload from "components/upload/Upload";
-// CREATE TABLE posts (
-//   id SERIAL PRIMARY KEY,
-//   posted_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE,
-//   content TEXT NOT NULL,
-//   created_at TIMESTAMP NOT NULL DEFAULT NOW() 
-// );
+import ImageUpload from "MyComponents/common/ImageUpload";
 import Api from "api/api";
-import axios from "axios";
+
 
 const NewPostFormModal = ({ buttonText }) => {
 
@@ -56,24 +45,26 @@ const NewPostFormModal = ({ buttonText }) => {
   }
 
   const handleSubmit = async e => {
+    const newPost = { ...formData }
     e.preventDefault();
-    const { username } = currentUser;
-    const { content } = formData;
-    const newPost = await Api.createPost(username, { content });
-
-    const headers = {
-      Authorization : `Bearer ${Api.token}`,
-      post_id : newPost?.id,
-      username : username
+    if(file) {
+      const data = new FormData();
+      const filename = Date.now() + file.name;
+      data.append("name", filename);
+      data.append("file", file)
+      newPost.image = filename;
+      console.log(newPost)
+      try {
+        await Api.request(`api/images`, data, "POST")
+      } catch(e) {}
     }
-    const imageFile = await axios({
-      url : "http://localhost:3001/images/",
-      method : "POST",
-      data : file,
-      headers
-    });
-    console.log(imageFile);
-    console.log(newPost)
+    try {
+      
+      await Api.createPost(currentUser.username, newPost, "POST");
+      window.location.reload();
+    } catch(e) {}
+    console.log("from newPostFormModal" ,file);
+
   }
 
   return (

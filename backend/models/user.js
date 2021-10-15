@@ -63,7 +63,7 @@ class User {
     const results = await db.query(
       `INSERT INTO users (username, email, password, first_name, last_name, is_admin)
         VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING username, first_name AS "firstName", last_name AS "lastName", email, is_admin AS "isAdmin"`,
+        RETURNING username, first_name AS "firstName", last_name AS "lastName", email, is_admin AS "isAdmin", profile_image AS "profileImage"`,
       [username, email, hashedPW, firstName, lastName, isAdmin]
     );
     const user = results.rows[0];
@@ -74,7 +74,7 @@ class User {
    * Returns [{ username, firstName, lastName, email, isAdmin}, ...]
    */
   static async findAll(q) {
-    let baseQuery = `SELECT username, email, first_name AS "firstName", last_name AS "lastName" FROM users`;
+    let baseQuery = `SELECT username, email, first_name AS "firstName", last_name AS "lastName", profile_image AS "profileImage" FROM users`;
     let whereExpressions = [];
     let queryValues = [];
 
@@ -115,7 +115,8 @@ class User {
       email, 
       first_name AS "firstName", 
       last_name AS "lastName", 
-      is_admin AS "isAdmin"
+      is_admin AS "isAdmin",
+      profile_image AS "profileImage"
         FROM users WHERE username = $1`,
       [username]
     );
@@ -124,7 +125,7 @@ class User {
       throw new NotFoundError(`No user : ${username}`);
     }
     const userPosts = await db.query(
-      `SELECT id, posted_by AS "postedBy", content, created_at AS "createdAt" FROM posts WHERE posted_by = $1`, [user.username]
+      `SELECT id, posted_by AS "postedBy", content, created_at AS "createdAt", image FROM posts WHERE posted_by = $1`, [user.username]
     );
     const userMeasurements = await db.query(
       `SELECT 
@@ -179,6 +180,7 @@ class User {
       firstName: "first_name",
       lastName: "last_name",
       isAdmin: "is_admin",
+      profileImage : "profileImage"
     });
     const usernameVarIdx = "$" + (values.length + 1);
     const querySQL = `UPDATE users

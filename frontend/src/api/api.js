@@ -59,7 +59,8 @@ class Api {
   static async deleteCalendarEvent(currentUsername, eventId) {
     const res = await this.request(`calendar-events/${currentUsername}/${eventId}`, {}, "DELETE")
   }
-
+  
+  // post stuff
   static async createPost(currentUsername, content) {
     const res = await this.request(`posts/${currentUsername}`, content, "POST");
     return res.post

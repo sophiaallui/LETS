@@ -39,7 +39,7 @@ class ImageUpload extends React.Component {
     // in this function you can save the image (this.state.file) on form submit
     // you have to call it yourself
   }
-  
+
   handleClick() {
     this.refs.fileInput.click();
   }
@@ -52,41 +52,44 @@ class ImageUpload extends React.Component {
   }
   render() {
     return (
-      <div className="fileinput text-center">
-        <input type="file" onChange={this.handleImageChange} ref="fileInput" />
-        <div className={"thumbnail" + (this.props.avatar ? " img-circle" : "")}>
-          <img src={this.state.imagePreviewUrl} alt="..." />
-        </div>
-        <div>
-          {this.state.file === null ? (
-            <Button
-              color={this.props.addBtnColor}
-              className={this.props.addBtnClasses}
-              onClick={() => this.handleClick()}
-            >
-              {this.props.avatar ? "Add Photo" : "Select image"}
-            </Button>
-          ) : (
-            <span>
+      <form>
+        <div className="fileinput text-center">
+          <input type="file" onChange={this.handleImageChange} ref="fileInput" />
+          <div className={"thumbnail" + (this.props.avatar ? " img-circle" : "")}>
+            <img src={this.state.imagePreviewUrl} alt="..." />
+          </div>
+          <div>
+            {this.state.file === null ? (
               <Button
-                color={this.props.changeBtnColor}
-                className={this.props.changeBtnClasses}
+                color={this.props.addBtnColor}
+                className={this.props.addBtnClasses}
                 onClick={() => this.handleClick()}
               >
-                Change
+                {this.props.avatar ? "Add Photo" : "Select image"}
               </Button>
-              {this.props.avatar ? <br /> : null}
-              <Button
-                color={this.props.removeBtnColor}
-                className={this.props.removeBtnClasses}
-                onClick={() => this.handleRemove()}
-              >
-                <i className="fa fa-times" /> Remove
-              </Button>
-            </span>
-          )}
+            ) : (
+              <span>
+                <Button
+                  color={this.props.changeBtnColor}
+                  className={this.props.changeBtnClasses}
+                  onClick={() => this.handleClick()}
+                >
+                  Change
+                </Button>
+                {this.props.avatar ? <br /> : null}
+                <Button
+                  color={this.props.removeBtnColor}
+                  className={this.props.removeBtnClasses}
+                  onClick={() => this.handleRemove()}
+                >
+                  <i className="fa fa-times" /> Remove
+                </Button>
+              </span>
+            )}
+          </div>
         </div>
-      </div>
+      </form>
+
     );
   }
 }

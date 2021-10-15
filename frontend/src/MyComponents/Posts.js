@@ -22,8 +22,9 @@ import UserContext from "UserContext";
 
 import { format } from "timeago.js";
 
-function Post({ type, post }) {
+function Post({ post, profileImage }) {
   const { currentUser } = useContext(UserContext);
+  const PF = process.env.PUBLIC_IMAGES_FOLDER;
   return (
     <>
       <Card>
@@ -33,8 +34,12 @@ function Post({ type, post }) {
               <img
                 alt="..."
                 className="avatar"
-                src={require("assets/img/faces/team-1.jpg")}
-              ></img>
+                src={
+                  profileImage ? 
+                  PF + profileImage
+                  : require("assets/img/placeholder.jpg")
+                }
+              />
             </a>
             <div className="mx-3">
               <a
@@ -79,7 +84,8 @@ function Post({ type, post }) {
             alt="..."
             className="img-fluid rounded"
             src={require("assets/img/sections/mohamed.jpg")}
-          ></img>
+          />
+
           <Row className="align-items-center my-3 pb-3 border-bottom">
             <Col sm="6">
               <div className="icon-actions">
@@ -106,7 +112,6 @@ function Post({ type, post }) {
                 <div className="avatar-group">
                   <a
                     className="avatar avatar-xs rounded-circle"
-
                     onClick={(e) => e.preventDefault()}
                     id="tooltip777026221"
                   >
@@ -160,8 +165,7 @@ function Post({ type, post }) {
                 alt="..."
                 className="media-comment-avatar rounded-circle"
                 src={require("assets/img/faces/team-1.jpg")}
-              ></img>
-
+              />
               <Media>
                 <div className="media-comment-text">
                   <h6 className="h5 mt-0">Michael Lewis</h6>
@@ -220,7 +224,7 @@ function Post({ type, post }) {
                 alt="..."
                 className="avatar avatar-lg rounded-circle mb-4"
                 src={require("assets/img/faces/team-3.jpg")}
-              ></img>
+              />
               <Media body>
                 <Form>
                   <Input

@@ -4,6 +4,7 @@ CREATE TABLE users (
   password TEXT NOT NULL,
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
+  profile_image TEXT DEFAULT NULL,
   is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
@@ -51,7 +52,8 @@ CREATE TABLE posts (
   id SERIAL PRIMARY KEY,
   posted_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE,
   content TEXT NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW() 
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  image TEXT DEFAULT NULL 
 );
 
 CREATE TABLE posts_comments (
