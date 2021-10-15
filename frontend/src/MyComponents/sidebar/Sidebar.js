@@ -63,7 +63,7 @@ const Sidebar = ({ currentPage = "profile", setCurrentTab, currentTab }) => {
                     <i className="ni ni-check-bold mr-2" />
                     <span className="sidebarListItemText">Friend Requests</span>
                 </li>
-                <li className={`sidebarListItem ${currentTab === "Stiill Waiting On" ? "active" : ""}`} onClick={() => setCurrentTab("Still Waiting On")}>
+                <li className={`sidebarListItem ${currentTab === "Still Waiting On" ? "active" : ""}`} onClick={() => setCurrentTab("Still Waiting On")}>
                     <i class="far fa-clock mr-2" />
                     <span className="sidebarListItemText">Still Waiting On</span>
                 </li>
