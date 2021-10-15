@@ -95,7 +95,7 @@ const Search = (props) => {
 			<div className={`${hideSearchResults ? 'hide-row-container' : 'row-container'}`}>
 				<div className='inner-row-container'>
 					{results ? (
-						results.length == 0 ? (
+						results.length === 0 ? (
 							<Row className='no-match'>
 								<Col>No match</Col>
 							</Row>

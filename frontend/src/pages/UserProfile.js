@@ -57,15 +57,15 @@ function UserProfile(props) {
             currentTab={currentTab}
           />
         </Col>
-        <Col lg="9">
+        <Col lg="9" className="mt-7">
           <div className="px-4">
             <Row className="justify-content-center">
               <Col className="order-lg-2" lg="1">
                 <div className="card-profile-image">
-                  <ImageUpload avatar addBtnClasses="mt-8" />
+                  <ImageUpload avatar addBtnClasses="mt-7" />
                 </div>
               </Col>
-              <Col className="order-lg-3 text-lg-right " lg="5">
+              <Col className="order-lg-3 text-lg-right" lg="5">
                 <div className="card-profile-actions py-4 mt-lg-0">
                   {currentUser.username === loadedUser?.username && (
                     <Button
@@ -117,7 +117,7 @@ function UserProfile(props) {
               <div className="h6 font-weight-300">{loadedUser?.email}</div>
             </div>
 
-            <div className="mt-5 py-5 border-top text-center">
+            <div className="mt-3 py-5 border-top text-center">
               <Row className="justify-content-center">
                 <Col lg="12">
                   {/* The ProfileTab was here */}
@@ -145,31 +145,29 @@ function UserProfile(props) {
                         <TabPane tabId="Posts" role="tabpanel">
                           {
                             loadedUser?.posts?.length === 0 ?
-                              (<div className="description">
+                              (<>
                                 <h2>No posts</h2>
                                 {currentUser.username === loadedUser?.username && <NewPostFormModal buttonText="Post one" />}
-                              </div>)
+                              </>
+
+                              )
                               : (
-                                <div className="description">
+                                <>
                                   <NewPostFormModal buttonText="New post" />
                                   {loadedUser?.posts?.map(p => (
                                     <Post type="Posts" post={p} key={p.id} />
                                   ))}
-                                </div>
+                                </>
                               )
                           }
                         </TabPane>
 
                         <TabPane tabId="Progress" role="tabpanel">
-                          <div className="description">
-                            <Charts />
-                          </div>
+                          <Charts />
                         </TabPane>
 
                         <TabPane tabId="Feed" role="tabpanel">
-                          <div className="description">
 
-                          </div>
                         </TabPane>
                       </TabContent>
 

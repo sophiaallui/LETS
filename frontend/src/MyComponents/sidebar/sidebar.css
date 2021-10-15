@@ -17,7 +17,8 @@
 }
 
 .sidebarWrapper {
-  padding : 20px;
+  padding-left : 25px;
+  padding-right: 20px;
 }
 
 .sidebarList {
@@ -29,9 +30,22 @@
 .sidebarListItem {
   display : flex;
   align-items: center;
-  margin-bottom: 20px;
+  height : 3rem;
+  padding-left: 10px;
+  margin-top: 10px;
+  border : medium none;
+  border-radius: 30px;
 }
 
+.sidebarListItem.active {
+  background-color: #fb6340;
+  color : white;
+  transition : background-color .2s;
+}
+
+.sidebarListItem:hover {
+  cursor : pointer;
+}
 
 .sidebarIcon {
   margin-right: 15px;
@@ -43,6 +57,7 @@
   padding : 10px;
   border-radius: 5px;
   font-weight: 500;
+  margin-top: 15px;
 }
 
 .sidebarHr {

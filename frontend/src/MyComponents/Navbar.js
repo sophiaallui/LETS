@@ -15,7 +15,7 @@ import {
   DropdownMenu
 } from "reactstrap";
 import AuthContext from "UserContext";
-import Search from "MyComponents/Search";
+import Search from "MyComponents/search/Search";
 
 function NavbarOrange({ logout }) {
   const { currentUser } = useContext(AuthContext);
