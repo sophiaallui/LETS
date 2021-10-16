@@ -119,13 +119,15 @@ app.delete(
       const postRes = await db.query(`SELECT id FROM posts WHERE image = $1`, [filename]);
       if(userRes.rows.length) {
         const username = userRes.rows[0].username
-        await db.query(`UPDATE users SET profile_image = null WHERE username = $1`, [username])
+        await db.query(`UPDATE users SET profile_image = NULL WHERE username = $1`, [username])
       }
       if(postRes.rows.length) {
         const postId = postRes.rows[0].id;
-        await db.query(`UPDATE posts SET image = null WHERE id = $1`, [postId])
+        await db.query(`UPDATE posts SET image = NULL WHERE id = $1`, [postId])
       }
-			fs.unlink(path.join(__dirname, "public/images/"+filename));
+			
+      await fs.promises.unlink(path.join(__dirname, "public/images/"+filename))
+      return res.json({ deleted : filename })
     } 
 		catch (e) {
       return next(e);
