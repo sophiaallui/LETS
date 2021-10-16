@@ -5,7 +5,7 @@ import {
 import Api from "api/api";
 import UserContext from "UserContext";
 
-const SendFriendRequestButton = ({ targetUsername, setFriendRequest, buttonText, setErrors }) => {
+const SendFriendRequestButton = ({ targetUsername, setFriendRequest, buttonText }) => {
   const { currentUser } = React.useContext(UserContext);
   const handleClick = async e => {
     e.preventDefault();
@@ -16,7 +16,6 @@ const SendFriendRequestButton = ({ targetUsername, setFriendRequest, buttonText,
     } 
     catch(e) {
       console.error("SendFriendRequestButton Error:", e);
-      setErrors(e);
     }
   }
   return (

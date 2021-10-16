@@ -5,6 +5,7 @@ import { Button, Card, CardHeader, CardBody, Row } from "reactstrap";
 import { Link } from "react-router-dom";
 
 function FriendCard({ user, type }) {
+  const PF = process.env.REACT_APP_PF;
   let button;
   if (type === "pending") {
     button = (
@@ -48,7 +49,7 @@ function FriendCard({ user, type }) {
                 className="img img-raised rounded-circle"
                 src={
                   user.profileImage ?
-                    require("assets/img/faces/team-4.jpg") :
+                    PF + user.profileImage :
                     require("assets/img/placeholder.jpg")
                 }
               />
