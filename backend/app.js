@@ -34,8 +34,10 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(authenticateJWT);
 
-app.use("/images", express.static(path.join(__dirname, "public/images")));
+app.use(express.static("public"))
 
+// app.use(express.static(path.join(__dirname, "public/images")));
+//                                express.static(absolute path + public/images)
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/messages", messageRoutes);
@@ -49,7 +51,7 @@ app.use("/room", roomRoutes);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "public/images");
+    cb(null, "./public/images");
   },
   filename: (req, file, cb) => {
     cb(null, req.body.name); // public/images/req.body.name
@@ -57,6 +59,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
 app.post(
   "/api/images",
   ensureLoggedIn,
@@ -84,6 +87,7 @@ app.post(
     }
   }
 );
+
 
 app.get("/api/images/:filename", ensureLoggedIn, (req, res) => {
   const { filename } = req.params;

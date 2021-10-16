@@ -26,10 +26,11 @@ function UserProfile(props) {
   const { currentUser } = useContext(UserContext);
   const [loadedUser, setLoadedUser] = useState(null);
   const [currentTab, setCurrentTab] = useState("Goals");
-  const PF = process.env.PF;
+  const PF = process.env.REACT_APP_PF;
   const friendsUsernames = currentUser.friends.map((f) =>
     f.user_from === currentUser.username ? f.user_to : f.user_from
   );
+
   useEffect(() => {
     const getLoadedUser = async () => {
       try {
