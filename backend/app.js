@@ -125,7 +125,7 @@ app.delete(
         const postId = postRes.rows[0].id;
         await db.query(`UPDATE posts SET image = null WHERE id = $1`, [postId])
       }
-			fs.unlink(path.join(__dirname, filename));
+			fs.unlink(path.join(__dirname, "public/images/"+filename));
     } 
 		catch (e) {
       return next(e);
