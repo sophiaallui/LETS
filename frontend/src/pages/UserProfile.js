@@ -26,7 +26,8 @@ function UserProfile(props) {
   const { currentUser } = useContext(UserContext);
   const [loadedUser, setLoadedUser] = useState(null);
   const [currentTab, setCurrentTab] = useState("Goals");
-  const PF = process.env.PF;
+  const [file, setFile] = useState(null);
+  const PF = process.env.REACT_APP_PF;
   const friendsUsernames = currentUser.friends.map((f) =>
     f.user_from === currentUser.username ? f.user_to : f.user_from
   );
@@ -54,6 +55,26 @@ function UserProfile(props) {
     setCurrentTab(tab);
   };
 
+  const handleProfileImageSubmit = async (e) => {
+    e.preventDefault();
+    if (file) {
+      const data = new FormData();
+      const filename = Date.now() + file.name;
+      data.append("name", filename);
+      data.append("file", file);
+      try {
+        await Api.request(`api/images`, data, "POST");
+        await Api.updateUser(
+          currentUser?.username,
+          { profileImage: filename },
+          "PUT"
+        );
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    window.location.reload();
+  };
   return (
     <>
       <Row>
@@ -80,7 +101,20 @@ function UserProfile(props) {
                   />
                   {loadedUser?.username === currentUser.username &&
                     !currentUser.profileImage && (
-                      <ImageUpload avatar addBtnClasses="mt-7" />
+                      <form onSubmit={handleProfileImageSubmit}>
+                        <ImageUpload
+                          avatar
+                          addBtnClasses="mt-7"
+                          setFile={setFile}
+                        />
+                        {file && (
+                          <Button 
+                           size="sm" 
+                           onSubmit={handleProfileImageSubmit}>
+                             Post
+                          </Button>
+                        )}
+                      </form>
                     )}
                 </div>
               </Col>
