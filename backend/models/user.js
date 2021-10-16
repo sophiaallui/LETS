@@ -168,9 +168,7 @@ class User {
    *   { username, email, password, firstName, lastName, isAdmin }
    *
    * Throws NotFoundError if not found.
-   *
-   * WARNING: this function can set a new password or make a user an admin.
-   * Callers of this function must be certain they have validated inputs to this
+
    */
   static async update(username, data) {
     if (data.password) {
