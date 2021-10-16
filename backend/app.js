@@ -3,13 +3,13 @@
 const express = require('express');
 const app = express();
 const path = require("path");
+const fs = require("fs");
 const cors = require('cors');
 const morgan = require("morgan");
 const { NotFoundError } = require("./ExpressError");
-const { authenticateJWT, ensureLoggedIn } = require("./middleware/auth");
+const { authenticateJWT, ensureLoggedIn, ensureCorrectUserOrAdmin } = require("./middleware/auth");
 
 const multer = require("multer");
-const knexDB = require("./knexDB");
 
 // ROUTES IMPORTS
 const authRoutes = require("./routes/authRoutes");
@@ -53,7 +53,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage : storage });
-app.post("/api/images", upload.single("file"), async (req, res, next) => {
+app.post("/api/images", ensureLoggedIn, upload.single("file"), async (req, res, next) => {
 	try {
 		console.log(req.file)
 		const { filename, mimetype, size } = req.file;
@@ -75,7 +75,7 @@ app.post("/api/images", upload.single("file"), async (req, res, next) => {
 	}
 })
 
-app.get("/api/images/:filename", (req, res) => {
+app.get("/api/images/:filename", ensureCorrectUserOrAdmin, (req, res) => {
 	const { filename } = req.params;
 	db.select("*")
 		.from("image_files")
@@ -92,6 +92,24 @@ app.get("/api/images/:filename", (req, res) => {
 			throw new NotFoundError(e.stack)
 		})
 })
+
+app.delete("/api/images/:filename/:username", ensureCorrectUserOrAdmin, async(req, res, next) => {
+ try {
+ 	const { filename, username } = req.params;
+ 	const usernameAndPostId = await db("image_files")
+ 									.where({ username, filename	})
+ 									.del()
+ 									.returning(['post_id', 'username'])
+ 	const [postId, username] = usernameAndPostId;
+ 	if(postId) {
+ 		db("posts")
+ 	}
+ } 
+ catch(e) {
+ 	return next(e);
+ }
+})
+
 
 /** Handle 404 errors -- this matches everything */
 app.use((req, res, next) => {

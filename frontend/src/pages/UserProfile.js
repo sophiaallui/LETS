@@ -18,7 +18,7 @@ function UserProfile(props) {
   const { currentUser } = useContext(UserContext);
   const [loadedUser, setLoadedUser] = useState(null);
   const [currentTab, setCurrentTab] = useState("Goals");
-
+  const PF = process.env.PUBLIC_IMAGES_FOLDER;
   const friendsUsernames = currentUser.friends.map((f) =>
     f.user_from === currentUser.username ? f.user_to : f.user_from
   );
@@ -66,7 +66,7 @@ function UserProfile(props) {
                   <img 
                     src={
                       loadedUser?.profileImage ?
-                      loadedUser?.profileImage :
+                      PF + loadedUser.profileImage :
                       require("assets/img/placeholder.jpg")
                     }
                   />
