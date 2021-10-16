@@ -8,9 +8,9 @@ const cors = require("cors");
 const morgan = require("morgan");
 const { NotFoundError } = require("./ExpressError");
 const {
-  authenticateJWT,
-  ensureLoggedIn,
-  ensureCorrectUserOrAdmin,
+    authenticateJWT,
+    ensureLoggedIn,
+    ensureCorrectUserOrAdmin,
 } = require("./middleware/auth");
 
 const multer = require("multer");
@@ -27,7 +27,8 @@ const calendarRoutes = require("./routes/calendarEventRoutes");
 
 // ROUTES for chat + rooms
 const roomRoutes = require("./routes/roomRoutes");
-const db = require("./knexDB");
+const knexDB = require("./knexDB");
+const db = require("./db");
 
 app.use(cors());
 app.use(express.json());
@@ -50,114 +51,101 @@ app.use("/calendar-events", calendarRoutes);
 app.use("/room", roomRoutes);
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "./public/images");
-  },
-  filename: (req, file, cb) => {
-    cb(null, req.body.name); // public/images/req.body.name
-  },
+    destination: (req, file, cb) => {
+        cb(null, "./public/images");
+    },
+    filename: (req, file, cb) => {
+        cb(null, req.body.name); // public/images/req.body.name
+    },
 });
 
 const upload = multer({ storage: storage });
 
 app.post(
-  "/api/images",
-  ensureLoggedIn,
-  upload.single("file"),
-  async (req, res, next) => {
-    try {
-      console.log(req.file);
-      const { filename, mimetype, size } = req.file;
-      const { username } = res.locals.user;
-      const filepath = req.file.path;
+    "/api/images",
+    ensureLoggedIn,
+    upload.single("file"),
+    async (req, res, next) => {
+        try {
+            console.log(req.file);
+            const { filename, mimetype, size } = req.file;
+            const { username } = res.locals.user;
+            const filepath = req.file.path;
 
-      const fileResult = await db
-        .insert({
-          filename,
-          filepath,
-          mimetype,
-          size,
-          username,
-        })
-        .into("image_files");
+            const fileResult = await knexDB
+                .insert({
+                    filename,
+                    filepath,
+                    mimetype,
+                    size,
+                    username,
+                })
+                .into("image_files");
 
-      return res.json({ success: true, filename });
-    } catch (e) {
-      return next(e);
+            return res.json({ success: true, filename });
+        } catch (e) {
+            return next(e);
+        }
     }
-  }
 );
 
 
 app.get("/api/images/:filename", ensureLoggedIn, (req, res) => {
-  const { filename } = req.params;
-  db.select("*")
-    .from("image_files")
-    .where({ filename })
-    .then((images) => {
-      if (images[0]) {
-        const dirname = path.resolve();
-        const fullfilepath = path.join(dirname, images[0].filepath);
-        return res.type(images[0].mimetype).sendFile(fullfilepath);
-      }
-      return Promise.reject(new NotFoundError());
-    })
-    .catch((e) => {
-      throw new NotFoundError(e.stack);
-    });
+    const { filename } = req.params;
+    knexDB.select("*")
+        .from("image_files")
+        .where({ filename })
+        .then((images) => {
+            if (images[ 0 ]) {
+                const dirname = path.resolve();
+                const fullfilepath = path.join(dirname, images[ 0 ].filepath);
+                return res.type(images[ 0 ].mimetype).sendFile(fullfilepath);
+            }
+            return Promise.reject(new NotFoundError());
+        })
+        .catch((e) => {
+            throw new NotFoundError(e.stack);
+        });
 });
 
 app.delete(
-  "/api/images/:filename/:username",
-  ensureCorrectUserOrAdmin,
-  async (req, res, next) => {
-    try {
-      const { filename, username } = req.params;
-      const usernameAndPostId = await db("image_files")
-        .where({ username, filename })
-        .del()
-        .returning(["post_id", "username"]);
+    "/api/images/:filename/:username",
 
-      const [postId] = usernameAndPostId;
-
-      if (postId) {
-        db("posts").where({ id: postId }).then(posts => {
-					if(posts[0].image === filename) {
-						db("posts").where({ id : postId }).update({ image : null }, ['*'])
-					}
-				})
-      }
-
-      if (username) {
-        db("users").where({ username }).then(users => {
-					if(users[0].profile_image === filename) {
-						db("users").where({ username }).update({ profile_image : null}, ["*"]);
-					}
-				})
-			}
-
-			fs.unlink(path.join(__dirname, filename));
-    } 
-		catch (e) {
-      return next(e);
+    async (req, res, next) => {
+        try {
+            const { filename, username } = req.params;
+            const fileDelResults = await db.query(
+                `DELETE FROM image_files WHERE filname = $1 OR username = $2 RETURNING post_id`, [filename, username]
+            );
+            if(!fileDelResults.rows.length) {
+                throw new NotFoundError()
+            }
+            const postId = fileDelResults.rows[0].post_id;
+            const postDelResults = await db.query(`UDPATE posts SET image = null WHERE id = $1`, [postId]);
+            const userDeleteResults = await db.query(`UPDATE users SET profile_image = null WHERE username = $1`, [username]);
+            fs.unlink(path.join(__dirname, filename));
+            return res.json({ deleted: filename })
+        }
+        catch (e) {
+            return next(e);
+        }
     }
-  }
 );
 
 /** Handle 404 errors -- this matches everything */
 app.use((req, res, next) => {
-  return next(new NotFoundError());
+    return next(new NotFoundError());
 });
 
 app.use((err, req, res, next) => {
-  if (process.env.NODE_ENV !== "test") {
-    console.error(err.stack);
-  }
-  const status = err.status || 500;
-  const message = err.message;
-  return res.status(status).json({
-    error: { message, status },
-  });
+    if (process.env.NODE_ENV !== "test") {
+        console.error(err.stack);
+    }
+    const status = err.status || 500;
+    const message = err.message;
+    return res.status(status).json({
+        error: { message, status },
+    });
 });
 
 module.exports = app;
