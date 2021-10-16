@@ -41,11 +41,11 @@ const Sidebar = ({ currentPage = "profile", setCurrentTab, currentTab }) => {
                     <span className="sidebarListItemText">Posts</span>
                 </li>
                 <li className={`sidebarListItem ${currentTab === "Progress" ? "active" : ""}`} onClick={() => setCurrentTab("Progress")}>
-                    <i class="fas fa-chart-line mr-2" />
+                    <i className="fas fa-chart-line mr-2" />
                     <span className="sidebarListItemText">Progress</span>
                 </li>
                 <li className={`sidebarListItem ${currentTab === "Feed" ? "active" : ""}`} onClick={() => setCurrentTab("Feed")}>
-                    <i class="fas fa-th-list mr-2" />
+                    <i className="fas fa-th-list mr-2" />
                     <span className="sidebarListItemText">Feed</span>
                 </li>
             </>

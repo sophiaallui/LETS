@@ -2,7 +2,15 @@ import React, { useEffect, useContext, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
 // reactstrap components
-import { Button, Row, Col, Card, CardBody, TabContent, TabPane } from "reactstrap";
+import {
+  Button,
+  Row,
+  Col,
+  Card,
+  CardBody,
+  TabContent,
+  TabPane,
+} from "reactstrap";
 import Sidebar from "MyComponents/sidebar/Sidebar";
 // Core Components
 import Api from "api/api";
@@ -18,7 +26,7 @@ function UserProfile(props) {
   const { currentUser } = useContext(UserContext);
   const [loadedUser, setLoadedUser] = useState(null);
   const [currentTab, setCurrentTab] = useState("Goals");
-  const PF = process.env.PUBLIC_IMAGES_FOLDER;
+  const PF = process.env.PF;
   const friendsUsernames = currentUser.friends.map((f) =>
     f.user_from === currentUser.username ? f.user_to : f.user_from
   );
@@ -43,8 +51,8 @@ function UserProfile(props) {
   );
 
   const handleSideBarClick = (tab) => {
-    setCurrentTab(tab)
-  }
+    setCurrentTab(tab);
+  };
 
   return (
     <>
@@ -63,25 +71,22 @@ function UserProfile(props) {
             <Row className="justify-content-center">
               <Col className="order-lg-2" lg="1">
                 <div className="card-profile-image">
-                  <img 
+                  <img
                     src={
-                      loadedUser?.profileImage ?
-                      PF + loadedUser.profileImage :
-                      require("assets/img/placeholder.jpg")
+                      loadedUser?.profileImage
+                        ? PF + loadedUser?.profileImage
+                        : require("assets/img/placeholder.jpg")
                     }
                   />
-                  {
-                    loadedUser?.username === 
-                      currentUser.username && 
-                        !currentUser.profileImage && 
+                  {loadedUser?.username === currentUser.username &&
+                    !currentUser.profileImage && (
                       <ImageUpload avatar addBtnClasses="mt-7" />
-                  }
+                    )}
                 </div>
               </Col>
               <Col className="order-lg-3 text-lg-right" lg="5">
                 <div className="card-profile-actions py-4 mt-lg-0">
-                  {currentUser.username === 
-                    loadedUser?.username && (
+                  {currentUser.username === loadedUser?.username && (
                     <Button
                       className="float-right"
                       color="info"
@@ -92,15 +97,12 @@ function UserProfile(props) {
                     </Button>
                   )}
 
-                  {currentUser.username !== 
-                    loadedUser?.username && 
-                      !friendsUsernames.includes(loadedUser?.username) 
-                    && (
-                    <SendFriendRequestButton
-                      targetUsername={loadedUser?.username}
-                    />
-                  )}
-
+                  {currentUser.username !== loadedUser?.username &&
+                    !friendsUsernames.includes(loadedUser?.username) && (
+                      <SendFriendRequestButton
+                        targetUsername={loadedUser?.username}
+                      />
+                    )}
                 </div>
               </Col>
 
@@ -142,51 +144,54 @@ function UserProfile(props) {
                     <CardBody>
                       <TabContent id="myTabContent" activeTab={currentTab}>
                         <TabPane tabId="Goals" role="tabpanel">
-                          {
-                            loadedUser?.goals?.length === 0 ?
-                              <div className="description">
-                                <h2>No goals</h2>
-                                {currentUser.username === loadedUser?.username && <Button>Post One</Button>}
-                              </div> :
-                              // Do the Goals HERE
-                              <div className="description">
-                                {loadedUser?.goals?.map(goal => (
-                                  <div key={goal.id}>
-                                    {goal.id}
-                                  </div>
-                                ))}
-                              </div>
-                          }
+                          {loadedUser?.goals?.length === 0 ? (
+                            <div className="description">
+                              <h2>No goals</h2>
+                              {currentUser.username ===
+                                loadedUser?.username && (
+                                <Button>Post One</Button>
+                              )}
+                            </div>
+                          ) : (
+                            // Do the Goals HERE
+                            <div className="description">
+                              {loadedUser?.goals?.map((goal) => (
+                                <div key={goal.id}>{goal.id}</div>
+                              ))}
+                            </div>
+                          )}
                         </TabPane>
 
                         <TabPane tabId="Posts" role="tabpanel">
-                          {
-                            loadedUser?.posts?.length === 0 ?
-                              (<>
-                                <h2>No posts</h2>
-                                {currentUser.username === loadedUser?.username && <NewPostFormModal buttonText="Post one" />}
-                              </>
-                              )
-                              : (
-                                <>
-                                  <NewPostFormModal buttonText="New post" />
-                                  {loadedUser?.posts?.map(p => (
-                                    <Post profileImage={loadedUser?.profileImage} type="Posts" post={p} key={p.id} />
-                                  ))}
-                                </>
-                              )
-                          }
+                          {loadedUser?.posts?.length === 0 ? (
+                            <>
+                              <h2>No posts</h2>
+                              {currentUser.username ===
+                                loadedUser?.username && (
+                                <NewPostFormModal buttonText="Post one" />
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              <NewPostFormModal buttonText="New post" />
+                              {loadedUser?.posts?.map((p) => (
+                                <Post
+                                  profileImage={loadedUser?.profileImage}
+                                  type="Posts"
+                                  post={p}
+                                  key={p.id}
+                                />
+                              ))}
+                            </>
+                          )}
                         </TabPane>
 
                         <TabPane tabId="Progress" role="tabpanel">
                           <Charts />
                         </TabPane>
 
-                        <TabPane tabId="Feed" role="tabpanel">
-
-                        </TabPane>
+                        <TabPane tabId="Feed" role="tabpanel"></TabPane>
                       </TabContent>
-
                     </CardBody>
                   </Card>
                 </Col>
