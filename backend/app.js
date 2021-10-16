@@ -27,7 +27,7 @@ const calendarRoutes = require("./routes/calendarEventRoutes");
 
 // ROUTES for chat + rooms
 const roomRoutes = require("./routes/roomRoutes");
-const knexDB = require("./knexDB");
+const knexDb = require("./knexDB");
 const db = require("./db");
 
 app.use(cors());
@@ -36,6 +36,7 @@ app.use(morgan("dev"));
 app.use(authenticateJWT);
 
 app.use(express.static("public"))
+app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 // app.use(express.static(path.join(__dirname, "public/images")));
 //                                express.static(absolute path + public/images)
@@ -60,6 +61,26 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+app.post(
+  "/api/images",
+  ensureLoggedIn,
+  upload.single("file"),
+  async (req, res, next) => {
+    try {
+      console.log(req.file);
+      const { filename, mimetype, size } = req.file;
+      const { username } = res.locals.user;
+      const filepath = req.file.path;
+
+      const fileResult = await knexDb
+        .insert({
+          filename,
+          filepath,
+          mimetype,
+          size,
+          username,
+        })
+        .into("image_files");
 
 app.post(
     "/api/images",
@@ -91,44 +112,50 @@ app.post(
 
 
 app.get("/api/images/:filename", ensureLoggedIn, (req, res) => {
-    const { filename } = req.params;
-    knexDB.select("*")
-        .from("image_files")
-        .where({ filename })
-        .then((images) => {
-            if (images[ 0 ]) {
-                const dirname = path.resolve();
-                const fullfilepath = path.join(dirname, images[ 0 ].filepath);
-                return res.type(images[ 0 ].mimetype).sendFile(fullfilepath);
-            }
-            return Promise.reject(new NotFoundError());
-        })
-        .catch((e) => {
-            throw new NotFoundError(e.stack);
-        });
+  const { filename } = req.params;
+  knexDb.select("*")
+    .from("image_files")
+    .where({ filename })
+    .then((images) => {
+      if (images[0]) {
+        const dirname = path.resolve();
+        const fullfilepath = path.join(dirname, images[0].filepath);
+        return res.type(images[0].mimetype).sendFile(fullfilepath);
+      }
+      return Promise.reject(new NotFoundError());
+    })
+    .catch((e) => {
+      throw new NotFoundError(e.stack);
+    });
 });
 
 app.delete(
-    "/api/images/:filename/:username",
+  "/api/images/:filename/:username",
+  ensureCorrectUserOrAdmin,
+  async (req, res, next) => {
+    try {
+      const { filename, username } = req.params;
+      const usernameAndPostId = await knexDb("image_files")
+        .where({ username, filename })
+        .del()
+        .returning(["post_id", "username"]);
 
-    async (req, res, next) => {
-        try {
-            const { filename, username } = req.params;
-            const fileDelResults = await db.query(
-                `DELETE FROM image_files WHERE filname = $1 OR username = $2 RETURNING post_id`, [filename, username]
-            );
-            if(!fileDelResults.rows.length) {
-                throw new NotFoundError()
-            }
-            const postId = fileDelResults.rows[0].post_id;
-            const postDelResults = await db.query(`UDPATE posts SET image = null WHERE id = $1`, [postId]);
-            const userDeleteResults = await db.query(`UPDATE users SET profile_image = null WHERE username = $1`, [username]);
-            fs.unlink(path.join(__dirname, filename));
-            return res.json({ deleted: filename })
-        }
-        catch (e) {
-            return next(e);
-        }
+      const userRes = await db.query(`SELECT username FROM users WHERE profile_image = $1`, [filename]);
+      const postRes = await db.query(`SELECT id FROM posts WHERE image = $1`, [filename]);
+      if(userRes.rows.length) {
+        const username = userRes.rows[0].username
+        await db.query(`UPDATE users SET profile_image = NULL WHERE username = $1`, [username])
+      }
+      if(postRes.rows.length) {
+        const postId = postRes.rows[0].id;
+        await db.query(`UPDATE posts SET image = NULL WHERE id = $1`, [postId])
+      }
+			
+      await fs.promises.unlink(path.join(__dirname, "public/images/"+filename))
+      return res.json({ deleted : filename })
+    } 
+		catch (e) {
+      return next(e);
     }
 );
 

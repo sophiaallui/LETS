@@ -58,8 +58,7 @@ const NewPostFormModal = ({ buttonText }) => {
         await Api.request(`api/images`, data, "POST")
       } catch(e) {}
     }
-    try {
-      
+    try { 
       await Api.createPost(currentUser.username, newPost, "POST");
       window.location.reload();
     } catch(e) {}

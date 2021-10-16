@@ -1,7 +1,6 @@
-/* .card-body{
-    overflow: auto;
-    max-height: 400px;
-}  */
+.messenger-container.row{
+    margin:0
+}
 
 .messenger-search.card{
     margin-bottom:0px;

@@ -180,7 +180,7 @@ class User {
       firstName: "first_name",
       lastName: "last_name",
       isAdmin: "is_admin",
-      profileImage : "profileImage"
+      profileImage : "profile_image"
     });
     const usernameVarIdx = "$" + (values.length + 1);
     const querySQL = `UPDATE users
@@ -188,6 +188,7 @@ class User {
                         WHERE username = ${usernameVarIdx}
                         RETURNING username,
                                   email,
+                                  profile_image AS "profileImage",
                                   first_name AS "firstName",
                                   last_name AS "lastName",
                                   is_admin AS "isAdmin"`;

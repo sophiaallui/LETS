@@ -119,26 +119,6 @@ const Sidebar = ({ currentPage = "profile", setCurrentTab, currentTab }) => {
           {listItems}
         </ul>
         <button className="sidebarButton">Show More</button>
-        <hr className="sidebarHr" />
-
-        <ul className="sidebarFriendList">
-          {friends?.map((user) => (
-            <Link to={`/profile/${user.username}`} key={user.username}>
-              <li className="sidebarFriend" key={user.username}>
-                <img
-                  className="sidebarFriendImg"
-                  src={
-                    user.profileImage
-                      ? user.profileImage
-                      : require("assets/img/placeholder.jpg")
-                  }
-                  alt=""
-                />
-                <span className="sidebarFriendName">{user.username}</span>
-              </li>
-            </Link>
-          ))}
-        </ul>
       </div>
     </div>
   );

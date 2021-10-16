@@ -45,6 +45,11 @@ class Api {
     return res.user;
   }
   
+  static async updateUser(username, data) {
+    const res = await this.request(`users/${username}`, data, "PATCH");
+    return res.user;
+  }
+
   /// Calendar stuff
   static async createCalendarEvent(currentUsername, data) {
     const res = await this.request(`calendar-events/${currentUsername}`, data, "post");
