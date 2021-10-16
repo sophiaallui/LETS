@@ -1,29 +1,29 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef } from "react";
 // reactstrap components
 import {
-	Card,
-	CardHeader,
-	CardBody,
-	CardFooter,
-	FormGroup,
-	Input,
-	InputGroupAddon,
-	InputGroupText,
-	InputGroup,
-	ListGroup,
-	ListGroupItem,
-	Row,
-	Col,
-	Form,
-} from 'reactstrap';
-import Message, { TypingMessage } from 'MyComponents/messenger/Message';
-import UserContext from 'UserContext';
-import Api from 'api/api';
-import Conversation from 'MyComponents/messenger/Conversation';
-import ChatHeader from 'MyComponents/messenger/ChatHeader';
-import OnlineFriends from 'MyComponents/messenger/MessengerFriends';
-import { io } from 'socket.io-client';
-import './design/messengerDesign.css';
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  FormGroup,
+  Input,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroup,
+  ListGroup,
+  ListGroupItem,
+  Row,
+  Col,
+  Form,
+} from "reactstrap";
+import Message, { TypingMessage } from "MyComponents/messenger/Message";
+import UserContext from "UserContext";
+import Api from "api/api";
+import Conversation from "MyComponents/messenger/Conversation";
+import ChatHeader from "MyComponents/messenger/ChatHeader";
+import OnlineFriends from "MyComponents/messenger/MessengerFriends";
+import { io } from "socket.io-client";
+import "./design/messengerDesign.css";
 /**
  * conversations : [
  *  {
@@ -48,286 +48,278 @@ import './design/messengerDesign.css';
  */
 
 function Messenger() {
+  const [messageFocus, setMessageFocus] = useState("");
+  const [conversations, setConversations] = useState([]);
+  const [currentChat, setCurrentChat] = useState(null);
+  const [messages, setMessages] = useState(null);
+  const [message, setMessage] = useState("");
+  const [typing, setTyping] = useState(null);
+  const [searchFriendText, setSearchFriendText] = useState("");
+  const [arrivalMessage, setArrivalMessage] = useState(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [hideSearchResults, setHideSearchResults] = useState(false);
 
-	const [messageFocus, setMessageFocus] = useState('');
-	const [conversations, setConversations] = useState([]);
-	const [currentChat, setCurrentChat] = useState(null);
-	const [messages, setMessages] = useState(null);
-	const [message, setMessage] = useState('');
-	const [typing, setTyping] = useState(null);
-	const [searchFriendText, setSearchFriendText] = useState('');
-	const [arrivalMessage, setArrivalMessage] = useState(null);
-	const [onlineUsers, setOnlineUsers] = useState([]);
-	const [loading, setLoading] = useState(false);
-	const [hideSearchResults, setHideSearchResults] = useState(false);
+  const { currentUser } = useContext(UserContext);
 
-	const { currentUser } = useContext(UserContext);
+  const scrollRef = useRef();
+  const socket = useRef();
 
-	const scrollRef = useRef();
-	const socket = useRef();
+  const friendsUsernames = currentUser.friends.map((f) =>
+    f.user_from === currentUser.username ? f.user_to : f.user_from
+  );
 
-	const friendsUsernames = currentUser.friends.map((f) =>
-		f.user_from === currentUser.username ? f.user_to : f.user_from
-	);
+  console.debug(friendsUsernames);
+  useEffect(() => {
+    socket.current = io("ws://localhost:8900");
+    socket.current.on("getMessage", (data) => {
+      console.log(data);
+      setArrivalMessage({ sentBy: data.senderUsername, text: data.text });
+    });
+    socket.current.on("getTyping", (bool) => setTyping(bool));
+    socket.current.on("done-typing", (bool) => setTyping(bool));
+  }, []);
 
-	console.debug(friendsUsernames);
-	useEffect(() => {
-		socket.current = io('ws://localhost:8900');
-		socket.current.on('getMessage', (data) => {
-			console.log(data);
-			setArrivalMessage({ sentBy: data.senderUsername, text: data.text });
-		});
-		socket.current.on('getTyping', (bool) => setTyping(bool));
-		socket.current.on('done-typing', (bool) => setTyping(bool));
-	}, []);
+  useEffect(() => {
+    arrivalMessage &&
+      currentChat?.members.includes(arrivalMessage.sentBy) &&
+      setMessages((messages) => [...messages, arrivalMessage]);
+    console.debug("socket arrivalMessage=", arrivalMessage);
+  }, [arrivalMessage, currentChat]);
 
-	useEffect(() => {
-		arrivalMessage &&
-			currentChat?.members.includes(arrivalMessage.sentBy) &&
-			setMessages((messages) => [...messages, arrivalMessage]);
-		console.debug('socket arrivalMessage=', arrivalMessage);
-	}, [arrivalMessage, currentChat]);
+  useEffect(() => {
+    socket && socket.current.emit("addUser", currentUser.username);
+    socket &&
+      socket.current.on("getUsers", (users) => {
+        console.log(users);
+        setOnlineUsers(users); // [{ username, socketId }, { username, socketId }]
+      });
+  }, [currentUser]);
 
-	useEffect(() => {
-		socket && socket.current.emit('addUser', currentUser.username);
-		socket &&
-			socket.current.on('getUsers', (users) => {
-				console.log(users);
-				setOnlineUsers(users); // [{ username, socketId }, { username, socketId }]
-			});
-	}, [currentUser]);
+  useEffect(() => {
+    const getConversations = async () => {
+      try {
+        const res = await Api.getConversations(currentUser.username);
+        console.log(res);
+        setConversations(res);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    getConversations();
+  }, [currentUser.username]);
 
-	useEffect(() => {
-		const getConversations = async () => {
-			try {
-				const res = await Api.getConversations(currentUser.username);
-				console.log(res);
-				setConversations(res);
-			} catch (e) {
-				console.error(e);
-			}
-		};
-		getConversations();
-	}, [currentUser.username]);
+  useEffect(() => {
+    const getMessages = async () => {
+      try {
+        if (currentChat) {
+          const res = await Api.getMessages(currentChat?.roomId);
+          setMessages(res);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    getMessages();
+  }, [currentChat]);
 
-	useEffect(() => {
-		const getMessages = async () => {
-			try {
-                if(currentChat) {
-                    const res = await Api.getMessages(currentChat?.roomId);
-                    setMessages(res);
-                }
+  useEffect(() => {
+    message.length === 0 &&
+      socket.current.emit("done-typing", currentUser.username);
+  }, [message]);
 
-			} catch (e) {
-				console.error(e);
-			}
-		};
-		getMessages();
-	}, [currentChat]);
+  useEffect(() => {
+    scrollRef.current &&
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-	useEffect(() => {
-		message.length === 0 &&
-			socket.current.emit('done-typing', currentUser.username);
-	}, [message]);
+  const handleChange = (e) => {
+    setMessage(e.target.value);
+    const roomMembersExceptForMe = currentChat.members.filter(
+      (username) => username !== currentUser.username
+    );
+    for (const user of roomMembersExceptForMe) {
+      socket.current.emit("typing", {
+        senderUsername: currentUser.username,
+        receiverUsername: user,
+      });
+    }
+  };
 
-	useEffect(() => {
-		scrollRef.current &&
-			scrollRef.current.scrollIntoView({ behavior: 'smooth' });
-	}, [messages]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const messageBody = {
+      text: message,
+      roomId: currentChat?.roomId,
+    };
+    const roomMembersExceptForMe = currentChat.members.filter(
+      (username) => username !== currentUser.username
+    );
+    for (const user of roomMembersExceptForMe) {
+      socket.current.emit("sendMessage", {
+        senderUsername: currentUser.username,
+        receiverUsername: user,
+        text: message,
+      });
+    }
 
-	const handleChange = (e) => {
-		setMessage(e.target.value);
-		const roomMembersExceptForMe = currentChat.members.filter(
-			(username) => username !== currentUser.username
-		);
-		for (const user of roomMembersExceptForMe) {
-			socket.current.emit('typing', {
-				senderUsername: currentUser.username,
-				receiverUsername: user,
-			});
-		}
-	};
+    try {
+      const message = await Api.sendMessage(messageBody, currentUser.username);
+      setMessages((messages) => [...messages, message]);
+      setMessage("");
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		const messageBody = {
-			text: message,
-			roomId: currentChat?.roomId,
-		};
-		const roomMembersExceptForMe = currentChat.members.filter(
-			(username) => username !== currentUser.username
-		);
-		for (const user of roomMembersExceptForMe) {
-			socket.current.emit('sendMessage', {
-				senderUsername: currentUser.username,
-				receiverUsername: user,
-				text: message,
-			});
-		}
+  console.debug(
+    "MessengerConversations=",
+    conversations,
+    "MessengerCurrentChat=",
+    currentChat,
+    "MessengerMessages=",
+    messages,
+    "MessengerMessage=",
+    message,
+    "MessengerOnlineUsers=",
+    onlineUsers
+  );
 
-		try {
-			const message = await Api.sendMessage(
-				messageBody,
-				currentUser.username
-			);
-			setMessages((messages) => [...messages, message]);
-			setMessage('');
-		} catch (e) {
-			console.error(e);
-		}
-	};
+  let filteredFriendsList = friendsUsernames
+    .filter((friend) => {
+      if (searchFriendText === "") {
+        return null;
+      } else if (
+        friend.toLowerCase().includes(searchFriendText.toLowerCase())
+      ) {
+        return friend;
+      }
+    })
+    .map((name) => {
+      return <ListGroupItem>{name}</ListGroupItem>;
+    });
 
-	console.debug(
-		'MessengerConversations=',
-		conversations,
-		'MessengerCurrentChat=',
-		currentChat,
-		'MessengerMessages=',
-		messages,
-		'MessengerMessage=',
-		message,
-		'MessengerOnlineUsers=',
-		onlineUsers
-	);
+  return (
+    <>
+      <Row>
+        <Col lg="3">
+          <Card className="messenger-search">
+            <InputGroup>
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  <i className="fas fa-search" />
+                </InputGroupText>
+              </InputGroupAddon>
+              <Input
+                placeholder="Search contact"
+                type="text"
+                value={searchFriendText}
+                onFocus={() => setHideSearchResults(false)}
+                onBlur={() => setHideSearchResults(true)}
+                onChange={(e) => {
+                  setLoading(true);
+                  setSearchFriendText(e.target.value);
+                }}
+              />
+              <InputGroupAddon addonType="append">
+                <InputGroupText>
+                  <i
+                    onClick={() => {
+                      console.log("x clicked");
+                      setSearchFriendText("");
+                    }}
+                    className="ni ni-fat-remove"
+                  />
+                </InputGroupText>
+              </InputGroupAddon>
+            </InputGroup>
+          </Card>
+          <div
+            className={`${
+              hideSearchResults
+                ? "hide-list-group-container"
+                : "list-group-container"
+            }`}
+          >
+            <ListGroup className="friend-search-result">
+              {filteredFriendsList.length === 0 &&
+              searchFriendText.length > 0 ? (
+                <ListGroupItem>No Match</ListGroupItem>
+              ) : (
+                filteredFriendsList
+              )}
+            </ListGroup>
+          </div>
 
-	let filteredFriendsList = friendsUsernames
-		.filter((friend) => {
-			if (searchFriendText === '') {
-				return null;
-			} else if (
-				friend.toLowerCase().includes(searchFriendText.toLowerCase())
-			) {
-				return friend;
-			}
-		})
-		.map((name) => {
-			return <ListGroupItem>{name}</ListGroupItem>;
-		});
+          <ListGroup>
+            {conversations?.map((c) => (
+              <div
+                key={c.roomId}
+                onClick={() => {
+                  setCurrentChat(c);
+                }}
+              >
+                <Conversation conversation={c} />
+              </div>
+            ))}
+          </ListGroup>
+        </Col>
 
-	return (
-		<>
-			<Row>
-				<Col lg='3'>
-					<Card className='messenger-search'>
-						<InputGroup>
-							<InputGroupAddon addonType='prepend'>
-								<InputGroupText>
-									<i className='fas fa-search' />
-								</InputGroupText>
-							</InputGroupAddon>
-							<Input
-								placeholder='Search contact'
-								type='text'
-								value={searchFriendText}
-								onFocus={() => setHideSearchResults(false)}
-								onBlur={() => setHideSearchResults(true)}
-								onChange={(e) => {
-									setLoading(true);
-									setSearchFriendText(e.target.value);
-								}}
-							/>
-							<InputGroupAddon addonType='append'>
-								<InputGroupText>
-									<i
-										onClick={() => {
-											console.log('x clicked');
-											setSearchFriendText('');
-										}}
-										className='ni ni-fat-remove'
-									/>
-								</InputGroupText>
-							</InputGroupAddon>
-						</InputGroup>
-					</Card>
-					<div
-						className={`${
-							hideSearchResults
-								? 'hide-list-group-container'
-								: 'list-group-container'
-						}`}
-					>
-						<ListGroup className='friend-search-result'>
-							{filteredFriendsList.length === 0 &&
-							searchFriendText.length > 0 ? (
-								<ListGroupItem>No Match</ListGroupItem>
-							) : (
-								filteredFriendsList
-							)}
-						</ListGroup>
-					</div>
-
-					<ListGroup>
-						{conversations?.map((c) => (
-							<div
-								key={c.roomId}
-								onClick={() => {
-									setCurrentChat(c);
-								}}
-							>
-								<Conversation conversation={c} />
-							</div>
-						))}
-					</ListGroup>
-				</Col>
-
-				<Col lg='6'>
-					<Card>
-						<CardHeader>
-							{currentChat ? (
-								<ChatHeader members={currentChat?.members} />
-							) : null}
-						</CardHeader>
-						<CardBody className='chat-box'>
-							{currentChat ? (
-								messages?.map((m) => (
-									<div ref={scrollRef} key={m.id}>
-										<Message
-											message={m}
-											mine={
-												m.sentBy ===
-												currentUser.username
-											}
-										/>
-									</div>
-								))
-							) : (
-								<span>Open a conversation to start a chat</span>
-							)}
-							{typing ? <TypingMessage /> : null}
-						</CardBody>
-						<CardFooter>
-							{currentChat ? (
-								<Form onSubmit={handleSubmit} role='form'>
-									<FormGroup className={messageFocus}>
-										<InputGroup className='mb-4'>
-											<Input
-												placeholder='Your message'
-												type='text'
-												onChange={handleChange}
-												value={message}
-											/>
-											<InputGroupAddon addonType='append'>
-												<InputGroupText>
-													<i className='ni ni-send'></i>
-												</InputGroupText>
-											</InputGroupAddon>
-										</InputGroup>
-									</FormGroup>
-								</Form>
-							) : null}
-						</CardFooter>
-					</Card>
-				</Col>
-				<Col lg='3'>
-					<OnlineFriends
-						friendsUsernames={friendsUsernames}
-						onlineUsers={onlineUsers}
-						setCurrentChat={setCurrentChat}
-					/>
-				</Col>
-			</Row>
-		</>
-	);
+        <Col lg="6">
+          <Card>
+            <CardHeader>
+              {currentChat ? (
+                <ChatHeader members={currentChat?.members} />
+              ) : null}
+            </CardHeader>
+            <CardBody className="chat-box">
+              {currentChat ? (
+                messages?.map((m) => (
+                  <div ref={scrollRef} key={m.id}>
+                    <Message
+                      message={m}
+                      mine={m.sentBy === currentUser.username}
+                    />
+                  </div>
+                ))
+              ) : (
+                <span>Open a conversation to start a chat</span>
+              )}
+              {typing ? <TypingMessage /> : null}
+            </CardBody>
+            <CardFooter>
+              {currentChat ? (
+                <Form onSubmit={handleSubmit} role="form">
+                  <FormGroup className={messageFocus}>
+                    <InputGroup className="mb-4">
+                      <Input
+                        placeholder="Your message"
+                        type="text"
+                        onChange={handleChange}
+                        value={message}
+                      />
+                      <InputGroupAddon addonType="append">
+                        <InputGroupText>
+                          <i className="ni ni-send"></i>
+                        </InputGroupText>
+                      </InputGroupAddon>
+                    </InputGroup>
+                  </FormGroup>
+                </Form>
+              ) : null}
+            </CardFooter>
+          </Card>
+        </Col>
+        <Col lg="3">
+          <OnlineFriends
+            friendsUsernames={friendsUsernames}
+            onlineUsers={onlineUsers}
+            setCurrentChat={setCurrentChat}
+          />
+        </Col>
+      </Row>
+    </>
+  );
 }
 
 export default Messenger;
