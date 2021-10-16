@@ -27,13 +27,15 @@ const calendarRoutes = require("./routes/calendarEventRoutes");
 
 // ROUTES for chat + rooms
 const roomRoutes = require("./routes/roomRoutes");
-const db = require("./knexDB");
+const knexDb = require("./knexDB");
+const db = require("./db");
 
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(authenticateJWT);
 
+app.use(express.static("public"))
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 app.use("/auth", authRoutes);
@@ -68,7 +70,7 @@ app.post(
       const { username } = res.locals.user;
       const filepath = req.file.path;
 
-      const fileResult = await db
+      const fileResult = await knexDb
         .insert({
           filename,
           filepath,
@@ -87,7 +89,7 @@ app.post(
 
 app.get("/api/images/:filename", ensureLoggedIn, (req, res) => {
   const { filename } = req.params;
-  db.select("*")
+  knexDb.select("*")
     .from("image_files")
     .where({ filename })
     .then((images) => {
@@ -105,33 +107,24 @@ app.get("/api/images/:filename", ensureLoggedIn, (req, res) => {
 
 app.delete(
   "/api/images/:filename/:username",
-  ensureCorrectUserOrAdmin,
   async (req, res, next) => {
     try {
       const { filename, username } = req.params;
-      const usernameAndPostId = await db("image_files")
+      const usernameAndPostId = await knexDb("image_files")
         .where({ username, filename })
         .del()
         .returning(["post_id", "username"]);
 
-      const [postId] = usernameAndPostId;
-
-      if (postId) {
-        db("posts").where({ id: postId }).then(posts => {
-					if(posts[0].image === filename) {
-						db("posts").where({ id : postId }).update({ image : null }, ['*'])
-					}
-				})
+      const userRes = await db.query(`SELECT username FROM users WHERE profile_image = $1`, [filename]);
+      const postRes = await db.query(`SELECT id FROM posts WHERE image = $1`, [filename]);
+      if(userRes.rows.length) {
+        const username = userRes.rows[0].username
+        await db.query(`UPDATE users SET profile_image = null WHERE username = $1`, [username])
       }
-
-      if (username) {
-        db("users").where({ username }).then(users => {
-					if(users[0].profile_image === filename) {
-						db("users").where({ username }).update({ profile_image : null}, ["*"]);
-					}
-				})
-			}
-
+      if(postRes.rows.length) {
+        const postId = postRes.rows[0].id;
+        await db.query(`UPDATE posts SET image = null WHERE id = $1`, [postId])
+      }
 			fs.unlink(path.join(__dirname, filename));
     } 
 		catch (e) {
