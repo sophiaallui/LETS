@@ -167,11 +167,8 @@ function UserProfile(props) {
 							</div>
 						</CardText>
 						<CardFooter>
-							{loadedUser?.posts?.length === 0 ? null : (
-								<>
-									<NewPostFormModal buttonText='New post' />
-								</>
-							)}
+							
+                            {currentUser.username === loadedUser?.username && <NewPostFormModal buttonText="New Post" />}
 						</CardFooter>
 					</Card>
 				</Col>
@@ -216,7 +213,6 @@ function UserProfile(props) {
 										</>
 									) : (
 										<>
-											{currentUser.username === loadedUser?.username && <NewPostFormModal buttonText="New Post" />}
 											{posts?.map((p) => (
 												<Post
 													profileImage={
