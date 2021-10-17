@@ -81,6 +81,15 @@ class Api {
     return res.posts;
   }
 
+  static async deletePost(username, postId) {
+    const res = await this.request(`posts/${username}/${postId}`, {}, "DELETE");
+    return res.deleted
+  };
+
+  static async likePost(postId, username) {
+    const res = await this.request(`posts/${username}/${postId}/like`, {}, "POST");
+    return res.like;
+  }
   // post comment stuff
   static async createComment(postId, username, data) {
     const res = await this.request(`comments/${postId}/${username}`, data, "POST");
@@ -90,6 +99,16 @@ class Api {
     const res = await this.request(`posts/${postId}`);
     return res.post;
   }
+  static async likePost(postId, username) {
+    const res = await this.request(`posts/${username}/${postId}/like`, {}, "POST");
+    
+  }
+  // POSTS & COMMENTS ENDPOINTS
+    static async getCommentsForPostId(postId) {
+      const res = await this.request(`comments/${postId}`);
+      return res.comments;
+  }
+
   // Friends Endpoints
   static async sendFriendRequest(currentUsername, targetUsername) {
     const res = await this.request(`friends/${currentUsername}/to/${targetUsername}`, {}, "POST");
@@ -142,11 +161,7 @@ class Api {
     return res.conversation;
   }
 
-  // POSTS & COMMENTS ENDPOINTS
-  static async getCommentsForPostId(postId) {
-      const res = await this.request(`comments/${postId}`);
-      return res.comments;
-  }
+
 }
 
 

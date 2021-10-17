@@ -10,6 +10,7 @@ import {
 	CardBody,
 	CardSubtitle,
 	CardTitle,
+	CardFooter,
 	TabContent,
 	TabPane,
 } from 'reactstrap';
@@ -55,16 +56,7 @@ function UserProfile(props) {
 		} 
 		getLoadedUser();
 		getPostsFullDetails();
-	}, [username]);
-
-	console.debug(
-		'UserProfile:',
-		'username=',
-		username,
-		'loadedUser=',
-		loadedUser,
-		"posts=",posts
-	);
+	}, [username, posts?.length]);
 
 	const handleSideBarClick = (tab) => {
 		setCurrentTab(tab);
@@ -90,6 +82,24 @@ function UserProfile(props) {
 		}
 		window.location.reload();
 	};
+
+	const deletePost = async (postId) => {
+		try {
+			await Api.deletePost(currentUser.username, postId);
+			setPosts(posts => posts.filter(p => p.id !== postId)) 
+		} catch(e) {
+			console.error(e);
+		}
+	}
+
+	console.debug(
+		'UserProfile:',
+		'username=',
+		username,
+		'loadedUser=',
+		loadedUser,
+		"posts=",posts
+	);
 	return (
 		<>
 			<Row className='profile-container'>
@@ -153,23 +163,23 @@ function UserProfile(props) {
 								<span>{loadedUser?.posts?.length}</span>
 								<span>Posts</span>
 							</div>
-
 							<div>
 								<span>{loadedUser?.friends?.length}</span>
 								<span>Friends</span>
 							</div>
-
 							<div>
 								<span>{loadedUser?.goals?.length}</span>
 								<span>Goals</span>
 							</div>
 						</CardText>
+						<CardFooter>
+							{currentUser.username === loadedUser?.username && <NewPostFormModal buttonText="New Post" />}
+						</CardFooter>
 				
 					</Card>
 				</Col>
 
 				<Col lg='7'>
-					{/* The ProfileTab was here */}
 					<Card>
 						<CardBody>
 							<TabContent
@@ -180,8 +190,7 @@ function UserProfile(props) {
 									{loadedUser?.goals?.length === 0 ? (
 										<div>
 											<h2>No goals</h2>
-											{currentUser.username ===
-												loadedUser?.username && (
+											{currentUser.username ===	loadedUser?.username && (
 												<Button>Post One</Button>
 											)}
 										</div>
@@ -208,7 +217,6 @@ function UserProfile(props) {
 										</>
 									) : (
 										<>
-											{currentUser.username === loadedUser?.username && <NewPostFormModal buttonText="New Post" />}
 											{posts?.map((p) => (
 												<Post
 													profileImage={
@@ -219,6 +227,7 @@ function UserProfile(props) {
 													post={p}
 													key={p.id}
 													friendsUsernames={friendsUsernames}
+													deletePost={() => deletePost(p.id)}
 												/>
 											))}
 										</>
@@ -228,7 +237,6 @@ function UserProfile(props) {
 								<TabPane tabId='Progress' role='tabpanel'>
 									<Charts />
 								</TabPane>
-
 								<TabPane tabId='Feed' role='tabpanel'></TabPane>
 							</TabContent>
 						</CardBody>

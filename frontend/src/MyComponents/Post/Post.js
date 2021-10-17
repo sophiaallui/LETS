@@ -16,16 +16,18 @@ import {
 import Comment from "MyComponents/comment/Comment";
 import UserContext from "UserContext";
 import Api from "api/api";
+import Alert from "MyComponents/common/Alert";
 /**
  * post = { id, postedBy, createdAt, content, createdAt }
  */
 
 import { format } from "timeago.js";
 
-function Post({ post, profileImage, friendsUsernames }) {
+function Post({ post, profileImage, friendsUsernames, deletePost }) {
   const { currentUser } = useContext(UserContext);
   const [comments, setComments] = useState(post?.comments);
   const [comment, setComment] = useState("");
+  const [likes, setLikes] = useState(post?.likes);
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
   const handleCommentSubmit = async (e) => {
@@ -42,6 +44,15 @@ function Post({ post, profileImage, friendsUsernames }) {
       console.error(e);
     }
   };
+  
+	const likePost = async () => {
+		try {
+			const newLike = await Api.likePost(post.id, currentUser.username);
+      setLikes(likes => [...likes, newLike])
+		} catch(e) {
+			console.error(e);
+		}
+	}
   return (
     <>
       <Card>
@@ -82,21 +93,16 @@ function Post({ post, profileImage, friendsUsernames }) {
                 >
                   <span className="btn-inner--icon icon-big">
                     <i className="ni ni-fat-add">Add Friend</i>
-                  </span>
+                  </span> 
                 </Button>
               )}
             {currentUser.username === post?.postedBy && (
-              <Button
-                className="btn-icon"
-                color="danger"
-                size="sm"
-                type="button"
-              >
+              <Alert deletePost={deletePost}>
                 <span className="btn-inner-icon icon-big">
                   <i className="fas fa-trash"></i>
                   <span className="btn-inner--text">Delete</span>
                 </span>
-              </Button>
+              </Alert>
             )}
           </div>
         </CardHeader>
@@ -116,10 +122,10 @@ function Post({ post, profileImage, friendsUsernames }) {
           <Row className="align-items-center my-3 pb-3 border-bottom">
             <Col sm="6">
               <div className="icon-actions">
-                <a className="like active" onClick={(e) => e.preventDefault()}>
+                <Button className="like active" size="sm" onClick={(e) => e.preventDefault()}>
                   <i className="ni ni-like-2"></i>
-                  <span className="text-muted">150</span>
-                </a>
+                  <span className="text-muted">{likes.length}</span>
+                </Button>
                 <a onClick={(e) => e.preventDefault()}>
                   <i className="ni ni-chat-round"></i>
                   <span className="text-muted">{comments.length}</span>
@@ -206,7 +212,7 @@ function Post({ post, profileImage, friendsUsernames }) {
                     onChange={(e) => setComment(e.target.value)}
                     value={comment}
                   />
-                  <Button>comment</Button>
+                  <Button size="sm">comment</Button>
                 </Form>
               </Media>
             </Media>
