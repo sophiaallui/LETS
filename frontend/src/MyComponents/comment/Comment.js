@@ -6,7 +6,7 @@ import './commentDesign.css';
 const Comment = ({ comment }) => {
 	const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 	return (
-		<Media>
+		<Media className='container'>
 			<Media className='media-comment'>
 				<Link to={`/profile/${comment.postedBy}`}>
 					<div className='comment-user-image-container'>
