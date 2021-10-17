@@ -13,7 +13,7 @@ import {
   Col,
   UncontrolledTooltip,
 } from "reactstrap";
-import { Link } from "react-router-dom";
+import Comment from "MyComponents/comment/Comment";
 import UserContext from "UserContext";
 import Api from "api/api";
 /**
@@ -183,32 +183,8 @@ function Post({ post, profileImage, friendsUsernames }) {
 
           {/* Comments SECTION */}
           <div className="mb-1">
-            {comments.map((c) => (
-              <Media className="media-comment">
-                <Link to={`/profile/${c.postedBy}`}>
-                  <img
-                    alt="..."
-                    className="media-comment-avatar rounded-circle"
-                    src={
-                      c.commentorProfileImage
-                        ? PF + c.commentorProfileImage
-                        : require("assets/img/faces/team-1.jpg")
-                    }
-                  />
-                </Link>
-
-                <Media>
-                  <div className="media-comment-text">
-                    <h6 className="h5 mt-0">{c.postedBy}</h6>
-                    <p className="text-sm lh-160">{c.content}</p>
-                    <div className="icon-actions">
-                      <small className="d-block text-muted">
-                        {format(c.createdAt)}
-                      </small>
-                    </div>
-                  </div>
-                </Media>
-              </Media>
+            {comments.map((comment) => (
+              <Comment comment={comment} key={comment.id} />
             ))}
 
             <Media className="align-items-center mt-5">

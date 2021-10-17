@@ -20,7 +20,7 @@ import UserContext from 'UserContext';
 import SendFriendRequestButton from 'MyComponents/SendFriendRequestButton';
 import ImageUpload from 'MyComponents/common/ImageUpload';
 import Charts from 'MyComponents/Charts';
-import Post from 'MyComponents/Posts';
+import Post from 'MyComponents/Post/Post';
 import NewPostFormModal from 'MyComponents/NewPostFormModal';
 import CardText from 'reactstrap/lib/CardText';
 import './design/userProfileDesign.css'
