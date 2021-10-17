@@ -22,23 +22,26 @@ import Api from "api/api";
 
 import { format } from "timeago.js";
 
-function Post({ post, profileImage, loadedUser }) {
+function Post({ post, profileImage, friendsUsernames }) {
   const { currentUser } = useContext(UserContext);
   const [comments, setComments] = useState(post?.comments);
   const [comment, setComment] = useState("");
-
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-  
-  const handleCommentSubmit = async e => {
+
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    const newComm = { content : comment}
+    const newComm = { content: comment };
     try {
-      const newComment = await Api.createComment(post.id, currentUser.username, newComm);
-      setComments(prev => [...prev, newComment])
-    } catch(e) {
+      const newComment = await Api.createComment(
+        post.id,
+        currentUser.username,
+        newComm
+      );
+      setComments((prev) => [...prev, newComment]);
+    } catch (e) {
       console.error(e);
     }
-  }
+  };
   return (
     <>
       <Card>
@@ -69,19 +72,20 @@ function Post({ post, profileImage, loadedUser }) {
           </div>
 
           <div className="text-right ml-auto">
-            {currentUser.username !== post?.postedBy ? (
-              <Button
-                className="btn-icon"
-                color="primary"
-                size="sm"
-                type="button"
-              >
-                <span className="btn-inner--icon icon-big">
-                  <i className="ni ni-fat-add"></i>
-                </span>
-                <span className="btn-inner--text">Add Friend</span>
-              </Button>
-            ) : (
+            {currentUser.username !== post?.postedBy &&
+              !friendsUsernames.includes(post?.postedBy) && (
+                <Button
+                  className="btn-icon"
+                  color="primary"
+                  size="sm"
+                  type="button"
+                >
+                  <span className="btn-inner--icon icon-big">
+                    <i className="ni ni-fat-add">Add Friend</i>
+                  </span>
+                </Button>
+              )}
+            {currentUser.username === post?.postedBy && (
               <Button
                 className="btn-icon"
                 color="danger"
@@ -223,7 +227,7 @@ function Post({ post, profileImage, loadedUser }) {
                     placeholder="Write your comment"
                     rows="1"
                     type="textarea"
-                    onChange={e => setComment(e.target.value)}
+                    onChange={(e) => setComment(e.target.value)}
                     value={comment}
                   />
                   <Button>comment</Button>

@@ -208,7 +208,7 @@ function UserProfile(props) {
 										</>
 									) : (
 										<>
-											<NewPostFormModal buttonText='New post' />
+											{currentUser.username === loadedUser?.username && <NewPostFormModal buttonText="New Post" />}
 											{posts?.map((p) => (
 												<Post
 													profileImage={
@@ -218,6 +218,7 @@ function UserProfile(props) {
 													type='Posts'
 													post={p}
 													key={p.id}
+													friendsUsernames={friendsUsernames}
 												/>
 											))}
 										</>
