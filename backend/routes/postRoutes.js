@@ -28,6 +28,16 @@ router.get("/:postId", ensureLoggedIn, async (req, res, next) => {
   }
 });
 
+router.get("/user/:username", ensureLoggedIn, async (req, res, next) => {
+  try {
+    const { username } = req.params;
+    const posts = await Post.getByUsername(username);
+    return res.json({ posts });
+  } catch(e) {
+    return next(e);
+  }
+});
+
 // POST /posts/:username
 // Accepts { content }
 // returns => { id, postedBy, content, createdAt, image }

@@ -13,24 +13,35 @@ import {
   Col,
   UncontrolledTooltip,
 } from "reactstrap";
-import { Link } from "react-router-dom";
+import Comment from "MyComponents/comment/Comment";
 import UserContext from "UserContext";
-
+import Api from "api/api";
 /**
  * post = { id, postedBy, createdAt, content, createdAt }
  */
 
 import { format } from "timeago.js";
 
-function Post({ post, profileImage }) {
+function Post({ post, profileImage, friendsUsernames }) {
   const { currentUser } = useContext(UserContext);
+  const [comments, setComments] = useState(post?.comments);
+  const [comment, setComment] = useState("");
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-  const [postDetails, setPostDetails] = useState(null);
-  useEffect(() => {
-    const getFullPostDetails = async () => {
 
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    const newComm = { content: comment };
+    try {
+      const newComment = await Api.createComment(
+        post.id,
+        currentUser.username,
+        newComm
+      );
+      setComments((prev) => [...prev, newComment]);
+    } catch (e) {
+      console.error(e);
     }
-  }, [post.id])
+  };
   return (
     <>
       <Card>
@@ -41,9 +52,9 @@ function Post({ post, profileImage }) {
                 alt="..."
                 className="avatar"
                 src={
-                  profileImage ? 
-                  PF + profileImage
-                  : require("assets/img/placeholder.jpg")
+                  profileImage
+                    ? PF + profileImage
+                    : require("assets/img/placeholder.jpg")
                 }
               />
             </a>
@@ -54,61 +65,64 @@ function Post({ post, profileImage }) {
               >
                 {post?.postedBy}
               </a>
-              <small className="d-block text-muted">{format(post.createdAt)}</small>
+              <small className="d-block text-muted">
+                {format(post.createdAt)}
+              </small>
             </div>
           </div>
 
-
           <div className="text-right ml-auto">
-            {currentUser.username !== post?.postedBy ?
+            {currentUser.username !== post?.postedBy &&
+              !friendsUsernames.includes(post?.postedBy) && (
+                <Button
+                  className="btn-icon"
+                  color="primary"
+                  size="sm"
+                  type="button"
+                >
+                  <span className="btn-inner--icon icon-big">
+                    <i className="ni ni-fat-add">Add Friend</i>
+                  </span>
+                </Button>
+              )}
+            {currentUser.username === post?.postedBy && (
               <Button
                 className="btn-icon"
-                color="primary"
+                color="danger"
                 size="sm"
                 type="button"
               >
-                <span className="btn-inner--icon icon-big">
-                  <i className="ni ni-fat-add"></i>
-                </span>
-                <span className="btn-inner--text">Add Friend</span>
-              </Button> :
-              <Button className="btn-icon" color="danger" size="sm" type="button">
                 <span className="btn-inner-icon icon-big">
                   <i className="fas fa-trash"></i>
                   <span className="btn-inner--text">Delete</span>
                 </span>
               </Button>
-            }
+            )}
           </div>
         </CardHeader>
 
         <CardBody>
-          <p className="mb-4">
-            {post.content}
-          </p>
+          <p className="mb-4">{post.content}</p>
           <img
             alt="..."
             className="img-fluid rounded"
             src={
-                post.image ? 
-                PF + post.image :
-                require("assets/img/sections/mohamed.jpg")
+              post.image
+                ? PF + post.image
+                : require("assets/img/sections/mohamed.jpg")
             }
           />
 
           <Row className="align-items-center my-3 pb-3 border-bottom">
             <Col sm="6">
               <div className="icon-actions">
-                <a
-                  className="like active"
-                  onClick={(e) => e.preventDefault()}
-                >
+                <a className="like active" onClick={(e) => e.preventDefault()}>
                   <i className="ni ni-like-2"></i>
                   <span className="text-muted">150</span>
                 </a>
                 <a onClick={(e) => e.preventDefault()}>
                   <i className="ni ni-chat-round"></i>
-                  <span className="text-muted">36</span>
+                  <span className="text-muted">{comments.length}</span>
                 </a>
                 <a onClick={(e) => e.preventDefault()}>
                   <i className="ni ni-curved-next"></i>
@@ -135,7 +149,6 @@ function Post({ post, profileImage }) {
                   </UncontrolledTooltip>
                   <a
                     className="avatar avatar-xs rounded-circle"
-
                     onClick={(e) => e.preventDefault()}
                     id="tooltip386481262"
                   >
@@ -170,52 +183,30 @@ function Post({ post, profileImage }) {
 
           {/* Comments SECTION */}
           <div className="mb-1">
-            <Media className="media-comment">
-              <img
-                alt="..."
-                className="media-comment-avatar rounded-circle"
-                src={require("assets/img/faces/team-1.jpg")}
-              />
-              <Media>
-                <div className="media-comment-text">
-                  <h6 className="h5 mt-0">Michael Lewis</h6>
-                  <p className="text-sm lh-160">
-                    You have the opportunity to play this game of life you need
-                    to appreciate every moment. A lot of people don’t appreciate
-                    the moment until it’s passed.
-                  </p>
-                  <div className="icon-actions">
-                    <a
-                      className="like active"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      <i className="ni ni-like-2"></i>
-                      <span className="text-muted">3 likes</span>
-                    </a>
-        
-                  </div>
-                </div>
-              </Media>
-            </Media>
+            {comments.map((comment) => (
+              <Comment comment={comment} key={comment.id} />
+            ))}
 
-  
             <Media className="align-items-center mt-5">
               <img
                 alt="..."
                 className="avatar avatar-lg rounded-circle mb-4"
                 src={
-                  currentUser.profileImage ? 
-                  PF + currentUser.profileImage :
-                  require("assets/img/faces/team-3.jpg")
-              }
+                  currentUser.profileImage
+                    ? PF + currentUser.profileImage
+                    : require("assets/img/faces/team-3.jpg")
+                }
               />
               <Media body>
-                <Form>
+                <Form onSubmit={handleCommentSubmit}>
                   <Input
                     placeholder="Write your comment"
                     rows="1"
                     type="textarea"
+                    onChange={(e) => setComment(e.target.value)}
+                    value={comment}
                   />
+                  <Button>comment</Button>
                 </Form>
               </Media>
             </Media>
