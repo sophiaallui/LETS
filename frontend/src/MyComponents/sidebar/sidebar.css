@@ -3,7 +3,7 @@
   /*height : calc(100vh - 50px);*/
   overflow-y: scroll;
   position : sticky;
-  top : 100px
+  top : 100px;
 }
 
 ::-webkit-scrollbar {
@@ -38,8 +38,8 @@
 }
 
 .sidebarListItem.active {
-  background-color: #fb6340;
-  color : white;
+  background-color: yellow;
+  color : black;
   transition : background-color .2s;
 }
 

@@ -105,7 +105,7 @@ function NavbarOrange({ logout }) {
   );
   return (
     <>
-      <Navbar className="navbar-dark bg-warning" expand="lg">
+      <Navbar  expand="lg">
         <Container>
           <NavbarBrand tag={Link} to="/">
             GAINS

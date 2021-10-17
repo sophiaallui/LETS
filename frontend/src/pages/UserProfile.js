@@ -94,7 +94,7 @@ function UserProfile(props) {
 				</Col>
 				<Col lg='2'>
 					<Card className='profile'>
-						<div>
+						<CardBody>
 							<img
 								width='500'
 								src={
@@ -123,7 +123,7 @@ function UserProfile(props) {
 										)}
 									</form>
 								)}
-						</div>
+						</CardBody>
 						<CardBody>
 							<CardTitle>
 								{loadedUser?.firstName} {loadedUser?.lastName}
