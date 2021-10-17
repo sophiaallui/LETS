@@ -10,6 +10,7 @@ import {
 	CardBody,
 	CardSubtitle,
 	CardTitle,
+	CardFooter,
 	TabContent,
 	TabPane,
 } from 'reactstrap';
@@ -23,7 +24,7 @@ import Charts from 'MyComponents/Charts';
 import Post from 'MyComponents/Posts';
 import NewPostFormModal from 'MyComponents/NewPostFormModal';
 import CardText from 'reactstrap/lib/CardText';
-import './design/userProfileDesign.css'
+import './design/userProfileDesign.css';
 
 function UserProfile(props) {
 	const { username } = useParams();
@@ -95,7 +96,7 @@ function UserProfile(props) {
 					<Card className='profile'>
 						<div>
 							<img
-                                width='500'
+								width='500'
 								src={
 									loadedUser?.profileImage
 										? PF + loadedUser?.profileImage
@@ -154,7 +155,13 @@ function UserProfile(props) {
 								<span>Goals</span>
 							</div>
 						</CardText>
-				
+						<CardFooter>
+							{loadedUser?.posts?.length === 0 ? null : (
+								<>
+									<NewPostFormModal buttonText='New post' />
+								</>
+							)}
+						</CardFooter>
 					</Card>
 				</Col>
 
@@ -198,7 +205,6 @@ function UserProfile(props) {
 										</>
 									) : (
 										<>
-											<NewPostFormModal buttonText='New post' />
 											{loadedUser?.posts?.map((p) => (
 												<Post
 													profileImage={
