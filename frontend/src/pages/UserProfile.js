@@ -135,8 +135,7 @@ function UserProfile(props) {
 									<SendFriendRequestButton
 										targetUsername={loadedUser?.username}
 									/>
-								)
-                            }
+								)}
 						</CardBody>
 						<CardText>
 							<div>
