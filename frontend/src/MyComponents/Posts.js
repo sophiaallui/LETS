@@ -24,7 +24,7 @@ import { format } from "timeago.js";
 
 function Post({ post, profileImage }) {
   const { currentUser } = useContext(UserContext);
-  const PF = process.env.REACT_APP_PF;
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   return (
     <>
       <Card>

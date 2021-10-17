@@ -15,6 +15,10 @@ const ImageUpload = (props) => {
   const [imagePreviewUrl, setImagePreviewUrl] = useState(props.avatar ? defaultAvatar : defaultImage);
   const fileInput = useRef();
 
+  React.useEffect(() => {
+    console.log("imagePreviewUrl", imagePreviewUrl)
+  }, [imagePreviewUrl])
+
   const handleImageChange = e => {
     e.preventDefault();
     let reader = new FileReader();
@@ -24,7 +28,7 @@ const ImageUpload = (props) => {
       setImagePreviewUrl(reader.result)
     }
     reader.readAsDataURL(file);
-    props.setFile(file)
+    props.setFile(file);
   }
 
   const handleClick = () => {
