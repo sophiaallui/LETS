@@ -10,7 +10,7 @@ const Sidebar = ({ currentPage = "profile", setCurrentTab, currentTab }) => {
   const friendsUsernames = currentUser.friends.map((f) =>
     f.user_from === currentUser.username ? f.user_to : f.user_from
   );
-
+  const PF =  process.env.REACT_APP_PUBLIC_FOLDER;
   useEffect(() => {
     const fetchFriends = async () => {
       try {
@@ -109,7 +109,7 @@ const Sidebar = ({ currentPage = "profile", setCurrentTab, currentTab }) => {
               className="sidebarFriendImg"
               src={
                 currentUser.profileImage
-                  ? currentUser.profileImage
+                  ? PF+ currentUser.profileImage
                   : require("assets/img/placeholder.jpg")
               }
               alt=""

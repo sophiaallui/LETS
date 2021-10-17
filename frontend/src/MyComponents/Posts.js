@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 // reactstrap components
 import {
@@ -24,7 +24,13 @@ import { format } from "timeago.js";
 
 function Post({ post, profileImage }) {
   const { currentUser } = useContext(UserContext);
-  const PF = process.env.REACT_APP_PF;
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const [postDetails, setPostDetails] = useState(null);
+  useEffect(() => {
+    const getFullPostDetails = async () => {
+
+    }
+  }, [post.id])
   return (
     <>
       <Card>
@@ -192,42 +198,16 @@ function Post({ post, profileImage }) {
               </Media>
             </Media>
 
-            <Media className="media-comment">
-              <img
-                alt="..."
-                className="media-comment-avatar rounded-circle"
-                src={require("assets/img/faces/team-2.jpg")}
-              ></img>
-              <Media>
-                <div className="media-comment-text">
-                  <h6 className="h5 mt-0">Jessica Stones</h6>
-                  <p className="text-sm lh-160">
-                    I always felt like I could do anything. That’s the main
-                    thing people are controlled by! Thoughts- their perception
-                    of themselves! They're slowed down.
-                  </p>
-                  <div className="icon-actions">
-                    <a
-                      className="like active"
-
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      <i className="ni ni-like-2"></i>
-                      <span className="text-muted">10 likes</span>
-                    </a>
-                    <a onClick={(e) => e.preventDefault()}>
-                      <i className="ni ni-curved-next"></i>
-                      <span className="text-muted">1 share</span>
-                    </a>
-                  </div>
-                </div>
-              </Media>
-            </Media>
+  
             <Media className="align-items-center mt-5">
               <img
                 alt="..."
                 className="avatar avatar-lg rounded-circle mb-4"
-                src={require("assets/img/faces/team-3.jpg")}
+                src={
+                  currentUser.profileImage ? 
+                  PF + currentUser.profileImage :
+                  require("assets/img/faces/team-3.jpg")
+              }
               />
               <Media body>
                 <Form>
@@ -235,7 +215,7 @@ function Post({ post, profileImage }) {
                     placeholder="Write your comment"
                     rows="1"
                     type="textarea"
-                  ></Input>
+                  />
                 </Form>
               </Media>
             </Media>

@@ -38,8 +38,15 @@ class Post {
     if (!post) throw new NotFoundError(`PostId ${id} does not exist`);
 
     const comments = await db.query(
-      `SELECT id, post_id AS "postId", posted_by AS "postedBy", content, created_at AS "createdAt"
-      FROM posts_comments WHERE post_id = $1`, [id]
+      `SELECT 
+        id, 
+        post_id AS "postId", 
+        posted_by AS "postedBy", 
+        content, 
+        created_at AS "createdAt", 
+        users.profile_image AS "commentorProfileImage"
+        FROM posts_comments JOIN users ON posts_comments.posted_by = users.username 
+      WHERE post_id = $1`, [id]
     );
 
     post.comments = comments.rows;

@@ -31,11 +31,12 @@ const knexDb = require("./knexDB");
 const db = require("./db");
 
 app.use(cors());
+app.use("/images", express.static(path.join(__dirname, "public/images")))
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(authenticateJWT);
 
-app.use("/images", express.static(path.join(__dirname, "public/images")));
+
+app.use(authenticateJWT);
 
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
@@ -106,7 +107,6 @@ app.get("/api/images/:filename", ensureLoggedIn, (req, res) => {
 
 app.delete(
   "/api/images/:filename/:username",
-  
   async (req, res, next) => {
     try {
       const { filename, username } = req.params;
