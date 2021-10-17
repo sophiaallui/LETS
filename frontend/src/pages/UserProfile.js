@@ -31,7 +31,7 @@ function UserProfile(props) {
 	const [loadedUser, setLoadedUser] = useState(null);
 	const [currentTab, setCurrentTab] = useState('Goals');
 	const [file, setFile] = useState(null);
-	const PF = process.env.REACT_APP_PF;
+	const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 	const friendsUsernames = currentUser.friends.map((f) =>
 		f.user_from === currentUser.username ? f.user_to : f.user_from
 	);
@@ -95,6 +95,7 @@ function UserProfile(props) {
 					<Card className='profile'>
 						<div>
 							<img
+                                width='500'
 								src={
 									loadedUser?.profileImage
 										? PF + loadedUser?.profileImage

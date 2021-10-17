@@ -35,7 +35,6 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(authenticateJWT);
 
-app.use(express.static("public"))
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 app.use("/auth", authRoutes);
@@ -107,7 +106,7 @@ app.get("/api/images/:filename", ensureLoggedIn, (req, res) => {
 
 app.delete(
   "/api/images/:filename/:username",
-  ensureCorrectUserOrAdmin,
+  
   async (req, res, next) => {
     try {
       const { filename, username } = req.params;
