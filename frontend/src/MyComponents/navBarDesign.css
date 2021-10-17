@@ -2,7 +2,14 @@
     position:sticky;
     top:0;
     z-index: 10;
-    border-bottom:solid 3px yellow;
-    background-color: black;
-    
+    background-color: #FCA311;    
+}
+
+.navbar-brand{
+    color: #14213D;
+}
+
+.nav-item .nav-link{
+    color: #14213D;
+
 }

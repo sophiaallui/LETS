@@ -104,7 +104,7 @@ function UserProfile(props) {
 					/>
 				</Col>
 				<Col lg='2'>
-					<Card className='profile'>
+					<Card className='profile margin-top'>
 						<CardBody>
 							<img
 								width='500'
@@ -173,7 +173,7 @@ function UserProfile(props) {
 					</Card>
 				</Col>
 
-				<Col lg='7'>
+				<Col className='profile margin-top' lg='7'>
 					{/* The ProfileTab was here */}
 					<Card>
 						<CardBody>
