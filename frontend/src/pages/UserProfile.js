@@ -8,9 +8,8 @@ import {
 	Col,
 	Card,
 	CardBody,
-    CardImg,
-	CardTitle,
 	CardSubtitle,
+	CardTitle,
 	TabContent,
 	TabPane,
 } from 'reactstrap';
@@ -23,18 +22,19 @@ import ImageUpload from 'MyComponents/common/ImageUpload';
 import Charts from 'MyComponents/Charts';
 import Post from 'MyComponents/Posts';
 import NewPostFormModal from 'MyComponents/NewPostFormModal';
-import './design/userProfileDesign.css';
+import CardText from 'reactstrap/lib/CardText';
+import './design/userProfileDesign.css'
 
 function UserProfile(props) {
 	const { username } = useParams();
 	const { currentUser } = useContext(UserContext);
 	const [loadedUser, setLoadedUser] = useState(null);
 	const [currentTab, setCurrentTab] = useState('Goals');
+	const [file, setFile] = useState(null);
 	const PF = process.env.REACT_APP_PF;
 	const friendsUsernames = currentUser.friends.map((f) =>
 		f.user_from === currentUser.username ? f.user_to : f.user_from
 	);
-
 	useEffect(() => {
 		const getLoadedUser = async () => {
 			try {
@@ -59,6 +59,26 @@ function UserProfile(props) {
 		setCurrentTab(tab);
 	};
 
+	const handleProfileImageSubmit = async (e) => {
+		e.preventDefault();
+		if (file) {
+			const data = new FormData();
+			const filename = Date.now() + file.name;
+			data.append('name', filename);
+			data.append('file', file);
+			try {
+				await Api.request(`api/images`, data, 'POST');
+				await Api.updateUser(
+					currentUser?.username,
+					{ profileImage: filename },
+					'PUT'
+				);
+			} catch (e) {
+				console.error(e);
+			}
+		}
+		window.location.reload();
+	};
 	return (
 		<>
 			<Row className='profile-container'>
@@ -72,20 +92,53 @@ function UserProfile(props) {
 					/>
 				</Col>
 				<Col lg='2'>
-					<Card>
-						{loadedUser?.username === currentUser.username &&
-							!currentUser.profileImage && (
-								<ImageUpload avatar addBtnClasses='mt-7' />
-							)}
-                        
-						<CardTitle>
-							<h3>
+					<Card className='profile'>
+						<div>
+							<img
+								src={
+									loadedUser?.profileImage
+										? PF + loadedUser?.profileImage
+										: require('assets/img/placeholder.jpg')
+								}
+							/>
+							{loadedUser?.username === currentUser.username &&
+								!currentUser.profileImage && (
+									<form onSubmit={handleProfileImageSubmit}>
+										<ImageUpload
+											avatar
+											addBtnClasses='mt-7'
+											setFile={setFile}
+										/>
+										{file && (
+											<Button
+												size='sm'
+												onSubmit={
+													handleProfileImageSubmit
+												}
+											>
+												Post
+											</Button>
+										)}
+									</form>
+								)}
+						</div>
+						<CardBody>
+							<CardTitle>
 								{loadedUser?.firstName} {loadedUser?.lastName}
-							</h3>
+							</CardTitle>
 
-							<div>{loadedUser?.email}</div>
-						</CardTitle>
-						<CardSubtitle>
+							<CardSubtitle>{loadedUser?.email}</CardSubtitle>
+							{currentUser.username !== loadedUser?.username &&
+								!friendsUsernames.includes(
+									loadedUser?.username
+								) && (
+									<SendFriendRequestButton
+										targetUsername={loadedUser?.username}
+									/>
+								)
+                            }
+						</CardBody>
+						<CardText>
 							<div>
 								<span>{loadedUser?.posts?.length}</span>
 								<span>Posts</span>
@@ -100,18 +153,9 @@ function UserProfile(props) {
 								<span>{loadedUser?.goals?.length}</span>
 								<span>Goals</span>
 							</div>
-						</CardSubtitle>
+						</CardText>
+				
 					</Card>
-					{/*<div>
-						{currentUser.username !== loadedUser?.username &&
-							!friendsUsernames.includes(
-								loadedUser?.username
-							) && (
-								<SendFriendRequestButton
-									targetUsername={loadedUser?.username}
-								/>
-							)}
-					</div>*/}
 				</Col>
 
 				<Col lg='7'>

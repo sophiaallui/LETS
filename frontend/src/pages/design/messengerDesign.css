@@ -1,5 +1,6 @@
 .messenger-container.row{
-    margin:0
+    margin:0;
+    padding-top:10px;
 }
 
 .messenger-search.card{

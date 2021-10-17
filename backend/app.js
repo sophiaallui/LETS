@@ -8,9 +8,9 @@ const cors = require("cors");
 const morgan = require("morgan");
 const { NotFoundError } = require("./ExpressError");
 const {
-    authenticateJWT,
-    ensureLoggedIn,
-    ensureCorrectUserOrAdmin,
+  authenticateJWT,
+  ensureLoggedIn,
+  ensureCorrectUserOrAdmin,
 } = require("./middleware/auth");
 
 const multer = require("multer");
@@ -38,8 +38,6 @@ app.use(authenticateJWT);
 app.use(express.static("public"))
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 
-// app.use(express.static(path.join(__dirname, "public/images")));
-//                                express.static(absolute path + public/images)
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/messages", messageRoutes);
@@ -52,12 +50,12 @@ app.use("/calendar-events", calendarRoutes);
 app.use("/room", roomRoutes);
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "./public/images");
-    },
-    filename: (req, file, cb) => {
-        cb(null, req.body.name); // public/images/req.body.name
-    },
+  destination: (req, file, cb) => {
+    cb(null, "public/images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, req.body.name); // public/images/req.body.name
+  },
 });
 
 const upload = multer({ storage: storage });
@@ -82,34 +80,12 @@ app.post(
         })
         .into("image_files");
 
-app.post(
-    "/api/images",
-    ensureLoggedIn,
-    upload.single("file"),
-    async (req, res, next) => {
-        try {
-            console.log(req.file);
-            const { filename, mimetype, size } = req.file;
-            const { username } = res.locals.user;
-            const filepath = req.file.path;
-
-            const fileResult = await knexDB
-                .insert({
-                    filename,
-                    filepath,
-                    mimetype,
-                    size,
-                    username,
-                })
-                .into("image_files");
-
-            return res.json({ success: true, filename });
-        } catch (e) {
-            return next(e);
-        }
+      return res.json({ success: true, filename });
+    } catch (e) {
+      return next(e);
     }
+  }
 );
-
 
 app.get("/api/images/:filename", ensureLoggedIn, (req, res) => {
   const { filename } = req.params;
@@ -157,22 +133,23 @@ app.delete(
 		catch (e) {
       return next(e);
     }
+  }
 );
 
 /** Handle 404 errors -- this matches everything */
 app.use((req, res, next) => {
-    return next(new NotFoundError());
+  return next(new NotFoundError());
 });
 
 app.use((err, req, res, next) => {
-    if (process.env.NODE_ENV !== "test") {
-        console.error(err.stack);
-    }
-    const status = err.status || 500;
-    const message = err.message;
-    return res.status(status).json({
-        error: { message, status },
-    });
+  if (process.env.NODE_ENV !== "test") {
+    console.error(err.stack);
+  }
+  const status = err.status || 500;
+  const message = err.message;
+  return res.status(status).json({
+    error: { message, status },
+  });
 });
 
 module.exports = app;
