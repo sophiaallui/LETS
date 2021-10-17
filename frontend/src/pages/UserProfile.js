@@ -32,6 +32,7 @@ function UserProfile(props) {
 	const [currentTab, setCurrentTab] = useState('Goals');
 	const [file, setFile] = useState(null);
 	const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+	const [posts, setPosts] = useState(null)
 	const friendsUsernames = currentUser.friends.map((f) =>
 		f.user_from === currentUser.username ? f.user_to : f.user_from
 	);
@@ -44,7 +45,16 @@ function UserProfile(props) {
 				console.error(e);
 			}
 		};
+		const getPostsFullDetails = async () => {
+			try {
+				const posts = await Api.getPostsDetailsByUsername(username);
+				setPosts(posts)
+			} catch(e) {
+				console.error(e)
+			}
+		} 
 		getLoadedUser();
+		getPostsFullDetails();
 	}, [username]);
 
 	console.debug(
@@ -52,7 +62,8 @@ function UserProfile(props) {
 		'username=',
 		username,
 		'loadedUser=',
-		loadedUser
+		loadedUser,
+		"posts=",posts
 	);
 
 	const handleSideBarClick = (tab) => {
@@ -198,11 +209,12 @@ function UserProfile(props) {
 									) : (
 										<>
 											<NewPostFormModal buttonText='New post' />
-											{loadedUser?.posts?.map((p) => (
+											{posts?.map((p) => (
 												<Post
 													profileImage={
 														loadedUser?.profileImage
 													}
+													loadedUser={loadedUser}
 													type='Posts'
 													post={p}
 													key={p.id}

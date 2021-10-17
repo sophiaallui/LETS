@@ -34,40 +34,43 @@ class Post {
         image
         FROM posts WHERE posted_by = $1`, [username]
     );
-    const post = res.rows[0];
-    if (!post) throw new NotFoundError(`PostId ${id} does not exist`);
-
-    const comments = await db.query(
-      `SELECT 
-        id, 
-        post_id AS "postId", 
-        posted_by AS "postedBy", 
-        content, 
-        created_at AS "createdAt", 
-        users.profile_image AS "commentorProfileImage"
-        FROM posts_comments JOIN users ON posts_comments.posted_by = users.username 
-      WHERE post_id = $1`, [id]
-    );
-
-    post.comments = comments.rows;
-    if(post.comments[0]) {
-      for(let comment of post.comments) {
-        const commentId = comment.id;
-        const postCommentsComments = await db.query(
+    const posts = res.rows;
+    if(posts.length) {
+      for(const post of posts) {
+        const { id } = post;
+        const comments = await db.query(
           `SELECT 
             id, 
             post_id AS "postId", 
-            post_comments_id AS "postCommentsId", 
             posted_by AS "postedBy", 
             content, 
-            created_at AS "createdAt"
-          FROM 
-          posts_comments_comments WHERE post_id = $1 AND post_comments_id = $2`, [id, commentId]
+            created_at AS "createdAt", 
+            users.profile_image AS "commentorProfileImage"
+            FROM posts_comments 
+              JOIN users ON posts_comments.posted_by = users.username 
+          WHERE post_id = $1`, [id]
         );
-        comment.comments = postCommentsComments.rows;
+        post.comments = comments.rows;
+        if(post.comments[0]) {
+          for(let comment of post.comments) {
+            const commentId = comment.id;
+            const postCommentsComments = await db.query(
+              `SELECT 
+                id, 
+                post_id AS "postId", 
+                post_comments_id AS "postCommentsId", 
+                posted_by AS "postedBy", 
+                content, 
+                created_at AS "createdAt"
+              FROM 
+              posts_comments_comments WHERE post_id = $1 AND post_comments_id = $2`, [id, commentId]
+            );
+            comment.comments = postCommentsComments.rows;
+          }
+        } 
       }
-    } 
-    return post;
+    }
+    return posts;
   };
 
   static async getAll() {
@@ -113,8 +116,16 @@ class Post {
     if (!post) throw new NotFoundError(`PostId ${id} does not exist`);
 
     const comments = await db.query(
-      `SELECT id, post_id AS "postId", posted_by AS "postedBy", content, created_at AS "createdAt"
-      FROM posts_comments WHERE post_id = $1`, [id]
+      `SELECT 
+      id, 
+      post_id AS "postId", 
+      posted_by AS "postedBy", 
+      content, 
+      created_at AS "createdAt", 
+      users.profile_image AS "commentorProfileImage"
+      FROM posts_comments 
+        JOIN users ON posts_comments.posted_by = users.username 
+    WHERE post_id = $1`, [id]
     );
 
     post.comments = comments.rows;

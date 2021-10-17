@@ -27,9 +27,12 @@ class PostComment {
   }
 
   static async createComment(username, postId, content) {
-    const checkIfPostExists = await db.query(`SELECT id from posts WHERE id = $1`, [postId]);
+    const checkIfPostExists = await db.query(
+      `SELECT id from posts WHERE id = $1`,
+      [postId]
+    );
     const post = checkIfPostExists.rows[0];
-    if(!post) throw new NotFoundError(`Post ${postId} does not exist`);
+    if (!post) throw new NotFoundError(`Post ${postId} does not exist`);
     const res = await db.query(
       `INSERT INTO posts_comments
       (post_id, posted_by, content) VALUES ($1, $2, $3)
@@ -41,21 +44,35 @@ class PostComment {
         created_at AS "createdAt"`,
       [postId, username, content]
     );
-    if(!res.rows[0]) throw new BadRequestError();
-    return res.rows[0];
-  };
+ 
+    if (!res.rows[0]) throw new BadRequestError();
+    const img = await db.query(
+      `SELECT profile_image 
+    FROM users WHERE username = $1`,
+      [res.rows[0].postedBy]
+    );
+    const comment = res.rows[0];
+    comment.commentorProfileImage = img.rows[0].profile_image
+    return comment;
+  }
 
-  static async deleteComment(postId, username, commentId)  {
-    const checkIfExists = await db.query(`SELECT id from posts_comments WHERE id = $1`, [commentId])
+  static async deleteComment(postId, username, commentId) {
+    const checkIfExists = await db.query(
+      `SELECT id from posts_comments WHERE id = $1`,
+      [commentId]
+    );
     const comment = checkIfExists.rows[0];
-    if(!comment) throw new NotFoundError(`Comment ${commentId} does not exist`);
+    if (!comment)
+      throw new NotFoundError(`Comment ${commentId} does not exist`);
     const res = await db.query(
       `DELETE FROM posts_comments 
         WHERE id = $1 AND
         post_id = $2 AND
         posted_by = $3
-        RETURNING id`, [commentId, postId, username]);
-    if(!res.rows[0]) throw new BadRequestError();
+        RETURNING id`,
+      [commentId, postId, username]
+    );
+    if (!res.rows[0]) throw new BadRequestError();
   }
 }
 

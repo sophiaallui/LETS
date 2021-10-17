@@ -76,6 +76,20 @@ class Api {
     return res.post;
   }
   
+  static async getPostsDetailsByUsername(username) {
+    const res = await this.request(`posts/user/${username}`);
+    return res.posts;
+  }
+
+  // post comment stuff
+  static async createComment(postId, username, data) {
+    const res = await this.request(`comments/${postId}/${username}`, data, "POST");
+    return res.comment
+  }
+  static async getPostDetailsByPostId(postId) {
+    const res = await this.request(`posts/${postId}`);
+    return res.post;
+  }
   // Friends Endpoints
   static async sendFriendRequest(currentUsername, targetUsername) {
     const res = await this.request(`friends/${currentUsername}/to/${targetUsername}`, {}, "POST");
