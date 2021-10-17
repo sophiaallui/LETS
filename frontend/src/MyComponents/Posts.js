@@ -24,7 +24,7 @@ import { format } from "timeago.js";
 
 function Post({ post, profileImage }) {
   const { currentUser } = useContext(UserContext);
-  const PF = process.env.PUBLIC_IMAGES_FOLDER;
+  const PF = process.env.REACT_APP_PF;
   return (
     <>
       <Card>
@@ -83,7 +83,11 @@ function Post({ post, profileImage }) {
           <img
             alt="..."
             className="img-fluid rounded"
-            src={require("assets/img/sections/mohamed.jpg")}
+            src={
+                post.image ? 
+                PF + post.image :
+                require("assets/img/sections/mohamed.jpg")
+            }
           />
 
           <Row className="align-items-center my-3 pb-3 border-bottom">

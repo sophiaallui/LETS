@@ -201,7 +201,7 @@ function Messenger() {
 
   return (
     <>
-      <Row>
+      <Row className='messenger-container'>
         <Col lg="3">
           <Card className="messenger-search">
             <InputGroup>

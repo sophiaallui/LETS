@@ -1,0 +1,9 @@
+.profile-container.row{
+    margin: 0;
+    padding-top: 10px;
+}
+
+.profile.card{
+    position : sticky;
+    top:100px;
+}

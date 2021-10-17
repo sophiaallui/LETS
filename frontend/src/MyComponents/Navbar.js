@@ -16,6 +16,7 @@ import {
 } from "reactstrap";
 import AuthContext from "UserContext";
 import Search from "MyComponents/search/Search";
+import './navBarDesign.css'
 
 function NavbarOrange({ logout }) {
   const { currentUser } = useContext(AuthContext);
