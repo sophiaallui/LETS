@@ -4,38 +4,34 @@ import React from "react";
 import { Button, Card, CardHeader, CardBody, Row } from "reactstrap";
 import { Link } from "react-router-dom";
 
-function FriendCard({ user, type }) {
+function FriendCard({ user, type, handleConfirm, handleCancelFriendRequest }) {
   const PF = process.env.REACT_APP_PF;
   let button;
   if (type === "pending") {
     button = (
-      <>
-        <Button className="mr-4 mt-3" color="danger" size="sm">Delete</Button>
+      <div className="d-flex justify-content-between">
+        <Button className="mr-4 mt-3 btn-round" block color="danger" size="sm">Delete</Button>
         <Button
-          className="float-right mt-3"
+          className="float-right mt-3 btn-round"
           color="info"
           size="sm"
+          block
+          onClick={handleConfirm}
         >
           Confirm
-        </Button> </>
+        </Button> 
+      </div>
     )
   } else if(type === "sent") {
     button = (
       <>
-        <Button className="mr-4 mt-3" color="danger" size="sm">Cancel</Button>
-        <Button
-          className="float-right mt-3"
-          color="info"
-          size="sm"
-        >
-          Message
-        </Button> 
+        <Button onClick={handleCancelFriendRequest} className="mr-4 mt-3 btn-rounded" block color="danger" size="md">Cancel</Button>
       </>
     )
   }
   return (
     <>
-      <Card className="card-profile">
+      <Card className="card-profile card-frame">
         <CardHeader
           className="bg-info"
           style={{
@@ -43,7 +39,7 @@ function FriendCard({ user, type }) {
           }}
         >
           <div className="card-avatar">
-            <a onClick={(e) => e.preventDefault()} tag={Link} to={`profile/${user.username}`}>
+            <Link to={`profile/${user.username}`}>
               <img
                 alt="..."
                 className="img img-raised rounded-circle"
@@ -53,12 +49,11 @@ function FriendCard({ user, type }) {
                     require("assets/img/placeholder.jpg")
                 }
               />
-            </a>
+            </Link>
           </div>
         </CardHeader>
         <CardBody className="pt-0">
           <div className="d-flex justify-content-between">
-              {button}
           </div>
           <Row>
             <div className="col">
@@ -79,6 +74,7 @@ function FriendCard({ user, type }) {
               {user.firstName} {user.lastName}
               <span className="font-weight-light">, {user.email}</span>
             </h5>
+            {button}
           </div>
         </CardBody>
       </Card>

@@ -44,15 +44,15 @@ function Post({ post, profileImage, friendsUsernames, deletePost }) {
       console.error(e);
     }
   };
-  
-	const likePost = async () => {
-		try {
-			const newLike = await Api.likePost(post.id, currentUser.username);
+
+  const likePost = async () => {
+    try {
+      const newLike = await Api.likePost(+post.id, currentUser.username);
       setLikes(likes => [...likes, newLike])
-		} catch(e) {
-			console.error(e);
-		}
-	}
+    } catch (e) {
+      console.error(e);
+    }
+  }
   return (
     <>
       <Card>
@@ -93,7 +93,7 @@ function Post({ post, profileImage, friendsUsernames, deletePost }) {
                 >
                   <span className="btn-inner--icon icon-big">
                     <i className="ni ni-fat-add">Add Friend</i>
-                  </span> 
+                  </span>
                 </Button>
               )}
             {currentUser.username === post?.postedBy && (
@@ -122,7 +122,7 @@ function Post({ post, profileImage, friendsUsernames, deletePost }) {
           <Row className="align-items-center my-3 pb-3 border-bottom">
             <Col sm="6">
               <div className="icon-actions">
-                <Button className="like active" size="sm" onClick={(e) => e.preventDefault()}>
+                <Button className="like active" size="sm" onClick={likePost}>
                   <i className="ni ni-like-2"></i>
                   <span className="text-muted">{likes.length}</span>
                 </Button>
@@ -139,48 +139,29 @@ function Post({ post, profileImage, friendsUsernames, deletePost }) {
 
             <Col className="d-none d-sm-block" sm="6">
               <div className="d-flex align-items-center justify-content-sm-end">
+
                 <div className="avatar-group">
-                  <a
-                    className="avatar avatar-xs rounded-circle"
-                    onClick={(e) => e.preventDefault()}
-                    id="tooltip777026221"
-                  >
-                    <img
-                      alt="..."
-                      src={require("assets/img/faces/team-1.jpg")}
-                    ></img>
-                  </a>
-                  <UncontrolledTooltip delay={0} target="tooltip777026221">
-                    Jessica Rowland
-                  </UncontrolledTooltip>
-                  <a
-                    className="avatar avatar-xs rounded-circle"
-                    onClick={(e) => e.preventDefault()}
-                    id="tooltip386481262"
-                  >
-                    <img
-                      alt="..."
-                      className="rounded-circle"
-                      src={require("assets/img/faces/team-2.jpg")}
-                    ></img>
-                  </a>
-                  <UncontrolledTooltip delay={0} target="tooltip386481262">
-                    Audrey Love
-                  </UncontrolledTooltip>
-                  <a
-                    className="avatar avatar-xs rounded-circle"
-                    onClick={(e) => e.preventDefault()}
-                    id="tooltip508888926"
-                  >
-                    <img
-                      alt="..."
-                      className="rounded-circle"
-                      src={require("assets/img/faces/team-3.jpg")}
-                    ></img>
-                  </a>
-                  <UncontrolledTooltip delay={0} target="tooltip508888926">
-                    Michael Lewis
-                  </UncontrolledTooltip>
+                  {likes?.map(l => (
+                    <>
+                      <a className="avatar avatar-xs rounded-circle"
+                        key={l.id}
+                        onClick={(e) => e.preventDefault()}
+                        id={`usernameToolTip${l.id}`}
+                      >
+                        <img
+                          alt="..."
+                          src={
+                            l.profileImage ?
+                            PF + l.profileImage :
+                            require("assets/img/placeholder.jpg")
+                          }
+                        />
+                      </a>
+                      <UncontrolledTooltip delay={0} target={`usernameToolTip${l.id}`}>
+                        {l.username}
+                      </UncontrolledTooltip>
+                    </>
+                  ))}
                 </div>
                 <small className="pl-2 font-weight-bold">and 30+ more</small>
               </div>
@@ -200,7 +181,7 @@ function Post({ post, profileImage, friendsUsernames, deletePost }) {
                 src={
                   currentUser.profileImage
                     ? PF + currentUser.profileImage
-                    : require("assets/img/faces/team-3.jpg")
+                    : require("assets/img/placeholder.jpg")
                 }
               />
               <Media body>

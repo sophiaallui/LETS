@@ -130,6 +130,10 @@ class Api {
     return res.friendRequest;
   }
 
+  static async cancelFriendRequest(currentUsername, username) {
+    const res = await this.request(`friends/${currentUsername}/to/${username}`, {}, "DELETE");
+    return res.request;
+  }
   // MESSAGES
   static async findConversationWithUser(currentUsername, secondUsername) {
       const res = await this.request(`room/find/${currentUsername}/${secondUsername}`);

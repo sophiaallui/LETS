@@ -33,10 +33,23 @@ function UserProfile(props) {
 	const [currentTab, setCurrentTab] = useState('Goals');
 	const [file, setFile] = useState(null);
 	const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-	const [posts, setPosts] = useState(null)
-	const friendsUsernames = currentUser.friends.map((f) =>
-		f.user_from === currentUser.username ? f.user_to : f.user_from
-	);
+	const [posts, setPosts] = useState(null);
+	const [mySentRequests, setMySentRequests] = useState([]);
+	const friendsUsernames = currentUser.friends.map((f) => f.user_from === currentUser.username ? f.user_to : f.user_from);
+
+	useEffect(() => {
+		const fetchMySentReqs = async () => {
+			try {
+				const myRequests = await Api.request(`friends/${currentUser.username}/sent`)
+				setMySentRequests(myRequests?.myRequests.map(f => f.user_to));
+		
+			} catch (e) {
+				console.error(e);
+			}
+		}
+		fetchMySentReqs();
+	}, [username]);
+	
 	useEffect(() => {
 		const getLoadedUser = async () => {
 			try {
@@ -50,10 +63,10 @@ function UserProfile(props) {
 			try {
 				const posts = await Api.getPostsDetailsByUsername(username);
 				setPosts(posts)
-			} catch(e) {
+			} catch (e) {
 				console.error(e)
 			}
-		} 
+		}
 		getLoadedUser();
 		getPostsFullDetails();
 	}, [username, posts?.length]);
@@ -86,8 +99,8 @@ function UserProfile(props) {
 	const deletePost = async (postId) => {
 		try {
 			await Api.deletePost(currentUser.username, postId);
-			setPosts(posts => posts.filter(p => p.id !== postId)) 
-		} catch(e) {
+			setPosts(posts => posts.filter(p => p.id !== postId))
+		} catch (e) {
 			console.error(e);
 		}
 	}
@@ -98,7 +111,7 @@ function UserProfile(props) {
 		username,
 		'loadedUser=',
 		loadedUser,
-		"posts=",posts
+		"posts=", posts
 	);
 	return (
 		<>
@@ -150,10 +163,9 @@ function UserProfile(props) {
 
 							<CardSubtitle>{loadedUser?.email}</CardSubtitle>
 							{currentUser.username !== loadedUser?.username &&
-								!friendsUsernames.includes(
-									loadedUser?.username
-								) && (
+								!friendsUsernames.includes(loadedUser?.username) && (
 									<SendFriendRequestButton
+										alreadySent={mySentRequests.includes(loadedUser?.username)}
 										targetUsername={loadedUser?.username}
 									/>
 								)}
@@ -175,7 +187,7 @@ function UserProfile(props) {
 						<CardFooter>
 							{currentUser.username === loadedUser?.username && <NewPostFormModal buttonText="New Post" />}
 						</CardFooter>
-				
+
 					</Card>
 				</Col>
 
@@ -190,7 +202,7 @@ function UserProfile(props) {
 									{loadedUser?.goals?.length === 0 ? (
 										<div>
 											<h2>No goals</h2>
-											{currentUser.username ===	loadedUser?.username && (
+											{currentUser.username === loadedUser?.username && (
 												<Button>Post One</Button>
 											)}
 										</div>
@@ -212,8 +224,8 @@ function UserProfile(props) {
 											<h2>No posts</h2>
 											{currentUser.username ===
 												loadedUser?.username && (
-												<NewPostFormModal buttonText='Post one' />
-											)}
+													<NewPostFormModal buttonText='Post one' />
+												)}
 										</>
 									) : (
 										<>
