@@ -2,14 +2,14 @@
     position:sticky;
     top:0;
     z-index: 10;
-    background-color: #FCA311;    
+    background-color: #388087;    
 }
 
 .navbar-brand{
-    color: #14213D;
+    color: white;
 }
 
 .nav-item .nav-link{
-    color: #14213D;
+    color: white;
 
 }

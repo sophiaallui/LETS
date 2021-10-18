@@ -175,8 +175,7 @@ function UserProfile(props) {
 
 				<Col className='profile margin-top' lg='7'>
 					{/* The ProfileTab was here */}
-					<Card>
-						<CardBody>
+				
 							<TabContent
 								id='myTabContent'
 								activeTab={currentTab}
@@ -235,8 +234,7 @@ function UserProfile(props) {
 
 								<TabPane tabId='Feed' role='tabpanel'></TabPane>
 							</TabContent>
-						</CardBody>
-					</Card>
+					
 				</Col>
 			</Row>
 		</>

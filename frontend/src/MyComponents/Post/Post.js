@@ -16,6 +16,7 @@ import {
 import Comment from "MyComponents/comment/Comment";
 import UserContext from "UserContext";
 import Api from "api/api";
+import './postDesign.css'
 /**
  * post = { id, postedBy, createdAt, content, createdAt }
  */
@@ -44,7 +45,7 @@ function Post({ post, profileImage, friendsUsernames }) {
   };
   return (
     <>
-      <Card>
+      <Card className='posts'>
         <CardHeader className="d-flex align-items-center">
           <div className="d-flex align-items-center">
             <a onClick={(e) => e.preventDefault()}>

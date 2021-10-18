@@ -36,12 +36,12 @@
   margin-top: 10px;
   border : medium none;
   border-radius: 30px;
-  color:white
+  color:black
 }
 
 .sidebarListItem.active {
-  background-color: #FCA311;
-  color : black;
+  background-color: #6FB3B8;
+  color : white;
   transition : background-color .2s;
 }
 
