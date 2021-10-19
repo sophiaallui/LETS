@@ -8,6 +8,7 @@ const PostComment = require("../models/postComment");
 const SubComment = require("../models/subComment");
 const jsonshema = require("jsonschema");
 const newCommentSchema = require("../schemas/postsCommentNew.json");
+const db = require("../db");
 const { BadRequestError } = require("../ExpressError");
 
 // GET /comments
@@ -63,7 +64,8 @@ router.post("/:commentId/:username/like", async (req, res, next) => {
     const { commentId, username } = req.params;
     const likeRes = await db.query(`INSERT INTO likes (comment_id, username) VALUES ($1, $2) returning *`, [commentId, username]);
     const finalLikesResults = await db.query(`SELECT * FROM posts_comments JOIN likes ON posts_comments.id = likes.comment_id WHERE posts_comments.id = $1`, [commentId]);
-    return res.json({ finalLikesResults })
+    const comment = finalLikesResults.rows;
+    return res.json({ comment })
   } catch(e) {
     return next(e);
   }

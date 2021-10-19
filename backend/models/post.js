@@ -269,7 +269,14 @@ class Post {
     );
     const likeId = likeIdRes.rows[0];
     const newLikeRes = await db.query(
-      `SELECT id, likes.post_id AS "postId", likes.username, users.profile_image AS "profileImage" FROM likes JOIN users ON users.username = likes.username WHERE id = $1`,
+      `SELECT 
+        id, 
+        likes.post_id AS "postId", 
+        likes.username, 
+        users.profile_image AS "profileImage" 
+        FROM likes JOIN users ON 
+        users.username = likes.username 
+          WHERE id = $1`,
       [likeId]
     );
     return newLikeRes.rows[0];
