@@ -24,6 +24,7 @@ import Charts from 'MyComponents/Charts';
 import Post from 'MyComponents/Post/Post';
 import NewPostFormModal from 'MyComponents/NewPostFormModal';
 import CardText from 'reactstrap/lib/CardText';
+import UserFeed from "MyComponents/pages/UserFeed";
 import './design/userProfileDesign.css'
 
 function UserProfile(props) {
@@ -249,7 +250,9 @@ function UserProfile(props) {
 								<TabPane tabId='Progress' role='tabpanel'>
 									<Charts />
 								</TabPane>
-								<TabPane tabId='Feed' role='tabpanel'></TabPane>
+								<TabPane tabId='Feed' role='tabpanel'>
+                  <Feed friendsUsernames={friendsUsernames} />
+                </TabPane>
 							</TabContent>
 						</CardBody>
 					</Card>
