@@ -13,10 +13,11 @@ import {
   Col,
   UncontrolledTooltip,
 } from "reactstrap";
+import Alert from 'MyComponents/common/Alert'
 import Comment from "MyComponents/comment/Comment";
 import UserContext from "UserContext";
 import Api from "api/api";
-import Alert from "MyComponents/common/Alert";
+import './postDesign.css'
 /**
  * post = { id, postedBy, createdAt, content, createdAt }
  */
@@ -55,7 +56,7 @@ function Post({ post, profileImage, friendsUsernames, deletePost }) {
   }
   return (
     <>
-      <Card>
+      <Card className='posts'>
         <CardHeader className="d-flex align-items-center">
           <div className="d-flex align-items-center">
             <a onClick={(e) => e.preventDefault()}>

@@ -1,9 +1,10 @@
 .sidebar {
   flex : 3;
-  /*height : calc(100vh - 50px);*/
-  overflow-y: scroll;
+  height : calc(100vh - 85.5px);
+  overflow-y: auto;
   position : sticky;
-  top : 100px
+  top : 85.5px;
+  margin-top: 10px;
 }
 
 ::-webkit-scrollbar {
@@ -35,10 +36,11 @@
   margin-top: 10px;
   border : medium none;
   border-radius: 30px;
+  color:black
 }
 
 .sidebarListItem.active {
-  background-color: #fb6340;
+  background-color: #6FB3B8;
   color : white;
   transition : background-color .2s;
 }

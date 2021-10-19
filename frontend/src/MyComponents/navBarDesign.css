@@ -1,5 +1,15 @@
-.navbar-dark.bg-warning.navbar.navbar-expand-lg{
+.navbar.navbar-expand-lg{
     position:sticky;
     top:0;
     z-index: 10;
+    background-color: #388087;    
+}
+
+.navbar-brand{
+    color: white;
+}
+
+.nav-item .nav-link{
+    color: white;
+
 }

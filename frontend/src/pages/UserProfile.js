@@ -24,8 +24,8 @@ import Charts from 'MyComponents/Charts';
 import Post from 'MyComponents/Post/Post';
 import NewPostFormModal from 'MyComponents/NewPostFormModal';
 import CardText from 'reactstrap/lib/CardText';
-import UserFeed from "MyComponents/pages/UserFeed";
-import './design/userProfileDesign.css'
+import UserFeed from './UserFeed.js';
+import './design/userProfileDesign.css';
 
 function UserProfile(props) {
 	const { username } = useParams();
@@ -36,21 +36,24 @@ function UserProfile(props) {
 	const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 	const [posts, setPosts] = useState(null);
 	const [mySentRequests, setMySentRequests] = useState([]);
-	const friendsUsernames = currentUser.friends.map((f) => f.user_from === currentUser.username ? f.user_to : f.user_from);
+	const friendsUsernames = currentUser.friends.map((f) =>
+		f.user_from === currentUser.username ? f.user_to : f.user_from
+	);
 
 	useEffect(() => {
 		const fetchMySentReqs = async () => {
 			try {
-				const myRequests = await Api.request(`friends/${currentUser.username}/sent`)
-				setMySentRequests(myRequests?.myRequests.map(f => f.user_to));
-		
+				const myRequests = await Api.request(
+					`friends/${currentUser.username}/sent`
+				);
+				setMySentRequests(myRequests?.myRequests.map((f) => f.user_to));
 			} catch (e) {
 				console.error(e);
 			}
-		}
+		};
 		fetchMySentReqs();
 	}, [username]);
-	
+
 	useEffect(() => {
 		const getLoadedUser = async () => {
 			try {
@@ -63,11 +66,11 @@ function UserProfile(props) {
 		const getPostsFullDetails = async () => {
 			try {
 				const posts = await Api.getPostsDetailsByUsername(username);
-				setPosts(posts)
+				setPosts(posts);
 			} catch (e) {
-				console.error(e)
+				console.error(e);
 			}
-		}
+		};
 		getLoadedUser();
 		getPostsFullDetails();
 	}, [username, posts?.length]);
@@ -100,11 +103,11 @@ function UserProfile(props) {
 	const deletePost = async (postId) => {
 		try {
 			await Api.deletePost(currentUser.username, postId);
-			setPosts(posts => posts.filter(p => p.id !== postId))
+			setPosts((posts) => posts.filter((p) => p.id !== postId));
 		} catch (e) {
 			console.error(e);
 		}
-	}
+	};
 
 	console.debug(
 		'UserProfile:',
@@ -112,7 +115,8 @@ function UserProfile(props) {
 		username,
 		'loadedUser=',
 		loadedUser,
-		"posts=", posts
+		'posts=',
+		posts
 	);
 	return (
 		<>
@@ -127,13 +131,14 @@ function UserProfile(props) {
 					/>
 				</Col>
 				<Col lg='2'>
-					<Card className='profile'>
-						<div>
+					<Card className='profile margin-top'>
+						<CardBody>
 							<img
+								width='500'
 								src={
 									loadedUser?.profileImage
 										? PF + loadedUser?.profileImage
-										: require('assets/img/placeholder.jpg')
+										: null
 								}
 							/>
 							{loadedUser?.username === currentUser.username &&
@@ -156,7 +161,7 @@ function UserProfile(props) {
 										)}
 									</form>
 								)}
-						</div>
+						</CardBody>
 						<CardBody>
 							<CardTitle>
 								{loadedUser?.firstName} {loadedUser?.lastName}
@@ -164,9 +169,13 @@ function UserProfile(props) {
 
 							<CardSubtitle>{loadedUser?.email}</CardSubtitle>
 							{currentUser.username !== loadedUser?.username &&
-								!friendsUsernames.includes(loadedUser?.username) && (
+								!friendsUsernames.includes(
+									loadedUser?.username
+								) && (
 									<SendFriendRequestButton
-										alreadySent={mySentRequests.includes(loadedUser?.username)}
+										alreadySent={mySentRequests.includes(
+											loadedUser?.username
+										)}
 										targetUsername={loadedUser?.username}
 									/>
 								)}
@@ -186,76 +195,71 @@ function UserProfile(props) {
 							</div>
 						</CardText>
 						<CardFooter>
-							{currentUser.username === loadedUser?.username && <NewPostFormModal buttonText="New Post" />}
+							{currentUser.username === loadedUser?.username && (
+								<NewPostFormModal buttonText='New Post' />
+							)}
 						</CardFooter>
-
 					</Card>
 				</Col>
 
-				<Col lg='7'>
-					<Card>
-						<CardBody>
-							<TabContent
-								id='myTabContent'
-								activeTab={currentTab}
-							>
-								<TabPane tabId='Goals' role='tabpanel'>
-									{loadedUser?.goals?.length === 0 ? (
-										<div>
-											<h2>No goals</h2>
-											{currentUser.username === loadedUser?.username && (
-												<Button>Post One</Button>
-											)}
-										</div>
-									) : (
-										// Do the Goals HERE
-										<div>
-											{loadedUser?.goals?.map((goal) => (
-												<div key={goal.id}>
-													{goal.id}
-												</div>
-											))}
-										</div>
-									)}
-								</TabPane>
+				<Col className='profile margin-top' lg='7'>
+					{/* The ProfileTab was here */}
 
-								<TabPane tabId='Posts' role='tabpanel'>
-									{loadedUser?.posts?.length === 0 ? (
-										<>
-											<h2>No posts</h2>
-											{currentUser.username ===
-												loadedUser?.username && (
-													<NewPostFormModal buttonText='Post one' />
-												)}
-										</>
-									) : (
-										<>
-											{posts?.map((p) => (
-												<Post
-													profileImage={
-														loadedUser?.profileImage
-													}
-													loadedUser={loadedUser}
-													type='Posts'
-													post={p}
-													key={p.id}
-													friendsUsernames={friendsUsernames}
-													deletePost={() => deletePost(p.id)}
-												/>
-											))}
-										</>
+					<TabContent id='myTabContent' activeTab={currentTab}>
+						<TabPane tabId='Goals' role='tabpanel'>
+							{loadedUser?.goals?.length === 0 ? (
+								<div>
+									<h2>No goals</h2>
+									{currentUser.username ===
+										loadedUser?.username && (
+										<Button>Post One</Button>
 									)}
-								</TabPane>
+								</div>
+							) : (
+								// Do the Goals HERE
+								<div>
+									{loadedUser?.goals?.map((goal) => (
+										<div key={goal.id}>{goal.id}</div>
+									))}
+								</div>
+							)}
+						</TabPane>
 
-								<TabPane tabId='Progress' role='tabpanel'>
-									<Charts />
-								</TabPane>
-								<TabPane tabId='Feed' role='tabpanel'>
-                  <Feed friendsUsernames={friendsUsernames} />
-                </TabPane>
-							</TabContent>
-						</CardBody>
-					</Card>
+						<TabPane tabId='Posts' role='tabpanel'>
+							{loadedUser?.posts?.length === 0 ? (
+								<>
+									<h2>No posts</h2>
+									{currentUser.username ===
+										loadedUser?.username && (
+										<NewPostFormModal buttonText='Post one' />
+									)}
+								</>
+							) : (
+								<>
+									{posts?.map((p) => (
+										<Post
+											profileImage={
+												loadedUser?.profileImage
+											}
+											loadedUser={loadedUser}
+											type='Posts'
+											post={p}
+											key={p.id}
+											friendsUsernames={friendsUsernames}
+											deletePost={() => deletePost(p.id)}
+										/>
+									))}
+								</>
+							)}
+						</TabPane>
+
+						<TabPane tabId='Progress' role='tabpanel'>
+							<Charts />
+						</TabPane>
+						<TabPane tabId='Feed' role='tabpanel'>
+							<UserFeed friendsUsernames={friendsUsernames} />
+						</TabPane>
+					</TabContent>
 				</Col>
 			</Row>
 		</>
