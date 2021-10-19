@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import Api from "api/api";
 import UserContext from "../UserContext";
-import { Row, Col, Container,  TabPane, TabContent, Card, CardBody } from "reactstrap";
+import { Row, Col, Container, TabPane, TabContent, Card, CardBody } from "reactstrap";
 
 import FriendCard from "MyComponents/FriendCard";
 import Sidebar from "MyComponents/sidebar/Sidebar";
@@ -31,13 +31,11 @@ const Friends = props => {
 
     const getUsersWaitingForMyConfirmation = async () => {
       try {
-        const usersWaitingUsernames = await Api.getPendingFriendRequests(currentUser.username);
-        if (!usersAwaitingMyConfirmation.length) {
-          return;
-        }
-        const usersWaitingPromise = Promise.all(usersWaitingUsernames?.map(username => Api.getCurrentUser(username)));
+        const usersWaiting = await Api.request(`friends/${currentUser.username}/pending`);
+        const usersWaitingPromise = Promise.all(usersWaiting?.requests?.map(u => Api.getCurrentUser(u.user_from)));
         const usersWaitingData = await usersWaitingPromise;
-        setUsersAwaitingMyConfirmation(usersWaitingData);
+        setUsersAwaitingMyConfirmation(usersWaitingData)
+
       }
       catch (e) {
         console.error(e);
@@ -46,13 +44,10 @@ const Friends = props => {
 
     const getMySentRequests = async () => {
       try {
-        const myRequestsUsernames = await Api.getMySentRequests(currentUser.username);
-        if (!myRequestsUsernames.length) {
-          return;
-        }
-        const myRequestsPromise = Promise.all(myRequestsUsernames?.map(username => Api.getCurrentUser(username)));
+        const myRequests = await Api.request(`friends/${currentUser.username}/sent`)
+        const myRequestsPromise = Promise.all(myRequests?.myRequests.map(u => Api.getCurrentUser(u.username)))
         const myRequestsData = await myRequestsPromise;
-        setMySentRequests(myRequestsData)
+        setMySentRequests(myRequestsData);
       }
       catch (e) {
         console.error(e);
@@ -61,7 +56,26 @@ const Friends = props => {
     getCurrentFriends();
     getUsersWaitingForMyConfirmation();
     getMySentRequests();
-  }, [currentUser.username]);
+  }, [currentUser.username, myFriends.length, mySentRequests.length]);
+
+  const handleConfirm = async (user) => {
+    try {
+      await Api.confirmFriendRequest(currentUser.username, user.username);
+      setUsersAwaitingMyConfirmation(usersAwaitingMyConfirmation.filter(f => f.username !== user.username));
+      setMyFriends(f => [...f, user])
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  const handleCancelFriendRequest = async (username) => {
+    try {
+      await Api.cancelFriendRequest(currentUser.username, username);
+      setMySentRequests(mySentRequests.filter(user => user.username !== username))
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
   console.debug("usersAwaitingMyConfirmation=", usersAwaitingMyConfirmation, "mySentRequests", mySentRequests, "myFriends=", myFriends);
   return (
@@ -95,8 +109,8 @@ const Friends = props => {
                       <Row>
                         {usersAwaitingMyConfirmation.length > 0 &&
                           usersAwaitingMyConfirmation.map(user => (
-                            <Col lg="3" md="6">
-                              <FriendCard type="pending" key={user.username} user={user} />
+                            <Col lg="3" md="6" key={user.username}>
+                              <FriendCard type="pending" key={user.username} user={user} handleConfirm={() => handleConfirm(user)} />
                             </Col>
                           ))}
                       </Row>
@@ -106,11 +120,17 @@ const Friends = props => {
                   <TabPane tabId="Still Waiting On">
                     <div className="description">
                       <h5>Still Waiting On ({mySentRequests.length})</h5>
-                      {mySentRequests.length > 0 && mySentRequests.map(user => (
-                        <Col lg="3" md="6"  key={user.username} >
-                          <FriendCard type="sent"user={user} />
-                        </Col>
-                      ))}
+                      <Row>
+                        {mySentRequests.length > 0 && mySentRequests.map(user => (
+                          <Col lg="3" md="6" key={user.username} >
+                            <FriendCard
+                              type="sent"
+                              user={user}
+                              handleCancelFriendRequest={() => handleCancelFriendRequest(user?.username)}
+                            />
+                          </Col>
+                        ))}
+                      </Row>
                     </div>
                   </TabPane>
                 </TabContent>

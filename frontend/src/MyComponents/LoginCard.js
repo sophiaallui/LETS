@@ -49,7 +49,7 @@ function LoginCard(props) {
   )
   return (
     <> 
-      {errors.length > 0 ? <ErrorModal title="Error" message={errors[0]} /> : null}
+      {errors.length > 0 ? <ErrorModal title="Error" messages={errors} /> : null}
       <Card className="bg-secondary shadow border-0">
         <CardHeader className="bg-white pb-5">
           <div className="text-muted text-center mb-3">

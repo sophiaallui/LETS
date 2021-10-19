@@ -3,7 +3,7 @@ import React, { useState, useRef } from "react";
 import ReactBSAlert from "react-bootstrap-sweetalert";
 import { Button } from "reactstrap";
 
-const Alert = () => {
+const Alert = ({ deletePost, children }) => {
   const [state, setState] = useState(null);
   const hideAlert = () => {
     setState(null);
@@ -14,13 +14,16 @@ const Alert = () => {
         warning
         style={{ display: "block", marginTop: "-100px" }}
         title="Are you sure?"
-        onConfirm={() => hideAlert()}
-        onCancel={confirmedAlert}
+        onConfirm={() => {
+          deletePost();
+          confirmedAlert();
+        }}
+        onCancel={hideAlert}
         showCancel
-        confirmBtnBsStyle="secondary"
-        confirmBtnText="Cancel"
-        cancelBtnBsStyle="danger"
-        cancelBtnText="Yes, delete it!"
+        confirmBtnBsStyle="danger"
+        confirmBtnText="Yes, delete it!"
+        cancelBtnBsStyle="secondary"
+        cancelBtnText="Cancel"
         btnSize=""
       >
         You won't be able to revert this!
@@ -28,22 +31,20 @@ const Alert = () => {
     );
   };
   const confirmedAlert = () => {
-    this.setState({
-      alert: (
-        <ReactBSAlert
-          success
-          style={{ display: "block", marginTop: "-100px" }}
-          title="Deleted!"
-          onConfirm={() => hideAlert()}
-          onCancel={() => hideAlert()}
-          confirmBtnBsStyle="primary"
-          confirmBtnText="Ok"
-          btnSize=""
-        >
-          Your file has been deleted.
-        </ReactBSAlert>
-      ),
-    });
+    setState(
+      <ReactBSAlert
+        success
+        style={{ display: "block", marginTop: "-100px" }}
+        title="Deleted!"
+        onConfirm={() => hideAlert()}
+        onCancel={() => hideAlert()}
+        confirmBtnBsStyle="primary"
+        confirmBtnText="Ok"
+        btnSize=""
+      >
+        Your file has been deleted.
+      </ReactBSAlert>
+    );
   };
   return (
     <>
@@ -55,7 +56,7 @@ const Alert = () => {
         type="button"
         onClick={confirmAlert}
       >
-
+        {children}
       </Button>
     </>
   );

@@ -64,6 +64,13 @@ CREATE TABLE posts_comments (
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE likes (
+  id SERIAL PRIMARY KEY,
+  post_id INT REFERENCES posts(id) ON DELETE CASCADE DEFAULT NULL,
+  comment_id INT REFERENCES posts_comments(id) ON DELETE CASCADE DEFAULT NULL,
+  username VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE
+);
+
 CREATE TABLE posts_comments_comments (
   id SERIAL PRIMARY KEY,
   post_id INT REFERENCES posts (id) ON DELETE CASCADE,

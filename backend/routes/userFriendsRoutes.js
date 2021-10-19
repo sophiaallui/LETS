@@ -22,11 +22,11 @@ router.get("/:username", ensureLoggedIn, async (req, res, next) => {
 // GETS a list of friend requests that are pending :username's confirmation
 // returns => { requests : [ ] }
 // auth required : same as :username or admin
-router.get("/:username/pending", ensureCorrectUserOrAdmin, async (req, res, next) => {
+router.get("/:username/pending", async (req, res, next) => {
   try {
     const { username } = req.params;
     const requests = await UserFriend.getAllPending(username);
-    return res.json({ requests : requests.map(u => u.user_from) })
+    return res.json({ requests  })
   } catch(e) {
     return next(e);
   }
@@ -34,11 +34,11 @@ router.get("/:username/pending", ensureCorrectUserOrAdmin, async (req, res, next
 
 // get friends/[username]/sent
 // gets a list of users that :username sent a friend req to.
-router.get("/:username/sent", ensureLoggedIn, async (req, res, next) => {
+router.get("/:username/sent", async (req, res, next) => {
   try {
     const { username } = req.params;
     const byMe = await UserFriend.getAllBy(username)
-    return res.json({ myRequests : byMe.map(u => u.user_to) })
+    return res.json({ myRequests : byMe })
   }
   catch(e) {
     return next(e);
@@ -69,6 +69,15 @@ router.put("/:username/from/:username2", ensureCorrectUserOrAdmin, async (req, r
   }
 });
 
-
+// delete friend request from logged-in user to target user
+router.delete("/:username/to/:username2", ensureCorrectUserOrAdmin, async (req, res, next) =>{
+  try {
+    const { username, username2 } = req.params;
+    const request = await UserFriend.cancelFriendRequest(username, username2);
+    return res.json({ request });
+  } catch(e) {
+    return next(e);
+  }
+})
 
 module.exports = router;

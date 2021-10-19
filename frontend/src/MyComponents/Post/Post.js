@@ -13,6 +13,7 @@ import {
   Col,
   UncontrolledTooltip,
 } from "reactstrap";
+import Alert from 'MyComponents/common/Alert'
 import Comment from "MyComponents/comment/Comment";
 import UserContext from "UserContext";
 import Api from "api/api";
@@ -23,10 +24,11 @@ import './postDesign.css'
 
 import { format } from "timeago.js";
 
-function Post({ post, profileImage, friendsUsernames }) {
+function Post({ post, profileImage, friendsUsernames, deletePost }) {
   const { currentUser } = useContext(UserContext);
   const [comments, setComments] = useState(post?.comments);
   const [comment, setComment] = useState("");
+  const [likes, setLikes] = useState(post?.likes);
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
   const handleCommentSubmit = async (e) => {
@@ -43,6 +45,15 @@ function Post({ post, profileImage, friendsUsernames }) {
       console.error(e);
     }
   };
+
+  const likePost = async () => {
+    try {
+      const newLike = await Api.likePost(+post.id, currentUser.username);
+      setLikes(likes => [...likes, newLike])
+    } catch (e) {
+      console.error(e);
+    }
+  }
   return (
     <>
       <Card className='posts'>
@@ -87,17 +98,12 @@ function Post({ post, profileImage, friendsUsernames }) {
                 </Button>
               )}
             {currentUser.username === post?.postedBy && (
-              <Button
-                className="btn-icon"
-                color="danger"
-                size="sm"
-                type="button"
-              >
+              <Alert deletePost={deletePost}>
                 <span className="btn-inner-icon icon-big">
                   <i className="fas fa-trash"></i>
                   <span className="btn-inner--text">Delete</span>
                 </span>
-              </Button>
+              </Alert>
             )}
           </div>
         </CardHeader>
@@ -117,10 +123,10 @@ function Post({ post, profileImage, friendsUsernames }) {
           <Row className="align-items-center my-3 pb-3 border-bottom">
             <Col sm="6">
               <div className="icon-actions">
-                <a className="like active" onClick={(e) => e.preventDefault()}>
+                <Button className="like active" size="sm" onClick={likePost}>
                   <i className="ni ni-like-2"></i>
-                  <span className="text-muted">150</span>
-                </a>
+                  <span className="text-muted">{likes.length}</span>
+                </Button>
                 <a onClick={(e) => e.preventDefault()}>
                   <i className="ni ni-chat-round"></i>
                   <span className="text-muted">{comments.length}</span>
@@ -134,48 +140,29 @@ function Post({ post, profileImage, friendsUsernames }) {
 
             <Col className="d-none d-sm-block" sm="6">
               <div className="d-flex align-items-center justify-content-sm-end">
+
                 <div className="avatar-group">
-                  <a
-                    className="avatar avatar-xs rounded-circle"
-                    onClick={(e) => e.preventDefault()}
-                    id="tooltip777026221"
-                  >
-                    <img
-                      alt="..."
-                      src={require("assets/img/faces/team-1.jpg")}
-                    ></img>
-                  </a>
-                  <UncontrolledTooltip delay={0} target="tooltip777026221">
-                    Jessica Rowland
-                  </UncontrolledTooltip>
-                  <a
-                    className="avatar avatar-xs rounded-circle"
-                    onClick={(e) => e.preventDefault()}
-                    id="tooltip386481262"
-                  >
-                    <img
-                      alt="..."
-                      className="rounded-circle"
-                      src={require("assets/img/faces/team-2.jpg")}
-                    ></img>
-                  </a>
-                  <UncontrolledTooltip delay={0} target="tooltip386481262">
-                    Audrey Love
-                  </UncontrolledTooltip>
-                  <a
-                    className="avatar avatar-xs rounded-circle"
-                    onClick={(e) => e.preventDefault()}
-                    id="tooltip508888926"
-                  >
-                    <img
-                      alt="..."
-                      className="rounded-circle"
-                      src={require("assets/img/faces/team-3.jpg")}
-                    ></img>
-                  </a>
-                  <UncontrolledTooltip delay={0} target="tooltip508888926">
-                    Michael Lewis
-                  </UncontrolledTooltip>
+                  {likes?.map(l => (
+                    <>
+                      <a className="avatar avatar-xs rounded-circle"
+                        key={l.id}
+                        onClick={(e) => e.preventDefault()}
+                        id={`usernameToolTip${l.id}`}
+                      >
+                        <img
+                          alt="..."
+                          src={
+                            l.profileImage ?
+                            PF + l.profileImage :
+                            require("assets/img/placeholder.jpg")
+                          }
+                        />
+                      </a>
+                      <UncontrolledTooltip delay={0} target={`usernameToolTip${l.id}`}>
+                        {l.username}
+                      </UncontrolledTooltip>
+                    </>
+                  ))}
                 </div>
                 <small className="pl-2 font-weight-bold">and 30+ more</small>
               </div>
@@ -195,7 +182,7 @@ function Post({ post, profileImage, friendsUsernames }) {
                 src={
                   currentUser.profileImage
                     ? PF + currentUser.profileImage
-                    : require("assets/img/faces/team-3.jpg")
+                    : require("assets/img/placeholder.jpg")
                 }
               />
               <Media body>
@@ -207,7 +194,7 @@ function Post({ post, profileImage, friendsUsernames }) {
                     onChange={(e) => setComment(e.target.value)}
                     value={comment}
                   />
-                  <Button>comment</Button>
+                  <Button size="sm">comment</Button>
                 </Form>
               </Media>
             </Media>

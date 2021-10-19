@@ -1,14 +1,15 @@
 const db = require("../db");
-const {
-  NotFoundError,
-  BadRequestError,
-} = require("../ExpressError");
+const { NotFoundError, BadRequestError } = require("../ExpressError");
 const { sqlForPartialUpdate } = require("../helpers/sqlForPartialUpdate");
 
 class Post {
   static async create(username, data) {
-    const checkIfUserExists = await db.query(`SELECT username FROM users WHERE username = $1`, [username]);
-    if (!checkIfUserExists.rows.length) throw new NotFoundError(`User : ${username} does not exist`);
+    const checkIfUserExists = await db.query(
+      `SELECT username FROM users WHERE username = $1`,
+      [username]
+    );
+    if (!checkIfUserExists.rows.length)
+      throw new NotFoundError(`User : ${username} does not exist`);
     const res = await db.query(
       `INSERT INTO posts
       (posted_by, content, image)
@@ -18,11 +19,11 @@ class Post {
         posted_by AS "postedBy",
         content,
         created_at AS "createdAt",
-        image`, 
-        [username, data.content, data.image]
+        image`,
+      [username, data.content, data.image]
     );
     return res.rows[0];
-  };
+  }
 
   static async getByUsername(username) {
     const res = await db.query(
@@ -32,12 +33,24 @@ class Post {
         content,
         created_at AS "createdAt",
         image
-        FROM posts WHERE posted_by = $1`, [username]
+        FROM posts WHERE posted_by = $1`,
+      [username]
     );
     const posts = res.rows;
-    if(posts.length) {
-      for(const post of posts) {
+    if (posts.length) {
+      for (const post of posts) {
         const { id } = post;
+        const likes = await db.query(
+          `
+        SELECT 
+          likes.id,
+          likes.post_id AS "postId",
+          likes.username, 
+          users.profile_image AS "profileImage" 
+          FROM likes JOIN users ON users.username = likes.username
+          WHERE post_id = $1`,
+          [id]
+        );
         const comments = await db.query(
           `SELECT 
             id, 
@@ -48,11 +61,13 @@ class Post {
             users.profile_image AS "commentorProfileImage"
             FROM posts_comments 
               JOIN users ON posts_comments.posted_by = users.username 
-          WHERE post_id = $1`, [id]
+          WHERE post_id = $1`,
+          [id]
         );
         post.comments = comments.rows;
-        if(post.comments[0]) {
-          for(let comment of post.comments) {
+        post.likes = likes.rows;
+        if (post.comments[0]) {
+          for (let comment of post.comments) {
             const commentId = comment.id;
             const postCommentsComments = await db.query(
               `SELECT 
@@ -63,15 +78,16 @@ class Post {
                 content, 
                 created_at AS "createdAt"
               FROM 
-              posts_comments_comments WHERE post_id = $1 AND post_comments_id = $2`, [id, commentId]
+              posts_comments_comments WHERE post_id = $1 AND post_comments_id = $2`,
+              [id, commentId]
             );
             comment.comments = postCommentsComments.rows;
           }
-        } 
+        }
       }
     }
     return posts;
-  };
+  }
 
   static async getAll() {
     const res = await db.query(`SELECT 
@@ -81,17 +97,23 @@ class Post {
     created_at AS "createdAt",
     image
     FROM posts`);
-    if(res.rows[0]) {
-      for(let post of res.rows) {
+    if (res.rows[0]) {
+      for (let post of res.rows) {
         const postId = post.id;
-        const comments = await db.query(`SELECT * FROM posts_comments WHERE post_id = $1`, [postId]);
-        if(comments.rows[0]) {
+        const comments = await db.query(
+          `SELECT * FROM posts_comments WHERE post_id = $1`,
+          [postId]
+        );
+        if (comments.rows[0]) {
           post.comments = comments.rows;
-          for(let comment of post.comments) {
-            const commentId = comment.id
-            const commentsComments = await db.query(`SELECT * FROM posts_comments_comments WHERE post_id = $1 AND post_comments_id = $2`, [postId, commentId]);
-            if(commentsComments.rows.length) {
-              comment.comments = commentsComments.rows
+          for (let comment of post.comments) {
+            const commentId = comment.id;
+            const commentsComments = await db.query(
+              `SELECT * FROM posts_comments_comments WHERE post_id = $1 AND post_comments_id = $2`,
+              [postId, commentId]
+            );
+            if (commentsComments.rows.length) {
+              comment.comments = commentsComments.rows;
             } else {
               comment.comments = [];
             }
@@ -110,11 +132,22 @@ class Post {
         content,
         created_at AS "createdAt",
         image
-        FROM posts WHERE id = $1`, [id]
+        FROM posts WHERE id = $1`,
+      [id]
     );
     const post = res.rows[0];
     if (!post) throw new NotFoundError(`PostId ${id} does not exist`);
-
+    const likes = await db.query(
+      `
+      SELECT 
+        likes.id,
+        likes.username, 
+        users.profile_image AS "profileImage" 
+      FROM likes JOIN users ON users.username = likes.username
+      WHERE post_id = $1`,
+      [id]
+    );
+    post.likes = likes.rows;
     const comments = await db.query(
       `SELECT 
       id, 
@@ -125,12 +158,13 @@ class Post {
       users.profile_image AS "commentorProfileImage"
       FROM posts_comments 
         JOIN users ON posts_comments.posted_by = users.username 
-    WHERE post_id = $1`, [id]
+    WHERE post_id = $1`,
+      [id]
     );
 
     post.comments = comments.rows;
-    if(post.comments[0]) {
-      for(let comment of post.comments) {
+    if (post.comments[0]) {
+      for (let comment of post.comments) {
         const commentId = comment.id;
         const postCommentsComments = await db.query(
           `SELECT 
@@ -141,13 +175,14 @@ class Post {
             content, 
             created_at AS "createdAt"
           FROM 
-          posts_comments_comments WHERE post_id = $1 AND post_comments_id = $2`, [id, commentId]
+          posts_comments_comments WHERE post_id = $1 AND post_comments_id = $2`,
+          [id, commentId]
         );
         comment.comments = postCommentsComments.rows;
       }
-    } 
+    }
     return post;
-  };
+  }
 
   static async getAll() {
     const res = await db.query(`SELECT 
@@ -157,17 +192,23 @@ class Post {
     created_at AS "createdAt",
     image
     FROM posts`);
-    if(res.rows[0]) {
-      for(let post of res.rows) {
+    if (res.rows[0]) {
+      for (let post of res.rows) {
         const postId = post.id;
-        const comments = await db.query(`SELECT * FROM posts_comments WHERE post_id = $1`, [postId]);
-        if(comments.rows[0]) {
+        const comments = await db.query(
+          `SELECT * FROM posts_comments WHERE post_id = $1`,
+          [postId]
+        );
+        if (comments.rows[0]) {
           post.comments = comments.rows;
-          for(let comment of post.comments) {
-            const commentId = comment.id
-            const commentsComments = await db.query(`SELECT * FROM posts_comments_comments WHERE post_id = $1 AND post_comments_id = $2`, [postId, commentId]);
-            if(commentsComments.rows.length) {
-              comment.comments = commentsComments.rows
+          for (let comment of post.comments) {
+            const commentId = comment.id;
+            const commentsComments = await db.query(
+              `SELECT * FROM posts_comments_comments WHERE post_id = $1 AND post_comments_id = $2`,
+              [postId, commentId]
+            );
+            if (commentsComments.rows.length) {
+              comment.comments = commentsComments.rows;
             } else {
               comment.comments = [];
             }
@@ -176,15 +217,17 @@ class Post {
       }
     }
     return res.rows;
-  };
+  }
 
   static async update(username, postId, data) {
-    const preCheck = await db.query(`SELECT id FROM posts WHERE id = $1`, [postId]);
-    if(!preCheck.rows[0]) throw new NotFoundError(`Post ${postId} not found`);
+    const preCheck = await db.query(`SELECT id FROM posts WHERE id = $1`, [
+      postId,
+    ]);
+    if (!preCheck.rows[0]) throw new NotFoundError(`Post ${postId} not found`);
 
     const { setCols, values } = sqlForPartialUpdate(data, {
-      content : "content",
-      created_at : "createdAt"    
+      content: "content",
+      created_at: "createdAt",
     });
     const usernameVarIdx = "$" + (values.length + 1);
     const postIdVarIdx = "$" + (values.length + 2);
@@ -197,17 +240,47 @@ class Post {
 
     const res = await db.query(querySQL, [...values, username, postId]);
     const post = res.rows[0];
-    if(!post) throw new BadRequestError();
-    
+    if (!post) throw new BadRequestError();
+
     return post;
-  };
+  }
 
   static async delete(username, postId) {
-    const preCheck = await db.query(`SELECT id FROM posts WHERE id = $1`, [postId]);
-    if(!preCheck.rows[0]) throw new NotFoundError(`Post with id : ${postId} does not exist`);
-    
-    await db.query(`DELETE FROM posts WHERE posted_by = $1 AND id = $2 RETURNING id`, [username, postId]);
-  };
-};
+    const preCheck = await db.query(`SELECT id FROM posts WHERE id = $1`, [
+      postId,
+    ]);
+    if (!preCheck.rows[0])
+      throw new NotFoundError(`Post with id : ${postId} does not exist`);
+    await db.query(
+      `DELETE FROM posts WHERE posted_by = $1 AND id = $2 RETURNING id`,
+      [username, postId]
+    );
+  }
+
+  static async likePost(username, postId) {
+    const preCheck = await db.query(`SELECT id FROM posts WHERE id = $1`, [
+      postId,
+    ]);
+    if (!preCheck.rows[0])
+      throw new NotFoundError(`Post with id : ${postId} does not exist`);
+    const likeIdRes = await db.query(
+      `INSERT INTO likes (post_id, username) VALUES($1, $2) RETURNING id`,
+      [postId, username]
+    );
+    const likeId = likeIdRes.rows[0];
+    const newLikeRes = await db.query(
+      `SELECT 
+        id, 
+        likes.post_id AS "postId", 
+        likes.username, 
+        users.profile_image AS "profileImage" 
+        FROM likes JOIN users ON 
+        users.username = likes.username 
+          WHERE id = $1`,
+      [likeId]
+    );
+    return newLikeRes.rows[0];
+  }
+}
 
 module.exports = Post;

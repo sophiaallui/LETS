@@ -21,11 +21,16 @@ class UserFriend {
 
   static async getAllBy(username) {
     const res = await db.query(
-      `SELECT user_to FROM users_friends
+      `SELECT * FROM users_friends JOIN users ON users_friends.user_to = users.username
       WHERE user_from = $1
        AND confirmed = 0`
        ,[username]
     );
+    for(const row of res.rows) {
+      if(row.password) {
+        delete row.password 
+      }
+    }
     return res.rows;
   }
 
@@ -103,9 +108,12 @@ class UserFriend {
     return results.rows[0];
   };
 
-  static async removeFriend(userFrom, userTo) {
-    return;
-  }
+  static async cancelFriendRequest(userFrom, userTo) {
+    const res = await db.query(`
+      DELETE FROM users_friends WHERE user_from = $1 AND user_to = $2 RETURNING *
+    `, [userFrom, userTo])
+    return res.rows[0];
+  };
 }
 
 

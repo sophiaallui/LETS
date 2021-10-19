@@ -76,4 +76,13 @@ router.delete("/:username/:postId", ensureCorrectUserOrAdmin, async (req, res, n
   }
 });
 
+router.post("/:username/:postId/like", ensureCorrectUserOrAdmin, async (req, res, next) => {
+  try {
+    const { username, postId } = req.params;
+    const like = await Post.likePost(username, postId);
+    return res.json({ like })
+  } catch(e) {
+    return next(e);
+  }
+})
 module.exports = router;
