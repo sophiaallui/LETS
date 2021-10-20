@@ -1,21 +1,44 @@
 import React, { useState, useRef, useContext } from "react";
 import {
-   PermMedia,
-   Label,
-   Room,
-   EmojiEmotions,
-   Cancel,
+  PermMedia,
+  Label,
+  Room,
+  EmojiEmotions,
+  Cancel,
 } from "@material-ui/icons";
 import UserContext from "UserContext";
 import "./share.css";
-const Share = () => {
-   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-   const { currentUser } = useContext(UserContext);
-   const desc = useRef();
-   const [file, setFile] = useState(null);
+import Api from "api/api";
 
-   return (
-      <div className="share">
+const Share = () => {
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const { currentUser } = useContext(UserContext);
+  const desc = useRef();
+  const [file, setFile] = useState(null);
+
+  const handleProfileImageSubmit = async (e) => {
+    e.preventDefault();
+    if (file) {
+      const data = new FormData();
+      const filename = Date.now() + file.name;
+      data.append("name", filename);
+      data.append("file", file);
+      try {
+        await Api.request(`api/images`, data, "POST");
+        await Api.updateUser(
+          currentUser?.username,
+          { profileImage: filename },
+          "PUT"
+        );
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    window.location.reload();
+  };
+
+  return (
+    <div className="share">
       <div className="shareWrapper">
         <div className="shareTop">
           <img
@@ -40,7 +63,7 @@ const Share = () => {
             <Cancel className="shareCancelImg" onClick={() => setFile(null)} />
           </div>
         )}
-        <form className="shareBottom" onSubmit={e => e.preventDefault()}>
+        <form className="shareBottom" onSubmit={(e) => e.preventDefault()}>
           <div className="shareOptions">
             <label htmlFor="file" className="shareOption">
               <PermMedia htmlColor="tomato" className="shareIcon" />
@@ -55,7 +78,7 @@ const Share = () => {
             </label>
             <div className="shareOption">
               <Label htmlColor="blue" className="shareIcon" />
-              <span className="shareOptionText">Tag</span>
+              <span className="shareOptionText">Goal</span>
             </div>
             <div className="shareOption">
               <Room htmlColor="green" className="shareIcon" />
@@ -72,7 +95,7 @@ const Share = () => {
         </form>
       </div>
     </div>
-   )
-}
+  );
+};
 
 export default Share;

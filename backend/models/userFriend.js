@@ -2,7 +2,6 @@ const db = require("../db");
 const { NotFoundError, BadRequestError } = require("../ExpressError");
 
 class UserFriend {
-
   // Gets all confirmed friends about that username.
   static async getAllFrom(username) {
     const res = await db.query(
@@ -23,12 +22,12 @@ class UserFriend {
     const res = await db.query(
       `SELECT * FROM users_friends JOIN users ON users_friends.user_to = users.username
       WHERE user_from = $1
-       AND confirmed = 0`
-       ,[username]
+       AND confirmed = 0`,
+      [username]
     );
-    for(const row of res.rows) {
-      if(row.password) {
-        delete row.password 
+    for (const row of res.rows) {
+      if (row.password) {
+        delete row.password;
       }
     }
     return res.rows;
@@ -40,10 +39,10 @@ class UserFriend {
       `SELECT * FROM users_friends
         WHERE user_to = $1
         AND confirmed = $2`,
-        [username, 0]
+      [username, 0]
     );
     return res.rows;
-  } 
+  }
 
   static async sendFriendRequest(userFrom, userTo) {
     const preCheck = await db.query(
@@ -54,11 +53,12 @@ class UserFriend {
       throw new NotFoundError();
     }
     const checkIfRequestWasSentAlready = await db.query(
-      `SELECT * FROM users_friends WHERE user_from = $1 AND user_to = $2 AND confirmed = 0`, [userTo, userFrom]
+      `SELECT * FROM users_friends WHERE user_from = $1 AND user_to = $2 AND confirmed = 0`,
+      [userTo, userFrom]
     );
-    if(checkIfRequestWasSentAlready.rows[0]) {
+    if (checkIfRequestWasSentAlready.rows[0]) {
       const res = await this.confirmFriendRequest(userTo, userFrom);
-      return res
+      return res;
     }
     const results = await db.query(
       `INSERT INTO users_friends 
@@ -76,23 +76,24 @@ class UserFriend {
       throw new BadRequestError();
     }
     return userFriendRequest;
-  };
-  
+  }
+
   static async confirmFriendRequest(userFrom, userTo) {
     const checkIfUserFromExists = await db.query(
-      `SELECT username FROM users WHERE username = $1`, [userFrom]
+      `SELECT username FROM users WHERE username = $1`,
+      [userFrom]
     );
     if (!checkIfUserFromExists.rows.length) {
       throw new NotFoundError(`User ${userFrom} does not exist`);
-    };;
+    }
     const checkIfUserToExists = await db.query(
-      `SELECT username FROM users WHERE username = $1`, [userTo]
+      `SELECT username FROM users WHERE username = $1`,
+      [userTo]
     );
-    if(!checkIfUserToExists.rows.length) {
-      throw new NotFoundError(`User ${userTo} does not exist`)
-    };
+    if (!checkIfUserToExists.rows.length) {
+      throw new NotFoundError(`User ${userTo} does not exist`);
+    }
 
-    
     const results = await db.query(
       `UPDATE users_friends
        SET confirmed = 1
@@ -103,19 +104,32 @@ class UserFriend {
         user_to AS "userTo",
         request_time AS "requestTime",
         confirmed
-        `, [userFrom, userTo]
+        `,
+      [userFrom, userTo]
     );
     return results.rows[0];
-  };
+  }
 
   static async cancelFriendRequest(userFrom, userTo) {
-    const res = await db.query(`
+    const res = await db.query(
+      `
       DELETE FROM users_friends WHERE user_from = $1 AND user_to = $2 RETURNING *
-    `, [userFrom, userTo])
-    return res.rows[0];
-  };
+    `,
+      [userFrom, userTo]
+    );
+    if (res.rows.length) {
+      return res.rows[0];
+    }
+    const res2 = await db.query(
+      `
+    DELETE FROM users_friends WHERE user_from = $2 AND user_to = $1 RETURNING *
+  `,
+      [userFrom, userTo]
+    );
+    if (res2.rows.length) {
+      return res2.rows[0];
+    }
+  }
 }
-
-
 
 module.exports = UserFriend;

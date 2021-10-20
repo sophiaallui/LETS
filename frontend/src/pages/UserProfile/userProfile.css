@@ -3,7 +3,7 @@
 }
 
 .profileRight{
-   flex: 9;
+   flex: 6;
 }
 
 .profileCover{
@@ -27,7 +27,6 @@
    right: 0;
    margin: auto;
    top: 150px;
-   border: 3px solid white;
 }
 
 .profileInfo{
@@ -42,7 +41,7 @@
 }
 
 .profileInfoDesc{
-   font-weight: 300;
+   font-weight: 600;
 }
 
 .profileRightBottom{

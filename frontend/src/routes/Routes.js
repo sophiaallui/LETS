@@ -10,6 +10,8 @@ import PrivateRoute from "./PrivateRoute";
 import EditProfile from "pages/EditProfile";
 import Goal from "pages/Goal";
 import Friends from "pages/Friends";
+import Home from "pages/Home";
+
 /** Site-wide routes.
  *
  * Parts of site should only be visitable when logged in. Those routes are

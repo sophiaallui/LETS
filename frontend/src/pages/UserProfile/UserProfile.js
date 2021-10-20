@@ -4,13 +4,6 @@ import { useParams, Link } from 'react-router-dom';
 // reactstrap components
 import {
 	Button,
-	Row,
-	Col,
-	Card,
-	CardBody,
-	CardSubtitle,
-	CardTitle,
-	CardFooter,
 	TabContent,
 	TabPane,
 } from 'reactstrap';
@@ -19,25 +12,23 @@ import Sidebar from 'MyComponents/sidebar/Sidebar';
 import Api from 'api/api';
 import UserContext from 'UserContext';
 import SendFriendRequestButton from 'MyComponents/SendFriendRequestButton';
-import ImageUpload from 'MyComponents/common/ImageUpload';
 import Charts from 'MyComponents/Charts';
 import Post from 'MyComponents/Post/Post';
 import NewPostFormModal from 'MyComponents/NewPostFormModal';
-import CardText from 'reactstrap/lib/CardText';
 import UserFeed from '../../MyComponents/feed/Feed.js';
-// import './design/userProfileDesign.css';
+import RightBar from "MyComponents/rightbar/RightBar";
 import "./userProfile.css";
+
 function UserProfile(props) {
 	const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 	const { username } = useParams();
 	const { currentUser, friendsUsernames } = useContext(UserContext);
 	const [loadedUser, setLoadedUser] = useState(null);
 	const [currentTab, setCurrentTab] = useState('Feed');
-	const [file, setFile] = useState(null);
 
 	const [posts, setPosts] = useState(null);
 	const [mySentRequests, setMySentRequests] = useState([]);
-	const [isMyProfile, setIsMyProfile] = useState(username === currentUser.username)
+	const [isMyProfile, setIsMyProfile] = useState(username === currentUser?.username)
 
 	useEffect(() => {
 		const fetchMySentReqs = async () => {
@@ -76,27 +67,6 @@ function UserProfile(props) {
 		setCurrentTab(tab);
 	};
 
-	const handleProfileImageSubmit = async (e) => {
-		e.preventDefault();
-		if (file) {
-			const data = new FormData();
-			const filename = Date.now() + file.name;
-			data.append('name', filename);
-			data.append('file', file);
-			try {
-				await Api.request(`api/images`, data, 'POST');
-				await Api.updateUser(
-					currentUser?.username,
-					{ profileImage: filename },
-					'PUT'
-				);
-			} catch (e) {
-				console.error(e);
-			}
-		}
-		window.location.reload();
-	};
-
 	const deletePost = async (postId) => {
 		try {
 			await Api.deletePost(currentUser.username, postId);
@@ -117,7 +87,6 @@ function UserProfile(props) {
 	);
 	return (
 		<>
-
 			<div className="profile">
 				<Sidebar
 					currentPage='profile'
@@ -194,10 +163,13 @@ function UserProfile(props) {
 								<UserFeed username={username} />
 							</TabPane>
 						</TabContent>
-					</div>
-				</div>
-			</div>
 
+					</div>
+
+				</div>
+				<RightBar user={loadedUser} />
+		
+			</div>
 		</>
 	);
 }

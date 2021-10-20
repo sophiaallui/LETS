@@ -1,31 +1,11 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, {  useContext  } from "react";
 import "./sidebar.css";
-import Api from "api/api";
 import UserContext from "UserContext";
-import { Link } from "react-router-dom";
+
 
 const Sidebar = ({ currentPage = "profile", setCurrentTab, currentTab }) => {
-  const [friends, setFriends] = useState([]);
   const { currentUser } = useContext(UserContext);
-  const friendsUsernames = currentUser.friends.map((f) =>
-    f.user_from === currentUser.username ? f.user_to : f.user_from
-  );
   const PF =  process.env.REACT_APP_PUBLIC_FOLDER;
-  useEffect(() => {
-    const fetchFriends = async () => {
-      try {
-        const allPromise = Promise.all(
-          friendsUsernames.map((username) => Api.getCurrentUser(username))
-        );
-        const friendsData = await allPromise;
-        setFriends(friendsData);
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
-    fetchFriends();
-  }, [currentUser.username]);
 
   let listItems;
   if (currentPage === "profile") {
