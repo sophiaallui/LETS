@@ -11,9 +11,10 @@ const Feed = ({ username }) => {
 	useEffect(() => {
 		const getPostsFullDetails = async () => {
 			try {
-				const posts = username 
-					? await Api.getPostsDetailsByUsername(username)
-					: await Api.getPostsDetailsByUsername(currentUser.username)
+				const posts = username === currentUser.username
+					? await Api.getPostTimeline(currentUser.username)
+					: await Api.getPostsDetailsByUsername(username)
+					
 				setPosts(posts.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)));
 			} catch (e) {
 				console.error(e);
@@ -30,7 +31,7 @@ const Feed = ({ username }) => {
 			console.error(e);
 		}
 	};
-
+	console.log(posts)
 	return (
 		<div className="feed">
 			<div className="feedWrapper">

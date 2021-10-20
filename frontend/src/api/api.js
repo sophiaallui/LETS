@@ -92,7 +92,8 @@ class Api {
   }
 
   static async getPostTimeline(username) {
-    const res = await this.request(`posts/${username}/timeline`)
+    const res = await this.request(`posts/user/${username}/timeline`);
+    return res;
   }  
   // post comment stuff
   static async createComment(postId, username, data) {
