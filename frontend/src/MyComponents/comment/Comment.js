@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { format } from 'timeago.js';
 import './commentDesign.css';
 const Comment = ({ comment }) => {
+	console.log(comment);
 	const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 	return (
 		<Media className='container'>
@@ -15,7 +16,7 @@ const Comment = ({ comment }) => {
 							src={
 								comment.commentorProfileImage
 									? PF + comment.commentorProfileImage
-									: require('assets/img/faces/team-1.jpg')
+									: require('assets/img/placeholder.jpg')
 							}
 						/>
 					</div>

@@ -34,7 +34,7 @@ router.get("/:username/pending", async (req, res, next) => {
 
 // get friends/[username]/sent
 // gets a list of users that :username sent a friend req to.
-router.get("/:username/sent", async (req, res, next) => {
+router.get("/:username/sent", ensureCorrectUserOrAdmin, async (req, res, next) => {
   try {
     const { username } = req.params;
     const byMe = await UserFriend.getAllBy(username)

@@ -20,7 +20,7 @@ const Search = (props) => {
 	const [isSearching, setIsSearching] = useState(false);
 	const [hideSearchResults, setHideSearchResults] = useState(false);
 	const debouncedSearchTerm = useDebounce(searchTerm, 500);
-	const PF = process.env.PROFILE
+	const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 	const history = useHistory();
 	useEffect(() => {
 		const handleSearch = async () => {
@@ -111,7 +111,7 @@ const Search = (props) => {
 												alt='...'
 												src={
 													user.profileImage
-														? user.profileImage
+														? PF + user.profileImage
 														: require('assets/img/placeholder.jpg')
 												}
 											/>

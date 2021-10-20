@@ -107,6 +107,7 @@ app.get("/api/images/:filename", ensureLoggedIn, (req, res) => {
 
 app.delete(
   "/api/images/:filename/:username",
+  ensureCorrectUserOrAdmin,
   async (req, res, next) => {
     try {
       const { filename, username } = req.params;

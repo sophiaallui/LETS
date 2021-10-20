@@ -257,29 +257,16 @@ class Post {
     );
   }
 
-  static async likePost(username, postId) {
-    const preCheck = await db.query(`SELECT id FROM posts WHERE id = $1`, [
-      postId,
-    ]);
-    if (!preCheck.rows[0])
-      throw new NotFoundError(`Post with id : ${postId} does not exist`);
-    const likeIdRes = await db.query(
-      `INSERT INTO likes (post_id, username) VALUES($1, $2) RETURNING id`,
-      [postId, username]
-    );
-    const likeId = likeIdRes.rows[0];
-    const newLikeRes = await db.query(
-      `SELECT 
-        id, 
-        likes.post_id AS "postId", 
-        likes.username, 
-        users.profile_image AS "profileImage" 
-        FROM likes JOIN users ON 
-        users.username = likes.username 
-          WHERE id = $1`,
-      [likeId]
-    );
-    return newLikeRes.rows[0];
+  static async likeDislikePost(username, postId) {
+    const checkIfLiked = await db.query(`SELECT * FROM likes WHERE username = $1 AND post_id = $2`, [username, postId]);
+    if(checkIfLiked.rows.length) { //unlike it
+      const res = await db.query(`DELETE FROM likes WHERE id = $1`, [checkIfLiked.rows[0].id])
+      return { liked : postId }
+    }
+    else { // like it
+      const res = await db.query(`INSERT INTO likes (username, post_id) VALUES ($1, $2)`, [username, postId]);
+      return { unliked : postId }
+    } 
   }
 }
 

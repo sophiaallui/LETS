@@ -87,7 +87,7 @@ class Api {
   };
 
   static async likePost(postId, username) {
-    const res = await this.request(`posts/${username}/${postId}/like`, {}, "POST");
+    const res = await this.request(`posts/${username}/${postId}/like`, {}, "PUT");
     return res.like;
   }
   // post comment stuff
@@ -99,10 +99,7 @@ class Api {
     const res = await this.request(`posts/${postId}`);
     return res.post;
   }
-  static async likePost(postId, username) {
-    const res = await this.request(`posts/${username}/${postId}/like`, {}, "POST");
-    
-  }
+
   // POSTS & COMMENTS ENDPOINTS
     static async getCommentsForPostId(postId) {
       const res = await this.request(`comments/${postId}`);

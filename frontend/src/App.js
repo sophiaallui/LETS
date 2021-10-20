@@ -96,11 +96,11 @@ function App() {
       return { success : false, e }
     }
   }
-
+  const friendsUsernames = currentUser?.friends.map(f => f.user_from === currentUser.username ? f.user_to : f.user_from)
   if(!infoLoaded) return <Spinner className="text-primary"/>
   return (
     <Router>
-      <UserContext.Provider value={{ currentUser, setCurrentUser }}>
+      <UserContext.Provider value={{ currentUser, setCurrentUser, friendsUsernames }}>
         <div>
           <NavBar logout={logout} />
           <Routes login={login} signup={signup} events={currentUser?.events} addEvent={addEvent} />

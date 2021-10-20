@@ -11,8 +11,8 @@ const Friends = props => {
   const [usersAwaitingMyConfirmation, setUsersAwaitingMyConfirmation] = useState([]);
   const [mySentRequests, setMySentRequests] = useState([]);
   const [currentTab, setCurrentTab] = useState("Friends")
-  const { currentUser } = useContext(UserContext);
-  const friendsUsernames = currentUser.friends.map(f => f.user_from === currentUser.username ? f.user_to : f.user_from)
+  const { currentUser, friendsUsernames } = useContext(UserContext);
+  // const friendsUsernames = currentUser.friends.map(f => f.user_from === currentUser.username ? f.user_to : f.user_from)
 
   const handleClick = (tab) => {
     setCurrentTab(tab)
@@ -35,7 +35,6 @@ const Friends = props => {
         const usersWaitingPromise = Promise.all(usersWaiting?.requests?.map(u => Api.getCurrentUser(u.user_from)));
         const usersWaitingData = await usersWaitingPromise;
         setUsersAwaitingMyConfirmation(usersWaitingData)
-
       }
       catch (e) {
         console.error(e);
@@ -140,8 +139,6 @@ const Friends = props => {
           </Col>
         </Row>
       </Container>
-
-
     </>
   )
 };

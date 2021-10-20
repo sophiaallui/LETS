@@ -76,10 +76,11 @@ router.delete("/:username/:postId", ensureCorrectUserOrAdmin, async (req, res, n
   }
 });
 
-router.post("/:username/:postId/like", ensureCorrectUserOrAdmin, async (req, res, next) => {
+// like and dislike post
+router.put("/:username/:postId/like", ensureCorrectUserOrAdmin, async (req, res, next) => {
   try {
     const { username, postId } = req.params;
-    const like = await Post.likePost(username, postId);
+    const like = await Post.likeDislikePost(username, postId);
     return res.json({ like })
   } catch(e) {
     return next(e);

@@ -24,12 +24,20 @@ import './postDesign.css'
 
 import { format } from "timeago.js";
 
-function Post({ post, profileImage, friendsUsernames, deletePost }) {
-  const { currentUser } = useContext(UserContext);
-  const [comments, setComments] = useState(post?.comments);
+function Post({ post, profileImage, deletePost }) {
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const { currentUser, friendsUsernames } = useContext(UserContext);
+
+  const [like, setLike] = useState(post.likes.length);
+  const [isLiked, setIsLiked] = useState(false);
+  const [comments, setComments] = useState(post.comments);
   const [comment, setComment] = useState("");
   const [likes, setLikes] = useState(post?.likes);
-  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  const [isMine, setIsMine] = useState(currentUser.username === post.postedBy);
+
+  useEffect(() => {
+    setIsLiked(post.likes.map(l => l.username).includes(currentUser.username));
+  }, [currentUser.username, post.likes]);
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
@@ -46,13 +54,10 @@ function Post({ post, profileImage, friendsUsernames, deletePost }) {
     }
   };
 
-  const likePost = async () => {
-    try {
-      const newLike = await Api.likePost(+post.id, currentUser.username);
-      setLikes(likes => [...likes, newLike])
-    } catch (e) {
-      console.error(e);
-    }
+  const likeHandler = async () => {
+    await Api.likePost(post.id, currentUser.username);
+    setLike(isLiked ? like - 1 : like + 1);
+    setIsLiked(!isLiked);
   }
   return (
     <>
@@ -84,8 +89,7 @@ function Post({ post, profileImage, friendsUsernames, deletePost }) {
           </div>
 
           <div className="text-right ml-auto">
-            {currentUser.username !== post?.postedBy &&
-              !friendsUsernames.includes(post?.postedBy) && (
+            {!isMine && !friendsUsernames.includes(post?.postedBy) && (
                 <Button
                   className="btn-icon"
                   color="primary"
@@ -97,7 +101,7 @@ function Post({ post, profileImage, friendsUsernames, deletePost }) {
                   </span>
                 </Button>
               )}
-            {currentUser.username === post?.postedBy && (
+            {isMine && (
               <Alert deletePost={deletePost}>
                 <span className="btn-inner-icon icon-big">
                   <i className="fas fa-trash"></i>
@@ -123,7 +127,7 @@ function Post({ post, profileImage, friendsUsernames, deletePost }) {
           <Row className="align-items-center my-3 pb-3 border-bottom">
             <Col sm="6">
               <div className="icon-actions">
-                <Button className="like active" size="sm" onClick={likePost}>
+                <Button className="like active" size="sm" onClick={likeHandler}>
                   <i className="ni ni-like-2"></i>
                   <span className="text-muted">{likes.length}</span>
                 </Button>
@@ -131,16 +135,11 @@ function Post({ post, profileImage, friendsUsernames, deletePost }) {
                   <i className="ni ni-chat-round"></i>
                   <span className="text-muted">{comments.length}</span>
                 </a>
-                <a onClick={(e) => e.preventDefault()}>
-                  <i className="ni ni-curved-next"></i>
-                  <span className="text-muted">12</span>
-                </a>
               </div>
             </Col>
 
             <Col className="d-none d-sm-block" sm="6">
               <div className="d-flex align-items-center justify-content-sm-end">
-
                 <div className="avatar-group">
                   {likes?.map(l => (
                     <>

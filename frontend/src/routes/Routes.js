@@ -4,7 +4,7 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import Messenger from "pages/Messenger";
 import Login from "pages/Login";
 import Register from "pages/Register";
-import Profile from "pages/UserProfile";
+import Profile from "pages/UserProfile/UserProfile";
 import LandingPage from "pages/Landing";
 import PrivateRoute from "./PrivateRoute";
 import EditProfile from "pages/EditProfile";
