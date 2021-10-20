@@ -39,6 +39,7 @@ function UserProfile(props) {
 				console.error(e);
 			}
 		};
+		setIsMyProfile(username === currentUser?.username)
 		fetchMySentReqs();
 	}, [username]);
 

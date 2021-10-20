@@ -21,14 +21,22 @@ const Feed = ({ username }) => {
 		};
 		getPostsFullDetails();
 	}, [username, currentUser.username]);
-	console.log("Feed posts=", posts)
-	
+
+	const deletePost = async (postId) => {
+		try {
+			await Api.deletePost(currentUser.username, postId);
+			setPosts((posts) => posts.filter((p) => p.id !== postId));
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
 	return (
 		<div className="feed">
 			<div className="feedWrapper">
 				{!username || username === currentUser.username && <Share />}
 				{posts.map(post => {
-					return <Post key={post.id} post={post} />
+					return <Post key={post.id} post={post} deletePost={() => deletePost(post.id)}/>
 				})}
 			</div>
 		</div>
