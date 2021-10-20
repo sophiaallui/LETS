@@ -14,7 +14,6 @@ const Feed = ({ username }) => {
 				const posts = username === currentUser.username
 					? await Api.getPostTimeline(currentUser.username)
 					: await Api.getPostsDetailsByUsername(username)
-					
 				setPosts(posts.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt)));
 			} catch (e) {
 				console.error(e);

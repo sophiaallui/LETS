@@ -97,7 +97,7 @@ function App() {
       return { success : false, e }
     }
   }
-  // const friendsUsernames = currentUser?.friends.map(f => f.user_to === currentUser?.username ? f.user_from : f.user_to)
+
   if(!infoLoaded) return <Spinner className="text-primary"/>
   return (
     <Router>
