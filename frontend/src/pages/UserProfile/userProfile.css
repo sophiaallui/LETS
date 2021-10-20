@@ -17,6 +17,7 @@
    object-fit: cover;
 }
 
+
 .profileUserImg{
    width: 150px;
    height: 150px;
@@ -41,7 +42,7 @@
 }
 
 .profileInfoDesc{
-   font-weight: 600;
+   font-weight: 300;
 }
 
 .profileRightBottom{

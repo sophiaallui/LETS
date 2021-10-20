@@ -37,6 +37,29 @@ const Share = () => {
     window.location.reload();
   };
 
+  const handleNewPostSubmit = async e => {
+    const newPost = {
+      postedBy : currentUser.username,
+      content : desc.current.value
+    }
+    e.preventDefault();
+    if(file) {
+      const data = new FormData();
+      const filename = Date.now() + file.name;
+      data.append("name", filename);
+      data.append("file", file)
+      newPost.image = filename;
+      console.log(newPost)
+      try {
+        await Api.request(`api/images`, data, "POST")
+      } catch(e) {}
+    }
+    try { 
+      await Api.createPost(currentUser.username, newPost, "POST");
+      window.location.reload();
+    } catch(e) {}
+  }
+
   return (
     <div className="share">
       <div className="shareWrapper">
@@ -67,7 +90,7 @@ const Share = () => {
           <div className="shareOptions">
             <label htmlFor="file" className="shareOption">
               <PermMedia htmlColor="tomato" className="shareIcon" />
-              <span className="shareOptionText">Photo</span>
+              <span className="shareOptionText">Profile Photo</span>
               <input
                 style={{ display: "none" }}
                 type="file"
@@ -76,13 +99,22 @@ const Share = () => {
                 onChange={(e) => setFile(e.target.files[0])}
               />
             </label>
+            
             <div className="shareOption">
               <Label htmlColor="blue" className="shareIcon" />
-              <span className="shareOptionText">Goal</span>
+              <span className="shareOptionText">Post</span>
+              <input
+                style={{ display: "none" }}
+                type="file"
+                id="file"
+                accept=".png,.jpeg,.jpg"
+                onChange={(e) => setFile(e.target.files[0])}
+              />
             </div>
+            
             <div className="shareOption">
               <Room htmlColor="green" className="shareIcon" />
-              <span className="shareOptionText">Location</span>
+              <span className="shareOptionText">Goals</span>
             </div>
             <div className="shareOption">
               <EmojiEmotions htmlColor="goldenrod" className="shareIcon" />

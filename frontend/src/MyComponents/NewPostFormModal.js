@@ -63,7 +63,6 @@ const NewPostFormModal = ({ buttonText }) => {
       window.location.reload();
     } catch(e) {}
     console.log("from newPostFormModal" ,file);
-
   }
 
   return (

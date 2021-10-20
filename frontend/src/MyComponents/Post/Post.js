@@ -34,6 +34,7 @@ function Post({ post, profileImage, deletePost }) {
   const [comment, setComment] = useState("");
   const [likes, setLikes] = useState(post?.likes);
   const [isMine, setIsMine] = useState(currentUser.username === post.postedBy);
+  const [showComments, setShowComments] = useState(false);
 
   useEffect(() => {
     setIsLiked(post.likes.map(l => l.username).includes(currentUser.username));
@@ -131,7 +132,10 @@ function Post({ post, profileImage, deletePost }) {
                   <i className="ni ni-like-2"></i>
                   <span className="text-muted">{likes.length}</span>
                 </Button>
-                <a onClick={(e) => e.preventDefault()}>
+                <a onClick={e => {
+                  e.preventDefault();
+                  setShowComments(bool => !bool);
+                }}>
                   <i className="ni ni-chat-round"></i>
                   <span className="text-muted">{comments.length}</span>
                 </a>
@@ -170,7 +174,7 @@ function Post({ post, profileImage, deletePost }) {
 
           {/* Comments SECTION */}
           <div className="mb-1">
-            {comments.map((comment) => (
+            {showComments && comments.map((comment) => (
               <Comment comment={comment} key={comment.id} />
             ))}
 
