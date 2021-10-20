@@ -15,7 +15,7 @@ function CardsHeader({ name, parentName }) {
   return (
     <>
       <div className="header bg-info pb-6">
-        <Container fluid>
+        <Container>
           <div className="header-body">
             <Row className="align-items-center py-4">
               <Col lg="6" xs="7">

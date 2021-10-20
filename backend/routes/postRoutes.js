@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../models/post");
 const { ensureCorrectUserOrAdmin, ensureLoggedIn } = require("../middleware/auth");
-
+const UserFriend = require("../models/userFriend");
 
 // GET /posts
 // returns => { posts : [] }
@@ -82,6 +82,19 @@ router.put("/:username/:postId/like", ensureCorrectUserOrAdmin, async (req, res,
     const { username, postId } = req.params;
     const like = await Post.likeDislikePost(username, postId);
     return res.json({ like })
+  } catch(e) {
+    return next(e);
+  }
+})
+
+router.get("/:username/timeline", ensureCorrectUserOrAdmin, async (req, res, next) => {
+  try {
+    const { username } = req.params;
+    const currentUserPosts = await Post.getByUsername(username);
+    const currentUserFriends = await UserFriend.getAllFrom(username);
+    const friendUsernames = currentUserFriends.map(u => u.user_from === username ? u.user_to : u.user_from);
+    const friendPosts = await Promise.all(friendUsernames.map(username => Post.getByUsername(username)));
+    return res.json([...currentUserPosts, ...friendPosts]);
   } catch(e) {
     return next(e);
   }

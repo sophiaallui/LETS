@@ -22,10 +22,10 @@ function FriendCard({ user, type, handleConfirm, handleCancelFriendRequest }) {
         </Button> 
       </div>
     )
-  } else if(type === "sent") {
+  } else {
     button = (
       <>
-        <Button onClick={handleCancelFriendRequest} className="mr-4 mt-3 btn-rounded" block color="danger" size="md">Cancel</Button>
+        <Button onClick={handleCancelFriendRequest} className="mr-4 mt-3 btn-rounded" block color="danger" size="md">Delete</Button>
       </>
     )
   }

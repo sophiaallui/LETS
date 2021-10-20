@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const UserFriend = require("../models/userFriend");
 const { ensureCorrectUserOrAdmin, ensureLoggedIn } = require("../middleware/auth");
-const db = require("../db");
 
 
 // GET friends/[username]
@@ -22,7 +21,7 @@ router.get("/:username", ensureLoggedIn, async (req, res, next) => {
 // GETS a list of friend requests that are pending :username's confirmation
 // returns => { requests : [ ] }
 // auth required : same as :username or admin
-router.get("/:username/pending", async (req, res, next) => {
+router.get("/:username/pending", ensureCorrectUserOrAdmin, async (req, res, next) => {
   try {
     const { username } = req.params;
     const requests = await UserFriend.getAllPending(username);
