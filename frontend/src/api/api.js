@@ -90,6 +90,11 @@ class Api {
     const res = await this.request(`posts/${username}/${postId}/like`, {}, "PUT");
     return res.like;
   }
+
+  static async getPostTimeline(username) {
+    const res = await this.request(`posts/user/${username}/timeline`);
+    return res;
+  }  
   // post comment stuff
   static async createComment(postId, username, data) {
     const res = await this.request(`comments/${postId}/${username}`, data, "POST");

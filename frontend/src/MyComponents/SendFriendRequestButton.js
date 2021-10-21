@@ -23,7 +23,9 @@ const SendFriendRequestButton = ({ targetUsername, setFriendRequest, buttonText,
   if(alreadySent) return <Button className="btn-round" disabled>Sent Friend Request</Button>
   return (
     <>
-      {errors ? <Button className="btn-round" disabled>Sent Friend Request</Button> : <Button className="btn-round" onClick={handleClick}>{buttonText || "Send Friend Request"}</Button>}
+      {errors 
+      ? <Button className="btn-round" disabled>Sent Friend Request</Button> 
+      : <Button className="btn-round" onClick={handleClick}>{buttonText || "Send Friend Request"}</Button>}
     </>
   )
 }

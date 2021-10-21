@@ -11,8 +11,7 @@ const Friends = props => {
   const [usersAwaitingMyConfirmation, setUsersAwaitingMyConfirmation] = useState([]);
   const [mySentRequests, setMySentRequests] = useState([]);
   const [currentTab, setCurrentTab] = useState("Friends")
-  const { currentUser, friendsUsernames } = useContext(UserContext);
-  // const friendsUsernames = currentUser.friends.map(f => f.user_from === currentUser.username ? f.user_to : f.user_from)
+  const { currentUser, friendsUsernames, setFriendsUsernames } = useContext(UserContext);
 
   const handleClick = (tab) => {
     setCurrentTab(tab)
@@ -55,22 +54,25 @@ const Friends = props => {
     getCurrentFriends();
     getUsersWaitingForMyConfirmation();
     getMySentRequests();
-  }, [currentUser.username, myFriends.length, mySentRequests.length]);
+  }, [currentUser.username]);
 
   const handleConfirm = async (user) => {
     try {
       await Api.confirmFriendRequest(currentUser.username, user.username);
       setUsersAwaitingMyConfirmation(usersAwaitingMyConfirmation.filter(f => f.username !== user.username));
       setMyFriends(f => [...f, user])
+      setFriendsUsernames(f => [...f, user.username])
     } catch (e) {
       console.error(e);
     }
   }
 
-  const handleCancelFriendRequest = async (username) => {
+  const handleCancelFriendRequest = async (username) => { 
     try {
       await Api.cancelFriendRequest(currentUser.username, username);
-      setMySentRequests(mySentRequests.filter(user => user.username !== username))
+      setMySentRequests(mySentRequests.filter(user => user.username !== username));
+      setMyFriends(myFriends.filter(user => user.username !== username));
+      friendsUsernames.includes(username) && setFriendsUsernames(u => u.filter(u => u !== username))
     } catch (e) {
       console.error(e);
     }
@@ -95,7 +97,7 @@ const Friends = props => {
                       <Row>
                         {myFriends?.map(user => (
                           <Col lg="3" md="6" key={user.username} >
-                            <FriendCard type="currentFriends" user={user} />
+                            <FriendCard type="currentFriends" user={user} handleCancelFriendRequest={() => handleCancelFriendRequest(user.username)} />
                           </Col>
                         ))}
                       </Row>

@@ -100,7 +100,7 @@ const Share = () => {
               />
             </label>
             
-            <div className="shareOption">
+            <label htmlFor="file" className="shareOption">
               <Label htmlColor="blue" className="shareIcon" />
               <span className="shareOptionText">Post</span>
               <input
@@ -110,7 +110,7 @@ const Share = () => {
                 accept=".png,.jpeg,.jpg"
                 onChange={(e) => setFile(e.target.files[0])}
               />
-            </div>
+            </label>
             
             <div className="shareOption">
               <Room htmlColor="green" className="shareIcon" />

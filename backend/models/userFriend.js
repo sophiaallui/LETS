@@ -129,6 +129,7 @@ class UserFriend {
     if (res2.rows.length) {
       return res2.rows[0];
     }
+    throw new NotFoundError()
   }
 }
 

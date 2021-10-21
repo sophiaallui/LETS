@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../models/post");
 const { ensureCorrectUserOrAdmin, ensureLoggedIn } = require("../middleware/auth");
-
+const UserFriend = require("../models/userFriend");
 
 // GET /posts
 // returns => { posts : [] }
@@ -33,6 +33,26 @@ router.get("/user/:username", ensureLoggedIn, async (req, res, next) => {
     const { username } = req.params;
     const posts = await Post.getByUsername(username);
     return res.json({ posts });
+  } catch(e) {
+    return next(e);
+  }
+});
+
+router.get("/user/:username/timeline", ensureCorrectUserOrAdmin, async (req, res, next) => {
+  try {
+    const { username } = req.params;
+    const currentUserPosts = await Post.getByUsername(username);
+    const currentUserFriends = await UserFriend.getAllFrom(username);
+    const friendUsernames = currentUserFriends.map(u => u.user_from === username ? u.user_to : u.user_from);
+    const friendPosts = await Promise.all(friendUsernames.map(username => Post.getByUsername(username)));
+
+    let finalResults = [...currentUserPosts];
+    for(const ele of friendPosts) {
+      if(Array.isArray(ele) && ele.length > 0) {
+        finalResults = [...finalResults, ...ele]
+      }
+    }
+    return res.json(finalResults);
   } catch(e) {
     return next(e);
   }
@@ -86,4 +106,6 @@ router.put("/:username/:postId/like", ensureCorrectUserOrAdmin, async (req, res,
     return next(e);
   }
 })
+
+
 module.exports = router;

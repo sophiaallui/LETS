@@ -98,14 +98,13 @@ function RegisterPage(props) {
             className="page-header-image"
             style={{
               backgroundImage:
-                "url(" + require("assets/img/ill/register_bg.png") + ")",
+                "url(" + require("assets/img/ill/p22.png") + ")",
             }}
           ></div>
           <Container className={activeContainer}>
             <div className="form-container sign-up-container">
               <Form onSubmit={handleSignupSubmit} role="form">
                 <h2>Create Account</h2>
-
                 <FormGroup className={"mb-3 " + signupNameFocus}>
                   <InputGroup className="input-group-alternative">
                     <InputGroupAddon addonType="prepend">

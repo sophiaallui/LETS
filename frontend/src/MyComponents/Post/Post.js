@@ -56,10 +56,13 @@ function Post({ post, profileImage, deletePost }) {
   };
 
   const likeHandler = async () => {
-    await Api.likePost(post.id, currentUser.username);
+    const msg = await Api.likePost(post.id, currentUser.username);
+    console.log(msg)
     setLike(isLiked ? like - 1 : like + 1);
+    setLikes(isLiked ? likes.filter(l => l.username !== currentUser.username) : [...likes, { postId: post.id, username: currentUser.username, profileImage: currentUser.profileImage }]);
     setIsLiked(!isLiked);
   }
+  console.log(likes)
   return (
     <>
       <Card className='posts'>
@@ -91,17 +94,17 @@ function Post({ post, profileImage, deletePost }) {
 
           <div className="text-right ml-auto">
             {!isMine && !friendsUsernames.includes(post?.postedBy) && (
-                <Button
-                  className="btn-icon"
-                  color="primary"
-                  size="sm"
-                  type="button"
-                >
-                  <span className="btn-inner--icon icon-big">
-                    <i className="ni ni-fat-add">Add Friend</i>
-                  </span>
-                </Button>
-              )}
+              <Button
+                className="btn-icon"
+                color="primary"
+                size="sm"
+                type="button"
+              >
+                <span className="btn-inner--icon icon-big">
+                  <i className="ni ni-fat-add">Add Friend</i>
+                </span>
+              </Button>
+            )}
             {isMine && (
               <Alert deletePost={deletePost}>
                 <span className="btn-inner-icon icon-big">
@@ -130,7 +133,7 @@ function Post({ post, profileImage, deletePost }) {
               <div className="icon-actions">
                 <Button className="like active" size="sm" onClick={likeHandler}>
                   <i className="ni ni-like-2"></i>
-                  <span className="text-muted">{likes.length}</span>
+                  <span className="text-muted">{like}</span>
                 </Button>
                 <a onClick={e => {
                   e.preventDefault();
@@ -148,26 +151,25 @@ function Post({ post, profileImage, deletePost }) {
                   {likes?.map(l => (
                     <>
                       <a className="avatar avatar-xs rounded-circle"
-                        key={l.id}
+                        key={l.username}
                         onClick={(e) => e.preventDefault()}
-                        id={`usernameToolTip${l.id}`}
+                        id={`usernameToolTip${l.username}`}
                       >
                         <img
                           alt="..."
                           src={
                             l.profileImage ?
-                            PF + l.profileImage :
-                            require("assets/img/placeholder.jpg")
+                              PF + l.profileImage :
+                              require("assets/img/placeholder.jpg")
                           }
                         />
                       </a>
-                      <UncontrolledTooltip delay={0} target={`usernameToolTip${l.id}`}>
+                      <UncontrolledTooltip delay={0} target={`usernameToolTip${l.username}`}>
                         {l.username}
                       </UncontrolledTooltip>
                     </>
                   ))}
                 </div>
-                <small className="pl-2 font-weight-bold">and 30+ more</small>
               </div>
             </Col>
           </Row>

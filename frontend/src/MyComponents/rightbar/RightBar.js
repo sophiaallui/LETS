@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import Api from "api/api";
 import { Link } from "react-router-dom";
 import UserContext from "UserContext";
-import { Add, Remove } from "@material-ui/icons";
+import SendFriendRequestButton from "MyComponents/SendFriendRequestButton";
 import "./rightbar.css";
 
 const Online = (user) => {
@@ -23,16 +23,14 @@ const Online = (user) => {
 };
 
 const RightBar = ({ user }) => {
+  const { currentUser, friendsUsernames, setCurrentUser } = useContext(UserContext);
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const [friends, setFriends] = useState([]);
-  const { currentUser, friendsUsernames, setCurrentUser } =
-    useContext(UserContext);
-  const [alreadyFriends, setAlreadyFriends] = useState(
-    friendsUsernames?.includes(user?.username)
-  );
+
+
   console.log("RightBar user=", user);
   console.log("RightBar friends=", friends);
-  console.log("RightBar alreadyFriends=", alreadyFriends, friendsUsernames);
+  console.log("RightBar friendsUsernames",friendsUsernames);
   useEffect(() => {
     const getFriends = async () => {
       try {
@@ -54,7 +52,7 @@ const RightBar = ({ user }) => {
 
   const handleClick = async () => {
     try {
-      if (alreadyFriends) {
+      if (friendsUsernames.includes(user?.username)) {
         await Api.request(
           `friends/${currentUser?.username}/to/${user?.username}`,
           {},
@@ -69,8 +67,7 @@ const RightBar = ({ user }) => {
         );
         setCurrentUser(currentUser.username);
       }
-      setAlreadyFriends(!alreadyFriends);
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const HomeRightBar = () => {
@@ -96,15 +93,12 @@ const RightBar = ({ user }) => {
   const ProfileRightBar = () => {
     return (
       <>
-        {user.username !== currentUser?.username && (
-          <button className="rightbarFollowButton" onClick={handleClick}>
-            {alreadyFriends ? "Remove" : "Add"}
-            {alreadyFriends ? <Remove /> : <Add />}
-          </button>
+        {user?.username !== currentUser?.username && !friendsUsernames.includes(user?.username) && (
+          <SendFriendRequestButton targetUsername={user.username} />
         )}
         <h4 className="rightbarTitle">User information</h4>
         <div className="rightbarInfo">
-        <div className="rightbarInfoItem">
+          <div className="rightbarInfoItem">
             <span className="rightbarInfoKey">Name:</span>
             <span className="rightbarInfoValue">{user?.firstName + " " + user?.lastName}</span>
           </div>

@@ -104,11 +104,10 @@ function UserProfile(props) {
                 src={
                   loadedUser?.profileImage
                     ? PF + loadedUser?.profileImage
-                    : require("assets/img/placeholder.jpg")
+                    : require("assets/img/ill/bg_contactus3.svg")
                 }
                 alt=""
               />
-
               <img
                 className="profileUserImg"
                 src={
@@ -118,7 +117,6 @@ function UserProfile(props) {
                 }
                 alt=""
               />
-              <button className="profileUploadButton"></button>
             </div>
             <div className="profileInfo">
               <h4 className="profileInfoName">{loadedUser?.username}</h4>

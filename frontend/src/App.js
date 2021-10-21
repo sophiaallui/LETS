@@ -17,8 +17,8 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [token, setToken] = useState(Api.token);
-  const [localStorageToken, setLocalStorageToken] = useLocalStorage("token")
-
+  const [localStorageToken, setLocalStorageToken] = useLocalStorage("token");
+  const [friendsUsernames, setFriendsUsernames] = useState([])
   console.debug(
     "App",
     "infoLoaded=",
@@ -27,7 +27,7 @@ function App() {
     token,
     "currentUser",
     currentUser,
-    "localStorageToken=", localStorageToken
+    "friendsUsernames=",friendsUsernames
   );
 
   useEffect(() => {
@@ -42,6 +42,7 @@ function App() {
           setLocalStorageToken(token)
           let currentUser = await Api.getCurrentUser(username);
           setCurrentUser(currentUser);
+          setFriendsUsernames(currentUser.friends.map(u => u.user_from === currentUser.username ? u.user_to : u.user_from))
         } catch (e) {
           console.error("App loadUserInfo: problem loading", e);
           setCurrentUser(null);
@@ -96,11 +97,11 @@ function App() {
       return { success : false, e }
     }
   }
-  const friendsUsernames = currentUser?.friends.map(f => f.user_from === currentUser.username ? f.user_to : f.user_from)
+
   if(!infoLoaded) return <Spinner className="text-primary"/>
   return (
     <Router>
-      <UserContext.Provider value={{ currentUser, setCurrentUser, friendsUsernames }}>
+      <UserContext.Provider value={{ currentUser, setCurrentUser, friendsUsernames, setFriendsUsernames }}>
         <div>
           <NavBar logout={logout} />
           <Routes login={login} signup={signup} events={currentUser?.events} addEvent={addEvent} />
