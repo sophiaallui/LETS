@@ -72,7 +72,7 @@ const OnlineFriends = ({ friendsUsernames, setCurrentChat, onlineUsers, setConve
       <CardBody>
         <ListGroup className="list my--3" flush>
           {friends?.map((f) => (
-            <ListGroupItem className="px-0" key={f.username} onClick={() => handleClick(f.username)}>
+            <ListGroupItem className="px-0" key={f.username} onClick={() => handleClick(f?.username)}>
               <Row className="align-items-center">
                 <Col className="col-auto">
                   <Link

@@ -26,7 +26,7 @@ import { format } from "timeago.js";
 
 function Post({ post, profileImage, deletePost }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-  const { currentUser, friendsUsernames } = useContext(UserContext);
+  const { currentUser, friendsUsernames, currentUserProfileImage } = useContext(UserContext);
 
   const [like, setLike] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(false);
@@ -39,6 +39,10 @@ function Post({ post, profileImage, deletePost }) {
   useEffect(() => {
     setIsLiked(post.likes.map(l => l.username).includes(currentUser.username));
   }, [currentUser.username, post.likes]);
+
+  useEffect(() => {
+    setIsMine(currentUser.username === post.postedBy);
+  }, [currentUser.username, post.postedBy]);
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
@@ -69,6 +73,7 @@ function Post({ post, profileImage, deletePost }) {
         <CardHeader className="d-flex align-items-center">
           <div className="d-flex align-items-center">
             <a onClick={(e) => e.preventDefault()}>
+              {isMine ? <img alt="" className="avatar" src={currentUserProfileImage ? PF + currentUserProfileImage : require("assets/img/placeholder.jpg")} /> : 
               <img
                 alt="..."
                 className="avatar"
@@ -77,7 +82,8 @@ function Post({ post, profileImage, deletePost }) {
                     ? PF + profileImage
                     : require("assets/img/placeholder.jpg")
                 }
-              />
+              />}
+
             </a>
             <div className="mx-3">
               <a

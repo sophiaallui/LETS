@@ -18,29 +18,18 @@ import "./userProfile.css";
 function UserProfile(props) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const { username } = useParams();
-  const { currentUser, friendsUsernames } = useContext(UserContext);
+  const { currentUser, friendsUsernames, currentUserProfileImage, currentUserCoverPic, setCurrentUserCoverPic } = useContext(UserContext);
   const [loadedUser, setLoadedUser] = useState(null);
   const [currentTab, setCurrentTab] = useState("Feed");
 
   const [posts, setPosts] = useState(null);
-  const [mySentRequests, setMySentRequests] = useState([]);
   const [isMyProfile, setIsMyProfile] = useState(
     username === currentUser?.username
   );
 
   useEffect(() => {
-    const fetchMySentReqs = async () => {
-      try {
-        const myRequests = await Api.request(
-          `friends/${currentUser.username}/sent`
-        );
-        setMySentRequests(myRequests?.myRequests.map((f) => f.user_to));
-      } catch (e) {
-        console.error(e);
-      }
-    };
     setIsMyProfile(username === currentUser?.username);
-    fetchMySentReqs();
+
   }, [username]);
 
   useEffect(() => {
@@ -99,24 +88,22 @@ function UserProfile(props) {
         <div className="profileRight">
           <div className="profileRightTop">
             <div className="profileCover">
-              <img
-                className="profileCoverImg"
-                src={
-                  loadedUser?.profileImage
-                    ? PF + loadedUser?.profileImage
-                    : require("assets/img/ill/bg_contactus3.svg")
-                }
-                alt=""
-              />
-              <img
-                className="profileUserImg"
-                src={
-                  loadedUser?.profileImage
-                    ? PF + loadedUser?.profileImage
-                    : require("assets/img/placeholder.jpg")
-                }
-                alt=""
-              />
+              {isMyProfile ? (
+                <>
+                  <img className="profileCoverImg" src={currentUserCoverPic ? PF + currentUserCoverPic : require("assets/img/ill/bg_contactus3.svg")} />
+                  <img className="profileUserImg" src={currentUserProfileImage ? PF + currentUserProfileImage : require("assets/img/placeholder.jpg")} />
+                </>
+              ) : (
+                <>
+                  <img
+                    className="profileCoverImg"
+                    src={loadedUser?.profileCoverImage ? PF + loadedUser?.profileCoverImage : require("assets/img/ill/bg_contactus3.svg")} alt="" />
+                  <img
+                    className="profileUserImg"
+                    src={loadedUser?.profileImage ? PF + loadedUser?.profileImage : require("assets/img/placeholder.jpg")} alt="" />
+                </>
+              )}
+
             </div>
             <div className="profileInfo">
               <h4 className="profileInfoName">{loadedUser?.username}</h4>

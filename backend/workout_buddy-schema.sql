@@ -5,6 +5,7 @@ CREATE TABLE users (
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
   profile_image TEXT DEFAULT NULL,
+  cover_picture TEXT DEFAULT NULL,
   is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
