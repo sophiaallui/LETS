@@ -12,7 +12,7 @@ CREATE TABLE users (
 
 CREATE TABLE rooms (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(34),
+  name VARCHAR(34) NOT NULL,
   created_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE
 );
 

@@ -16,7 +16,10 @@ router.post("/:username", async (req, res, next) => {
 		const { username } = req.params;
 		const {receiverUsername } = req.body;
 		const roomResults = await db.query(
-			`INSERT INTO rooms (name, created_by) VALUES ($1, $2) RETURNING *`, [receiverUsername, username]
+			`INSERT INTO rooms 
+				(name, created_by) 
+				VALUES ($1, $2) 
+			RETURNING *`, [receiverUsername, username]
 		);
 		const room = roomResults.rows[0];
 		const participantsResults = await db.query(
