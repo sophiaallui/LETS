@@ -12,12 +12,12 @@ import Api from "api/api";
 
 const Share = () => {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-  const { 
+  const {
     currentUser,
     currentUserProfileImage,
     setCurrentUserProfileImage,
     setCurrentUserCoverPic,
-    currentUserCoverPic 
+    currentUserCoverPic,
   } = useContext(UserContext);
   const desc = useRef();
 
@@ -32,76 +32,85 @@ const Share = () => {
       data.append("name", filename);
       data.append("file", profilePic);
       try {
-        if(currentUserProfileImage) await Api.request(`api/images/${currentUserProfileImage}/${currentUser.username}`, {}, "DELETE"); // if they already have a profileImage delete it first
+        if (currentUserProfileImage)
+          await Api.request(
+            `api/images/${currentUserProfileImage}/${currentUser.username}`,
+            {},
+            "DELETE"
+          ); // if they already have a profileImage delete it first
         await Api.request(`api/images`, data, "POST");
-        await Api.updateUser(
-          currentUser?.username,
-          { profileImage: filename },
-          "PUT"
-        );
+        await Api.updateUser(currentUser?.username, { profileImage: filename });
         setCurrentUserProfileImage(filename);
         setPofilePic(null);
-      } catch (e) { }
+      } catch (e) {}
     }
   };
 
   const handleCoverPictureSubmit = async () => {
-    if(coverPic) {
+    if (coverPic) {
       const data = new FormData();
       const filename = Date.now() + coverPic.name;
       data.append("name", filename);
       data.append("file", coverPic);
       try {
-        if(currentUserCoverPic) await Api.request(`api/images/${currentUserCoverPic}/${currentUser.username}`, {}, "DELETE");
+        if (currentUserCoverPic)
+          await Api.request(
+            `api/images/${currentUserCoverPic}/${currentUser.username}`,
+            {},
+            "DELETE"
+          );
         await Api.request(`api/images`, data, "POST");
-        await Api.updateUser(
-          currentUser?.username,
-          { coverPicture : filename },
-          "PUT"
-        );
+        await Api.updateUser(currentUser?.username, { coverPicture: filename });
         setCurrentUserCoverPic(filename);
         setCoverPic(null);
-      } catch(e) {}
+      } catch (e) {}
     }
-  }
-  const handleNewPostSubmit = async e => {
+  };
+  const handleNewPostSubmit = async (e) => {
     const newPost = {
       postedBy: currentUser.username,
-      content: desc.current.value
-    }
+      content: desc.current.value,
+    };
     if (postImage) {
       const data = new FormData();
       const filename = Date.now() + postImage.name;
       data.append("name", filename);
-      data.append("file", postImage)
+      data.append("file", postImage);
       newPost.image = filename;
-      console.log(newPost)
+      console.log(newPost);
       try {
-        await Api.request(`api/images`, data, "POST")
-      } catch (e) { }
+        await Api.request(`api/images`, data, "POST");
+      } catch (e) {}
     }
     try {
       await Api.createPost(currentUser.username, newPost, "POST");
       window.location.reload();
-    } catch (e) { }
-  }
+    } catch (e) {}
+  };
 
-  const handleSubmit = async e => {
-    e.preventDefault()
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (postImage) {
       try {
-        await handleNewPostSubmit()
-      } catch (e) { }
-    } else if(profilePic) {
+        await handleNewPostSubmit();
+      } catch (e) {}
+    } else if (profilePic) {
       try {
-        await handleProfileImageSubmit()
-      } catch (e) { }
-    } else if(coverPic) {
+        await handleProfileImageSubmit();
+      } catch (e) {}
+    } else if (coverPic) {
       await handleCoverPictureSubmit();
     }
-  }
+  };
 
-  console.log("profilePic",profilePic, "postImage",postImage, "coverPic", coverPic);
+  console.log(
+    "profilePic",
+    profilePic,
+    "postImage",
+    postImage,
+    "coverPic",
+    coverPic
+  );
 
   return (
     <div className="share">
@@ -125,20 +134,41 @@ const Share = () => {
         <hr className="shareHr" />
         {profilePic && (
           <div className="shareImgContainer">
-            <img className="shareImg" src={URL.createObjectURL(profilePic)} alt="" />
-            <Cancel className="shareCancelImg" onClick={() => setPofilePic(null)} />
+            <img
+              className="shareImg"
+              src={URL.createObjectURL(profilePic)}
+              alt=""
+            />
+            <Cancel
+              className="shareCancelImg"
+              onClick={() => setPofilePic(null)}
+            />
           </div>
         )}
         {postImage && (
           <div className="shareImgContainer">
-            <img className="shareImg" src={URL.createObjectURL(postImage)} alt="" />
-            <Cancel className="shareCancelImg" onClick={() => setPostImage(null)} />
+            <img
+              className="shareImg"
+              src={URL.createObjectURL(postImage)}
+              alt=""
+            />
+            <Cancel
+              className="shareCancelImg"
+              onClick={() => setPostImage(null)}
+            />
           </div>
         )}
         {coverPic && (
           <div className="shareImgContainer">
-            <img className="shareImg" src={URL.createObjectURL(coverPic)} alt="" />
-            <Cancel className="shareCancelImg" onClick={() => setCoverPic(null)} />
+            <img
+              className="shareImg"
+              src={URL.createObjectURL(coverPic)}
+              alt=""
+            />
+            <Cancel
+              className="shareCancelImg"
+              onClick={() => setCoverPic(null)}
+            />
           </div>
         )}
         <form className="shareBottom" onSubmit={handleSubmit}>
