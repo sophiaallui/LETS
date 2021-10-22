@@ -13,11 +13,11 @@ import {
 import UserContext from "UserContext";
 import { Link } from "react-router-dom";
 
-const OnlineFriends = ({ friendsUsernames, setCurrentChat, onlineUsers, setConversations }) => {
-  const [friends, setFriends] = useState(null);
+const OnlineFriends = ({ setCurrentChat, onlineUsers, setConversations }) => {
+  const [friends, setFriends] = useState([]);
   const [onlineFriends, setOnlineFriends] = useState([]);
 
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, friendsUsernames } = useContext(UserContext);
 
 
   useEffect(() => {
@@ -32,9 +32,7 @@ const OnlineFriends = ({ friendsUsernames, setCurrentChat, onlineUsers, setConve
         console.error(e);
       }
     };
-    if (friendsUsernames.length > 0) {
-      fetchFriends();
-    }
+    fetchFriends();
   }, [friendsUsernames]);
 
   useEffect(() => {
@@ -47,15 +45,17 @@ const OnlineFriends = ({ friendsUsernames, setCurrentChat, onlineUsers, setConve
     if(!friendUsername) return;
     try {
       const foundConversations = await Api.findRoom(currentUser.username, friendUsername);
-      if(!Object.keys(foundConversations).length) {
+      if(Object.keys(foundConversations).length === 0) {
         const data = { 
-          recieverUsername : friendUsername
+          receiverUsername : friendUsername
         }
         const newRoom = await Api.createRoom(currentUser.username, data);
         console.debug("newRoom=",newRoom)
-        setCurrentChat(newRoom)  
+        setCurrentChat(newRoom)
+        return;  
       }
-      setCurrentChat(foundConversations)
+      console.log("foundConversations=", foundConversations)
+      setCurrentChat(foundConversations);
     }
     catch(e) {
       console.error(e)
@@ -71,8 +71,8 @@ const OnlineFriends = ({ friendsUsernames, setCurrentChat, onlineUsers, setConve
 
       <CardBody>
         <ListGroup className="list my--3" flush>
-          {friends?.map((f) => (
-            <ListGroupItem className="px-0" key={f.username} onClick={() => handleClick(f.username)}>
+          {friends.map((f) => (
+            <ListGroupItem className="px-0" key={f.username} onClick={() => handleClick(f?.username)}>
               <Row className="align-items-center">
                 <Col className="col-auto">
                   <Link

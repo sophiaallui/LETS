@@ -18,7 +18,10 @@ function App() {
   const [infoLoaded, setInfoLoaded] = useState(false);
   const [token, setToken] = useState(Api.token);
   const [localStorageToken, setLocalStorageToken] = useLocalStorage("token");
-  const [friendsUsernames, setFriendsUsernames] = useState([])
+  const [friendsUsernames, setFriendsUsernames] = useState([]);
+  const [currentUserProfileImage, setCurrentUserProfileImage] = useState(null);
+  const [currentUserCoverPic, setCurrentUserCoverPic] = useState(null);
+
   console.debug(
     "App",
     "infoLoaded=",
@@ -27,7 +30,7 @@ function App() {
     token,
     "currentUser",
     currentUser,
-    "friendsUsernames=",friendsUsernames
+    "friendsUsernames=", friendsUsernames
   );
 
   useEffect(() => {
@@ -43,6 +46,8 @@ function App() {
           let currentUser = await Api.getCurrentUser(username);
           setCurrentUser(currentUser);
           setFriendsUsernames(currentUser.friends.map(u => u.user_from === currentUser.username ? u.user_to : u.user_from))
+          setCurrentUserProfileImage(currentUser?.profileImage);
+          setCurrentUserCoverPic(currentUser?.coverPicture);
         } catch (e) {
           console.error("App loadUserInfo: problem loading", e);
           setCurrentUser(null);
@@ -89,19 +94,28 @@ function App() {
       setCurrentUser(user => {
         return {
           ...user,
-          events : [ ...user.events, event ]
+          events: [...user.events, event]
         }
       })
-    } catch(e) {
+    } catch (e) {
       console.error(e);
-      return { success : false, e }
+      return { success: false, e }
     }
   }
 
-  if(!infoLoaded) return <Spinner className="text-primary"/>
+  if (!infoLoaded) return <Spinner className="text-primary" />
   return (
     <Router>
-      <UserContext.Provider value={{ currentUser, setCurrentUser, friendsUsernames, setFriendsUsernames }}>
+      <UserContext.Provider value={{
+        currentUser,
+        setCurrentUser,
+        friendsUsernames,
+        setFriendsUsernames,
+        currentUserProfileImage,
+        setCurrentUserProfileImage,
+        currentUserCoverPic,
+        setCurrentUserCoverPic
+      }}>
         <div>
           <NavBar logout={logout} />
           <Routes login={login} signup={signup} events={currentUser?.events} addEvent={addEvent} />

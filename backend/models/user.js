@@ -63,7 +63,7 @@ class User {
     const results = await db.query(
       `INSERT INTO users (username, email, password, first_name, last_name, is_admin)
         VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING username, first_name AS "firstName", last_name AS "lastName", email, is_admin AS "isAdmin", profile_image AS "profileImage"`,
+        RETURNING username, first_name AS "firstName", last_name AS "lastName", email, is_admin AS "isAdmin", profile_image AS "profileImage", cover_picture AS "coverPicture"`,
       [username, email, hashedPW, firstName, lastName, isAdmin]
     );
     const user = results.rows[0];
@@ -116,7 +116,8 @@ class User {
       first_name AS "firstName", 
       last_name AS "lastName", 
       is_admin AS "isAdmin",
-      profile_image AS "profileImage"
+      profile_image AS "profileImage",
+      cover_picture AS "coverPicture"
         FROM users WHERE username = $1`,
       [username]
     );
@@ -165,7 +166,7 @@ class User {
    * Update user data with `data`
    * This is a "partial update" -- it's fine if data doesn't contain all the fields; this only changes the provided ones.
    * Data can include :
-   *   { username, email, password, firstName, lastName, isAdmin }
+   *   { username, email, password, firstName, lastName, isAdmin, profileImage, coverPicture }
    *
    * Throws NotFoundError if not found.
 
@@ -178,7 +179,8 @@ class User {
       firstName: "first_name",
       lastName: "last_name",
       isAdmin: "is_admin",
-      profileImage : "profile_image"
+      profileImage : "profile_image",
+      coverPicture : "cover_picture"
     });
     const usernameVarIdx = "$" + (values.length + 1);
     const querySQL = `UPDATE users

@@ -4,7 +4,7 @@ import UserContext from "UserContext";
 
 
 const Sidebar = ({ currentPage = "profile", setCurrentTab, currentTab }) => {
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, currentUserProfileImage } = useContext(UserContext);
   const PF =  process.env.REACT_APP_PUBLIC_FOLDER;
 
   let listItems;
@@ -88,8 +88,8 @@ const Sidebar = ({ currentPage = "profile", setCurrentTab, currentTab }) => {
             <img
               className="sidebarFriendImg"
               src={
-                currentUser.profileImage
-                  ? PF+ currentUser.profileImage
+                currentUserProfileImage
+                  ? PF+ currentUserProfileImage
                   : require("assets/img/placeholder.jpg")
               }
               alt=""

@@ -10,8 +10,7 @@ import {
 import { Link } from "react-router-dom";
 
 const ChatHeader = ({ members }) => {
-  const PF = process.env.PF
-  
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   return (
     <Row>
       <Col md="10">

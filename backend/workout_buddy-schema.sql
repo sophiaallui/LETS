@@ -5,13 +5,14 @@ CREATE TABLE users (
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
   profile_image TEXT DEFAULT NULL,
+  cover_picture TEXT DEFAULT NULL,
   is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 
 CREATE TABLE rooms (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(34),
+  name VARCHAR(34) NOT NULL,
   created_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE
 );
 

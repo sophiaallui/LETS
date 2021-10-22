@@ -26,7 +26,11 @@
     },
     "profileImage" : {
       "type" : "string",
-      "minLength" : "3"
+      "minLength" : "5"
+    },
+    "coverPicture" : {
+      "type" : "string",
+      "minLength" : "5"
     }
   },
   "additionalProperties": false,
