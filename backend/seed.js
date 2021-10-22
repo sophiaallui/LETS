@@ -82,11 +82,6 @@ async function seedData() {
         ('jae', 'admin', 1),
 				('test', 'jae', 1);
 
-    		INSERT INTO goals
-     		(created_by, content, due_date, is_complete) VALUES
-     		('charles', 'testing content', '2021/11/1', 'FALSE'),
-     		('charles', 'testing content2', '2021/12/1', 'FALSE'),
-     		('jae', 		'bleh', '2021/10/9', 'TRUE');
 
      		INSERT INTO calendar_event
 		      (posted_by, event_title, start_date, end_date, radios)

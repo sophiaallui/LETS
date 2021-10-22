@@ -34,14 +34,16 @@ class Goal {
     if (!checkIfUserExists.rows.length) throw new NotFoundError(`No user : ${username}`)
     const res = await db.query(
       `INSERT INTO goals 
-        (created_by, content, due_date, is_complete) VALUES
-        ($1, $2, $3, $4) RETURNING
+        (created_by, content, due_date, start_date, is_complete, color) VALUES
+        ($1, $2, $3, $4, $5, $6) RETURNING
         id,
         created_by AS "createdBy",
         content,
         due_date AS "dueDate",
+        start_date AS "startDate",
+        color,
         is_complete AS "isComplete"`,
-      [username, data.content, data.dueDate, data.isComplete]
+      [username, data.content, data.dueDate, data.startDate, data.isComplete, data.color]
     );
     return res.rows[0];
   }

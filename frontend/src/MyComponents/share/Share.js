@@ -9,6 +9,11 @@ import {
 import UserContext from "UserContext";
 import "./share.css";
 import Api from "api/api";
+import { Modal, Button, FormGroup, Input, ButtonGroup, Row, Col } from "reactstrap";
+import NotificationAlert from "react-notification-alert";
+import "react-notification-alert/dist/animate.css";
+
+import NewGoalFormModal from "MyComponents/NewGoalFormModal";
 
 const Share = () => {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
@@ -20,10 +25,30 @@ const Share = () => {
     currentUserCoverPic,
   } = useContext(UserContext);
   const desc = useRef();
+  const notify = useRef();
 
   const [profilePic, setPofilePic] = useState(null);
   const [postImage, setPostImage] = useState(null);
   const [coverPic, setCoverPic] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+    const options = {
+    place : "tr",
+    message : (
+      <div>
+        <span className="alert-title" data-notify="title">Notification </span>
+        <span data-notify="message">
+          Added new goal
+        </span>
+      </div>
+    ),
+    type : "success",
+    icon : "ni ni-bell-55",
+    autoDismiss : 5
+  };
+  
+  const showNotifications = () => {
+    notify.current.notificationAlert(options)
+  };
 
   const handleProfileImageSubmit = async (e) => {
     if (profilePic) {
@@ -66,6 +91,7 @@ const Share = () => {
       } catch (e) {}
     }
   };
+
   const handleNewPostSubmit = async (e) => {
     const newPost = {
       postedBy: currentUser.username,
@@ -88,6 +114,8 @@ const Share = () => {
     } catch (e) {}
   };
 
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (postImage) {
@@ -103,17 +131,11 @@ const Share = () => {
     }
   };
 
-  console.log(
-    "profilePic",
-    profilePic,
-    "postImage",
-    postImage,
-    "coverPic",
-    coverPic
-  );
 
   return (
     <div className="share">
+    <NotificationAlert ref={notify} zIndex={1031} onClick={() => console.log("hey")} />
+
       <div className="shareWrapper">
         <div className="shareTop">
           <img
@@ -211,7 +233,14 @@ const Share = () => {
 
             <div className="shareOption">
               <Room htmlColor="green" className="shareIcon" />
-              <span className="shareOptionText">Goals</span>
+              <span className="shareOptionText" onClick={() => setShowModal(true)}>Goals</span>
+              <NewGoalFormModal 
+                showModal={showModal} 
+                setShowModal={setShowModal} 
+                options={options} 
+                showNotifications={showNotifications} 
+              />
+      
             </div>
             <div className="shareOption">
               <EmojiEmotions htmlColor="goldenrod" className="shareIcon" />
@@ -222,6 +251,7 @@ const Share = () => {
             Share
           </button>
         </form>
+
       </div>
     </div>
   );

@@ -145,7 +145,9 @@ class User {
       `SELECT 
         id, 
         created_by AS "createdBy", 
-        content, 
+        content,
+        start_date AS "startDate",
+        color, 
         due_date AS "dueDate", 
         is_complete AS "isComplete" 
           FROM goals 
