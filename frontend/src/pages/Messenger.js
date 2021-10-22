@@ -60,14 +60,11 @@ function Messenger() {
   const [loading, setLoading] = useState(false);
   const [hideSearchResults, setHideSearchResults] = useState(false);
 
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, friendsUsernames } = useContext(UserContext);
 
   const scrollRef = useRef();
   const socket = useRef();
 
-  const friendsUsernames = currentUser.friends.map((f) =>
-    f.user_from === currentUser.username ? f.user_to : f.user_from
-  );
 
   console.debug(friendsUsernames);
   useEffect(() => {
@@ -94,7 +91,7 @@ function Messenger() {
         console.log(users);
         setOnlineUsers(users); // [{ username, socketId }, { username, socketId }]
       });
-  }, [currentUser]);
+  }, [currentUser.username]);
 
   useEffect(() => {
     const getConversations = async () => {
@@ -312,7 +309,6 @@ function Messenger() {
         </Col>
         <Col lg="3">
           <OnlineFriends
-            friendsUsernames={friendsUsernames}
             onlineUsers={onlineUsers}
             setCurrentChat={setCurrentChat}
           />

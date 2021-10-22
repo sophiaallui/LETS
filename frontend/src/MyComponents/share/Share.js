@@ -12,53 +12,96 @@ import Api from "api/api";
 
 const Share = () => {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-  const { currentUser } = useContext(UserContext);
+  const { 
+    currentUser,
+    currentUserProfileImage,
+    setCurrentUserProfileImage,
+    setCurrentUserCoverPic,
+    currentUserCoverPic 
+  } = useContext(UserContext);
   const desc = useRef();
-  const [file, setFile] = useState(null);
+
+  const [profilePic, setPofilePic] = useState(null);
+  const [postImage, setPostImage] = useState(null);
+  const [coverPic, setCoverPic] = useState(null);
 
   const handleProfileImageSubmit = async (e) => {
-    e.preventDefault();
-    if (file) {
+    if (profilePic) {
       const data = new FormData();
-      const filename = Date.now() + file.name;
+      const filename = Date.now() + profilePic.name;
       data.append("name", filename);
-      data.append("file", file);
+      data.append("file", profilePic);
       try {
+        if(currentUserProfileImage) await Api.request(`api/images/${currentUserProfileImage}/${currentUser.username}`, {}, "DELETE"); // if they already have a profileImage delete it first
         await Api.request(`api/images`, data, "POST");
         await Api.updateUser(
           currentUser?.username,
           { profileImage: filename },
           "PUT"
         );
-      } catch (e) {
-        console.error(e);
-      }
+        setCurrentUserProfileImage(filename);
+        setPofilePic(null);
+      } catch (e) { }
     }
-    window.location.reload();
   };
 
+  const handleCoverPictureSubmit = async () => {
+    if(coverPic) {
+      const data = new FormData();
+      const filename = Date.now() + coverPic.name;
+      data.append("name", filename);
+      data.append("file", coverPic);
+      try {
+        if(currentUserCoverPic) await Api.request(`api/images/${currentUserCoverPic}/${currentUser.username}`, {}, "DELETE");
+        await Api.request(`api/images`, data, "POST");
+        await Api.updateUser(
+          currentUser?.username,
+          { coverPicture : filename },
+          "PUT"
+        );
+        setCurrentUserCoverPic(filename);
+        setCoverPic(null);
+      } catch(e) {}
+    }
+  }
   const handleNewPostSubmit = async e => {
     const newPost = {
-      postedBy : currentUser.username,
-      content : desc.current.value
+      postedBy: currentUser.username,
+      content: desc.current.value
     }
-    e.preventDefault();
-    if(file) {
+    if (postImage) {
       const data = new FormData();
-      const filename = Date.now() + file.name;
+      const filename = Date.now() + postImage.name;
       data.append("name", filename);
-      data.append("file", file)
+      data.append("file", postImage)
       newPost.image = filename;
       console.log(newPost)
       try {
         await Api.request(`api/images`, data, "POST")
-      } catch(e) {}
+      } catch (e) { }
     }
-    try { 
+    try {
       await Api.createPost(currentUser.username, newPost, "POST");
       window.location.reload();
-    } catch(e) {}
+    } catch (e) { }
   }
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+    if (postImage) {
+      try {
+        await handleNewPostSubmit()
+      } catch (e) { }
+    } else if(profilePic) {
+      try {
+        await handleProfileImageSubmit()
+      } catch (e) { }
+    } else if(coverPic) {
+      await handleCoverPictureSubmit();
+    }
+  }
+
+  console.log("profilePic",profilePic, "postImage",postImage, "coverPic", coverPic);
 
   return (
     <div className="share">
@@ -67,8 +110,8 @@ const Share = () => {
           <img
             className="shareProfileImg"
             src={
-              currentUser.profileImage
-                ? PF + currentUser.profileImage
+              currentUserProfileImage
+                ? PF + currentUserProfileImage
                 : require("assets/img/placeholder.jpg")
             }
             alt=""
@@ -80,38 +123,62 @@ const Share = () => {
           />
         </div>
         <hr className="shareHr" />
-        {file && (
+        {profilePic && (
           <div className="shareImgContainer">
-            <img className="shareImg" src={URL.createObjectURL(file)} alt="" />
-            <Cancel className="shareCancelImg" onClick={() => setFile(null)} />
+            <img className="shareImg" src={URL.createObjectURL(profilePic)} alt="" />
+            <Cancel className="shareCancelImg" onClick={() => setPofilePic(null)} />
           </div>
         )}
-        <form className="shareBottom" onSubmit={(e) => e.preventDefault()}>
+        {postImage && (
+          <div className="shareImgContainer">
+            <img className="shareImg" src={URL.createObjectURL(postImage)} alt="" />
+            <Cancel className="shareCancelImg" onClick={() => setPostImage(null)} />
+          </div>
+        )}
+        {coverPic && (
+          <div className="shareImgContainer">
+            <img className="shareImg" src={URL.createObjectURL(coverPic)} alt="" />
+            <Cancel className="shareCancelImg" onClick={() => setCoverPic(null)} />
+          </div>
+        )}
+        <form className="shareBottom" onSubmit={handleSubmit}>
           <div className="shareOptions">
-            <label htmlFor="file" className="shareOption">
+            <label htmlFor="profilePic" className="shareOption">
               <PermMedia htmlColor="tomato" className="shareIcon" />
               <span className="shareOptionText">Profile Photo</span>
               <input
                 style={{ display: "none" }}
                 type="file"
-                id="file"
+                id="profilePic"
                 accept=".png,.jpeg,.jpg"
-                onChange={(e) => setFile(e.target.files[0])}
+                onChange={(e) => setPofilePic(e.target.files[0])}
               />
             </label>
-            
-            <label htmlFor="file" className="shareOption">
+
+            <label htmlFor="coverPic" className="shareOption">
+              <PermMedia htmlColor="tomato" className="shareIcon" />
+              <span className="shareOptionText">Cover Photo</span>
+              <input
+                style={{ display: "none" }}
+                type="file"
+                id="coverPic"
+                accept=".png,.jpeg,.jpg"
+                onChange={(e) => setCoverPic(e.target.files[0])}
+              />
+            </label>
+
+            <label htmlFor="postImage" className="shareOption">
               <Label htmlColor="blue" className="shareIcon" />
               <span className="shareOptionText">Post</span>
               <input
                 style={{ display: "none" }}
                 type="file"
-                id="file"
+                id="postImage"
                 accept=".png,.jpeg,.jpg"
-                onChange={(e) => setFile(e.target.files[0])}
+                onChange={(e) => setPostImage(e.target.files[0])}
               />
             </label>
-            
+
             <div className="shareOption">
               <Room htmlColor="green" className="shareIcon" />
               <span className="shareOptionText">Goals</span>

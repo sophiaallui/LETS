@@ -31,7 +31,8 @@ const knexDb = require("./knexDB");
 const db = require("./db");
 
 app.use(cors());
-app.use("/images", express.static(path.join(__dirname, "public/images")))
+app.use("/images", express.static(path.join(__dirname, "public/images")));
+
 app.use(express.json());
 app.use(morgan("dev"));
 
@@ -116,11 +117,16 @@ app.delete(
         .del()
         .returning(["post_id", "username"]);
 
-      const userRes = await db.query(`SELECT username FROM users WHERE profile_image = $1`, [filename]);
+      const profileImageRes = await db.query(`SELECT username FROM users WHERE profile_image = $1`, [filename]);
       const postRes = await db.query(`SELECT id FROM posts WHERE image = $1`, [filename]);
-      if(userRes.rows.length) {
-        const username = userRes.rows[0].username
+      const coverPictureRes = await db.query(`SELECT username FROM users WHERE cover_picture = $1`, [filename])
+      if(profileImageRes.rows.length) {
+        const username = profileImageRes.rows[0].username
         await db.query(`UPDATE users SET profile_image = NULL WHERE username = $1`, [username])
+      }
+      if(coverPictureRes.rows.length) {
+        const username = coverPictureRes.rows[0].username;
+        await db.query(`UPDATE users SET cover_picture = NULL WHERE username = $1`, [username])
       }
       if(postRes.rows.length) {
         const postId = postRes.rows[0].id;
