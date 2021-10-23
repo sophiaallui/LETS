@@ -35,7 +35,9 @@ CREATE TABLE goals (
   id SERIAL PRIMARY KEY,
   created_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE,
   content TEXT NOT NULL,
+  start_date TIMESTAMP NOT NULL DEFAULT NOW(),
   due_date TIMESTAMP NOT NULL,
+  color TEXT NOT NULL,
   is_complete BOOLEAN NOT NULL DEFAULT FALSE
 );
 
