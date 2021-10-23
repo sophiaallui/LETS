@@ -123,7 +123,7 @@ function UserProfile(props) {
                     {isMyProfile && <Button>Post One</Button>}
                   </>
                 ) : (
-                    <Goals isMine={isMyProfile} goals={loadedUser?.goals} />
+                    <Goals isMine={isMyProfile} userGoals={loadedUser?.goals} />
                 )}
               </TabPane>
 

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef, useEffect, Col, Row } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import Api from "api/api";
 import UserContext from "UserContext";
 import { Card, CardHeader, ListGroup, ListGroupItem, CardBody, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem} from "reactstrap";
@@ -7,15 +7,21 @@ import NotificationAlert from "react-notification-alert";
 import "react-notification-alert/dist/animate.css";
 import "./goals.css";
 
-const Goals = ({ isMine, goals }) => {
-	const [filteredGoals, setFilteredGoals] = useState([])
+
+const Goals = ({ isMine, userGoals }) => {
+	const { currentUser } = useContext(UserContext);
+	const [goals, setGoals] = useState([]);
 	const [showModal, setShowModal] = useState(false);
+	const [checkedIds, setCheckedIds] = useState([]);
+	const [isComplete, setIsComplete] = useState(false);
 	useEffect(() => {
-		setFilteredGoals(goals?.map(g => {
+		setGoals(userGoals?.map(g => {
 			const color = g.color.split("-")[1];
 			return { ...g, color }
-		}))
-	}, [goals, filteredGoals?.length]);
+		}));
+
+		setCheckedIds(goals?.filter(goal => goal.isComplete).map(g => g.id));
+	}, [userGoals, goals?.length]);
 	const notify = useRef();
     const options = {
     place : "tr",
@@ -35,17 +41,35 @@ const Goals = ({ isMine, goals }) => {
   const addGoal = (newGoal) => {
   	newGoal.startDate = String(newGoal.startDate);
   	newGoal.dueDate = String(newGoal.dueDate);
-  	setFilteredGoals([...filteredGoals, newGoal])
+  	setGoals([...goals, newGoal])
   }
 
+  const deleteGoals = async () => {
+  	try {
+  		await Promise.all(checkedIds.map(id => Api.request(`goals/${currentUser.username}/${id}`, {}, "DELETE")));
+  		setGoals(
+  			goals.filter(goal => !checkedIds.includes(goal.id))
+  		)
+  		setCheckedIds([]);
+  	} catch(e) {
+  		console.error(e);
+  	}
+  }
   const showNotifications = () => {
   	notify.current.notificationAlert(options)
   }
+
+  const addToCheckedIds = (id) => {
+  	checkedIds.includes(id) 
+  	? setCheckedIds(checkedIds.filter(id => id !== id))
+  	: setCheckedIds(prev => [...prev, id])
+  }
+  console.log(checkedIds, goals)
 	return (
 		<div className="goals">
 		 	<NotificationAlert ref={notify} zIndex={1031} onClick={() => console.log("hey")} />
 			<div className="goalsWrapper">
-				<Card className="posts" style={{ width : "400%" }}>
+				<Card style={{ width : "400%" }}>
 					<CardHeader className="d-flex align-items-center">
 						<h5 className="h3 mb-0">Goals</h5>
 						<div className="text-right ml-auto">
@@ -61,8 +85,11 @@ const Goals = ({ isMine, goals }) => {
 											addGoal={addGoal} 
 										/>
 									</DropdownItem>
-									<DropdownItem onClick={() => {}}>
+									<DropdownItem onClick={deleteGoals}>
 										Delete selected goals
+									</DropdownItem>
+									<DropdownItem onClick={() => {}}>
+										Mark selected as complete
 									</DropdownItem>
 								</DropdownMenu>
 							</UncontrolledDropdown>
@@ -71,7 +98,7 @@ const Goals = ({ isMine, goals }) => {
 					</CardHeader>
 					<CardBody>
 						<ListGroup data-toggle="checklist" flush>
-							{filteredGoals?.map(({
+							{goals?.map(({
 								id,
 								createdBy,
 								content,
@@ -94,6 +121,7 @@ const Goals = ({ isMine, goals }) => {
 			                            defaultChecked={isComplete}
 			                            id={`chk-todo-task-${id}`}
 			                            type="checkbox"
+			                            onClick={() => addToCheckedIds(id)}
 			                          />
 			                          <label
 			                            className="custom-control-label"
