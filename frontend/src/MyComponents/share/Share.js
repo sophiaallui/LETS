@@ -66,6 +66,7 @@ const Share = () => {
       } catch (e) {}
     }
   };
+  
   const handleNewPostSubmit = async (e) => {
     const newPost = {
       postedBy: currentUser.username,
