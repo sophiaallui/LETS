@@ -117,14 +117,10 @@ function UserProfile(props) {
           <div className="profileRightBottom">
             <TabContent id="myTabContent" activeTab={currentTab}>
               <TabPane tabId="Goals" role="tabpanel">
-                {loadedUser?.goals?.length === 0 ? (
-                  <>
-                    <h2>No goals</h2>
-                    {isMyProfile && <Button>Post One</Button>}
-                  </>
-                ) : (
-                    <Goals isMine={isMyProfile} userGoals={loadedUser?.goals} />
+                {loadedUser?.goals?.length === 0 && (
+                    <h2>No goals</h2>                   
                 )}
+                <Goals isMine={isMyProfile} userGoals={loadedUser?.goals} />
               </TabPane>
 
               <TabPane tabId="Posts" role="tabpanel">

@@ -9,7 +9,6 @@ import {
 import UserContext from "UserContext";
 import "./share.css";
 import Api from "api/api";
-import { Modal, Button, FormGroup, Input, ButtonGroup, Row, Col } from "reactstrap";
 import NotificationAlert from "react-notification-alert";
 import "react-notification-alert/dist/animate.css";
 
@@ -31,22 +30,9 @@ const Share = () => {
   const [postImage, setPostImage] = useState(null);
   const [coverPic, setCoverPic] = useState(null);
   const [showModal, setShowModal] = useState(false);
-    const options = {
-    place : "tr",
-    message : (
-      <div>
-        <span className="alert-title" data-notify="title">Notification </span>
-        <span data-notify="message">
-          Added new goal
-        </span>
-      </div>
-    ),
-    type : "success",
-    icon : "ni ni-bell-55",
-    autoDismiss : 5
-  };
+ 
   
-  const showNotifications = () => {
+  const showNotifications = (options) => {
     notify.current.notificationAlert(options)
   };
 
@@ -236,7 +222,6 @@ const Share = () => {
               <NewGoalFormModal 
                 showModal={showModal} 
                 setShowModal={setShowModal} 
-                options={options} 
                 showNotifications={showNotifications} 
               />
       
