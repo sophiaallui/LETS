@@ -6,8 +6,8 @@ const db = knex({
   connection : {
     host : '127.0.0.1',
     port : 5432,
-    user : process.env.PGUSER,
-    password : process.env.PGPASSWORD,
+    // user : process.env.PGUSER,
+    // password : process.env.PGPASSWORD,
     database : DB_URI
   }
 });
