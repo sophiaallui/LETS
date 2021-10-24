@@ -70,17 +70,6 @@ const Goals = ({ isMine, userGoals }) => {
     setNumCompleted(completedArr?.length);
   }, [userGoals])
 
-  // useEffect(() => {
-  //   setGoals(
-  //     userGoals?.map((g) => {
-  //       const color = g.color.split("-")[1];
-  //       return { ...g, color };
-  //     })
-  //   );
-  //   setCheckedIds(goals?.filter((goal) => goal.isComplete).map((g) => g.id));
-  //   const completedArr = goals?.filter((goal) => goal.isComplete);
-  //   setNumCompleted(completedArr?.length);
-  // }, [userGoals]);
 
   const addGoal = (newGoal) => {
     console.log("Goals.js newGoal=", newGoal);
