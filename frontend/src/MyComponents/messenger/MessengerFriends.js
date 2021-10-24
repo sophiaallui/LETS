@@ -39,7 +39,7 @@ const OnlineFriends = ({ setCurrentChat, onlineUsers, setConversations }) => {
     setOnlineFriends(
       friendsUsernames.filter((f) => onlineUsers.map(u => u.username).includes(f))
     );
-  }, [onlineUsers, friends]);
+  }, [onlineUsers, friends, friendsUsernames]);
 
   const handleClick = async (friendUsername) => {
     if(!friendUsername) return;
