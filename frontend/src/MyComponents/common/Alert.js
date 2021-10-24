@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 
 import ReactBSAlert from "react-bootstrap-sweetalert";
 import { Button } from "reactstrap";
