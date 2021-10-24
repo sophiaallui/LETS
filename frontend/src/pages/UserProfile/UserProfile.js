@@ -13,6 +13,8 @@ import Post from "MyComponents/Post/Post";
 import NewPostFormModal from "MyComponents/NewPostFormModal";
 import UserFeed from "../../MyComponents/feed/Feed.js";
 import RightBar from "MyComponents/rightbar/RightBar";
+import Goals from "MyComponents/goals/Goals";
+
 import "./userProfile.css";
 
 function UserProfile(props) {
@@ -73,7 +75,7 @@ function UserProfile(props) {
     "loadedUser=",
     loadedUser,
     "posts=",
-    posts
+    posts,
   );
   return (
     <>
@@ -115,26 +117,16 @@ function UserProfile(props) {
           <div className="profileRightBottom">
             <TabContent id="myTabContent" activeTab={currentTab}>
               <TabPane tabId="Goals" role="tabpanel">
-                {loadedUser?.goals?.length === 0 ? (
-                  <div>
-                    <h2>No goals</h2>
-                    {isMyProfile && <Button>Post One</Button>}
-                  </div>
-                ) : (
-                  // Do the Goals HERE
-                  <div>
-                    {loadedUser?.goals?.map((goal) => (
-                      <div key={goal.id}>{goal.id}</div>
-                    ))}
-                  </div>
+                {loadedUser?.goals?.length === 0 && (
+                    <h2>No goals</h2>                   
                 )}
+                <Goals isMine={isMyProfile} userGoals={loadedUser?.goals} />
               </TabPane>
 
               <TabPane tabId="Posts" role="tabpanel">
                 {loadedUser?.posts?.length === 0 ? (
                   <>
                     <h2>No posts</h2>
-                    {isMyProfile && <NewPostFormModal buttonText="Post one" />}
                   </>
                 ) : (
                   <>
