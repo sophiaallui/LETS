@@ -1,16 +1,14 @@
 import React, { useEffect, useContext, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 // reactstrap components
-import { Button, TabContent, TabPane } from "reactstrap";
+import { TabContent, TabPane } from "reactstrap";
 import Sidebar from "MyComponents/sidebar/Sidebar";
 // Core Components
 import Api from "api/api";
 import UserContext from "UserContext";
-import SendFriendRequestButton from "MyComponents/SendFriendRequestButton";
 import Charts from "MyComponents/Charts";
 import Post from "MyComponents/Post/Post";
-import NewPostFormModal from "MyComponents/NewPostFormModal";
 import UserFeed from "../../MyComponents/feed/Feed.js";
 import RightBar from "MyComponents/rightbar/RightBar";
 import Goals from "MyComponents/goals/Goals";
@@ -20,7 +18,7 @@ import "./userProfile.css";
 function UserProfile(props) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const { username } = useParams();
-  const { currentUser, friendsUsernames, currentUserProfileImage, currentUserCoverPic, setCurrentUserCoverPic } = useContext(UserContext);
+  const { currentUser, friendsUsernames, currentUserProfileImage, currentUserCoverPic } = useContext(UserContext);
   const [loadedUser, setLoadedUser] = useState(null);
   const [currentTab, setCurrentTab] = useState("Feed");
 

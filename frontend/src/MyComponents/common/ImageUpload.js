@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 // used for making the prop types of this component
 import PropTypes from "prop-types";
 
@@ -9,13 +9,14 @@ import defaultImage from "assets/img/image_placeholder.jpg";
 import defaultAvatar from "assets/img/placeholder.jpg";
 import Api from "api/api";
 
+
 const ImageUpload = (props) => {
-  const { currentUser } = useContext(UserContext);
+  const { currentUserProfileImage, setCurrentUserProfileImage, currentUser } = useContext(UserContext);
   const [file, setFile] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(props.avatar ? defaultAvatar : defaultImage);
   const fileInput = useRef();
-
-  React.useEffect(() => {
+  const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+  useEffect(() => {
     console.log("imagePreviewUrl", imagePreviewUrl)
   }, [imagePreviewUrl])
 
@@ -28,63 +29,78 @@ const ImageUpload = (props) => {
       setImagePreviewUrl(reader.result)
     }
     reader.readAsDataURL(file);
-    props.setFile(file);
   }
 
   const handleClick = () => {
     fileInput.current.click();
   }
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    console.log(file, imagePreviewUrl)
+    if(file) {
+      const data = new FormData();
+      const filename = Date.now() + file.name;
+      data.append("name", filename);
+      data.append("file", file);
+      try {
+        if(currentUserProfileImage) {
+          await Api.request(`api/images/${currentUserProfileImage}/${currentUser.username}`, {}, "DELETE");
+        }
+        await Api.request(`api/images`, data, "POST");
+        await Api.updateUser(currentUser.username, { profileImage : filename });
+        setCurrentUserProfileImage(filename);
+        setImagePreviewUrl(null);
+        setFile(null);
+      } catch(e) {}
+    }
   }
 
   const handleRemove = () => {
     setFile(null);
     setImagePreviewUrl(props.avatar ? defaultAvatar : defaultImage);
-    props.setFile(null);
     fileInput.current.value = null;
   }
   return (
-      <div className="fileinput text-center">
-        <input type="file" onChange={handleImageChange} ref={fileInput} />
-        <div className={"thumbnail" + (props.avatar ? " img-circle" : "")}>
-          <img src={imagePreviewUrl} alt="..." className="rounded-circle" />
-        </div>
-        <div>
-          {file === null ? (
-            <Button
-              color={props.addBtnColor}
-              className={props.addBtnClasses}
-              onClick={() => handleClick()}
-              size="sm"
-            >
-              {props.avatar ? "Add Photo" : "Select image"}
-            </Button>
-          ) : (
-            <span>
-              <Button
-                color={props.changeBtnColor}
-                className={props.changeBtnClasses}
-                onClick={() => handleClick()}
-                size="sm"
-              >
-                Change
-              </Button>
-              {props.avatar ? <br /> : null}
-              <Button
-                color={props.removeBtnColor}
-                className={props.removeBtnClasses}
-                onClick={() => handleRemove()}
-                size="sm"
-              >
-                <i className="fa fa-times" /> Remove
-              </Button>
-            </span>
-          )}
-        </div>
+    <form onSubmit={handleSubmit}>
+    <div className="fileinput text-center">
+      <input type="file" onChange={handleImageChange} ref={fileInput} />
+      <div className={"thumbnail" + (props.avatar ? " img-circle" : "")}>
+        <img src={currentUserProfileImage ? PF + currentUserProfileImage :  imagePreviewUrl} alt="..." />
       </div>
+      <div>
+        {file === null ? (
+          <Button
+            color={props.addBtnColor}
+            className={props.addBtnClasses}
+            onClick={() => handleClick()}
+          >
+            {props.avatar ? "Add Photo" : "Select image"}
+          </Button>
+        ) : (
+          <span>
+            <Button
+              color={props.changeBtnColor}
+              className={props.changeBtnClasses}
+              onClick={() => handleClick()}
+            >
+              Change
+            </Button>
+            {props.avatar ? <br /> : null}
+            <Button
+              color={props.removeBtnColor}
+              className={props.removeBtnClasses}
+              onClick={() => handleRemove()}
+            >
+              <i className="fa fa-times" /> Remove
+            </Button>
+            <Button color={props.changeBtnColor} className={props.changeBtnClasses} onClick={handleSubmit}>
+              Submit
+            </Button>
+          </span>
+        )}
+      </div>
+    </div>
+  </form>
   )
 }
 
@@ -97,6 +113,46 @@ ImageUpload.defaultProps = {
   addBtnColor: "file",
   changeBtnClasses: "btn-round",
   changeBtnColor: "file",
+};
+
+ImageUpload.propTypes = {
+  avatar: PropTypes.bool,
+  removeBtnClasses: PropTypes.string,
+  removeBtnColor: PropTypes.oneOf([
+    "default",
+    "primary",
+    "secondary",
+    "success",
+    "info",
+    "warning",
+    "danger",
+    "link",
+    "file",
+  ]),
+  addBtnClasses: PropTypes.string,
+  addBtnColor: PropTypes.oneOf([
+    "default",
+    "primary",
+    "secondary",
+    "success",
+    "info",
+    "warning",
+    "danger",
+    "link",
+    "file",
+  ]),
+  changeBtnClasses: PropTypes.string,
+  changeBtnColor: PropTypes.oneOf([
+    "default",
+    "primary",
+    "secondary",
+    "success",
+    "info",
+    "warning",
+    "danger",
+    "link",
+    "file",
+  ]),
 };
 
 

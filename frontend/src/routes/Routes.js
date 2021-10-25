@@ -7,10 +7,10 @@ import Register from "pages/Register";
 import Profile from "pages/UserProfile/UserProfile";
 import LandingPage from "pages/Landing";
 import PrivateRoute from "./PrivateRoute";
-import EditProfile from "pages/EditProfile";
+import EditProfile from "pages/EditProfile/EditProfile";
 import Goal from "pages/Goal";
 import Friends from "pages/Friends";
-import Home from "pages/Home";
+
 
 /** Site-wide routes.
  *
