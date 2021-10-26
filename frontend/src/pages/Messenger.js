@@ -97,15 +97,6 @@ function Messenger() {
   }, [onlineChatroomMembers, arrivalMessage, currentOnlineRoomId])
 
   useEffect(() => {
-    socket && socket.current.emit("addUser", currentUser.username);
-    socket &&
-      socket.current.on("getUsers", (users) => {
-        console.log(users);
-        setOnlineUsers(users); // [{ username, socketId }, { username, socketId }]
-      });
-  }, [currentUser.username]);
-
-  useEffect(() => {
     const getConversations = async () => {
       try {
         const res = await Api.getConversations(currentUser.username);
@@ -116,7 +107,17 @@ function Messenger() {
       }
     };
     getConversations();
+    socket && socket.current.emit("addUser", currentUser.username);
+    socket &&
+      socket.current.on("getUsers", (users) => {
+        console.log(users);
+        setOnlineUsers(users); // [{ username, socketId }, { username, socketId }]
+      });
   }, [currentUser.username]);
+
+  // useEffect(() => {
+
+  // }, [currentUser.username]);
 
   useEffect(() => {
     const getMessages = async () => {

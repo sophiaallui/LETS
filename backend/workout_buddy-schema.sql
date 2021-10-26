@@ -123,10 +123,12 @@ CREATE TABLE image_files (
 
 CREATE TYPE noti_type AS ENUM ('friend_request', 'message', 'comment', 'like');
 
+
+
 CREATE TABLE notifications (
     id SERIAL PRIMARY KEY, 
-    is_seen BOOLEAN DEFAULT FALSE,
-    sent_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE,
+    is_seen BOOLEAN NOT NULL DEFAULT FALSE,
+    sent_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE NOT NULL,
     sent_to VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE NOT NULL,
     post_id INT REFERENCES posts(id) ON DELETE CASCADE,
     comment_id INT REFERENCES posts_comments(id) ON DELETE CASCADE,
@@ -134,6 +136,19 @@ CREATE TABLE notifications (
     notification_type noti_type,
     seen_date TIMESTAMP DEFAULT NULL
 );
+
+CREATE OR REPLACE FUNCTION Del() 
+  RETURNS TRIGGER 
+  LANGUAGE PLPGSQL
+  AS $$
+  BEGIN
+    DELETE FROM notifications WHERE seen_date IS NOT NULL AND seen_date < NOW() - INTERVAL '30 days';
+    RETURN NULL;
+  END;
+$$;
+
+CREATE TRIGGER del_old_notifications 
+  AFTER UPDATE ON notifications FOR EACH ROW EXECUTE PROCEDURE Del();
 
 -- jae comments on charles post what should be stored? the actual post or the comment? or both ? 
 -- select * from notifications where sent_to = currentUser.username and is_seen = false
