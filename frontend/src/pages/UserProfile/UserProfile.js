@@ -81,8 +81,8 @@ function UserProfile(props) {
       <div className="profile">
         <Sidebar
           currentPage="profile"
-          posts={loadedUser?.posts}
-          goals={loadedUser?.goals}
+          posts={currentUser?.posts}
+          goals={currentUser?.goals}
           setCurrentTab={handleSideBarClick}
           currentTab={currentTab}
         />

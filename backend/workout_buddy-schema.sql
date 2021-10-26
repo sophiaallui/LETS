@@ -120,3 +120,20 @@ CREATE TABLE image_files (
   mimetype TEXT NOT NULL,
   size BIGINT NOT NULL
 );
+
+CREATE TYPE noti_type AS ENUM ('friend_request', 'message', 'comment', 'like');
+
+CREATE TABLE notifications (
+    id SERIAL PRIMARY KEY, 
+    is_seen BOOLEAN DEFAULT FALSE,
+    sent_by VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE,
+    sent_to VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE NOT NULL,
+    post_id INT REFERENCES posts(id) ON DELETE CASCADE,
+    comment_id INT REFERENCES posts_comments(id) ON DELETE CASCADE,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    notification_type noti_type
+);
+
+-- jae comments on charles post what should be stored? the actual post or the comment? or both ? 
+-- select * from notifications where sent_to = currentUser.username and is_seen = false
+-- => [{ id, is_seen, sent_by, }]
