@@ -65,7 +65,6 @@ function UserProfile(props) {
       console.error(e);
     }
   };
-
   console.debug(
     "UserProfile:",
     "username=",

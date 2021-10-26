@@ -71,6 +71,7 @@ const Goals = ({ isMine, userGoals }) => {
   }, [userGoals])
 
 
+
   const addGoal = (newGoal) => {
     console.log("Goals.js newGoal=", newGoal);
     setShowModal(false);
@@ -143,8 +144,8 @@ const Goals = ({ isMine, userGoals }) => {
       </div>
 
       <div
-        className="header bg-info pb-6 d-flex flex-column share"
-        style={{ width: "60vw", position: "absolute" }}
+        className="header pb-6 d-flex flex-column share"
+        style={{ width: "60vw", position: "absolute", backgroundColor:'#6FB3B8'}}
       >
         <Container fluid className="mb-6">
           <div className="header-body">

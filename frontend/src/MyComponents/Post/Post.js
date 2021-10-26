@@ -23,6 +23,7 @@ import './postDesign.css'
  */
 
 import { format } from "timeago.js";
+import { regExpLiteral } from '@babel/types';
 
 function Post({ post, profileImage, deletePost }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
@@ -58,6 +59,11 @@ function Post({ post, profileImage, deletePost }) {
       console.error(e);
     }
   };
+
+  useEffect(()=>{
+      const reg = new RegExp('@\w*', 'i')
+      
+  }, [comment])
 
   const likeHandler = async () => {
     const msg = await Api.likePost(post.id, currentUser.username);
