@@ -27,7 +27,7 @@ const calendarRoutes = require("./routes/calendarEventRoutes");
 
 // ROUTES for chat + rooms
 const roomRoutes = require("./routes/roomRoutes");
-const knexDb = require("./knexDB");
+const knexDb = require("./knexDb");
 const db = require("./db");
 
 app.use(cors());

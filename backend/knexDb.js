@@ -1,5 +1,6 @@
-require("dotenv").config();
 const knex = require("knex");
+require("dotenv").config();
+
 const { DB_URI } = require("./config");
 const db = knex({
   client : 'pg',
