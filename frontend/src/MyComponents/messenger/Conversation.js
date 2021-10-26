@@ -4,7 +4,7 @@ import UserContext from "UserContext";
 import Api from "api/api";
 
 // conversation : { name, members : [ username, username ] }
-const Conversation = ({ conversation, active }) => {
+const Conversation = ({ conversation, active, unreadMessage }) => {
 
   const { currentUser } = useContext(UserContext);
   const [users, setUsers] = useState(null);
@@ -44,7 +44,7 @@ const Conversation = ({ conversation, active }) => {
               tag="span"
               xs="10"
             >
-            {/* Be sure to check it out if your dev pro... */}
+                {unreadMessage}
             </Col>
           </Media>
         </Media>

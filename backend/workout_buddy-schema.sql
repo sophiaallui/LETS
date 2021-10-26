@@ -131,7 +131,8 @@ CREATE TABLE notifications (
     post_id INT REFERENCES posts(id) ON DELETE CASCADE,
     comment_id INT REFERENCES posts_comments(id) ON DELETE CASCADE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    notification_type noti_type
+    notification_type noti_type,
+    seen_date TIMESTAMP DEFAULT NULL
 );
 
 -- jae comments on charles post what should be stored? the actual post or the comment? or both ? 
