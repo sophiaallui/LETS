@@ -59,7 +59,7 @@ function Messenger() {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hideSearchResults, setHideSearchResults] = useState(false);
-
+  const [unreadMessage, setUndreadMessage] = useState(0);
   const { currentUser, friendsUsernames } = useContext(UserContext);
 
   const scrollRef = useRef();
@@ -81,8 +81,13 @@ function Messenger() {
     arrivalMessage &&
       currentChat?.members.includes(arrivalMessage.sentBy) &&
       setMessages((messages) => [...messages, arrivalMessage]);
+      setUndreadMessage(num => num + 1);
     console.debug("socket arrivalMessage=", arrivalMessage);
   }, [arrivalMessage, currentChat]);
+
+  useEffect(() => {
+    setUndreadMessage(0)
+  }, [currentChat])
 
   useEffect(() => {
     socket && socket.current.emit("addUser", currentUser.username);
@@ -256,7 +261,7 @@ function Messenger() {
                   setCurrentChat(c);
                 }}
               >
-                <Conversation conversation={c} />
+                <Conversation conversation={c} unreadMessage={unreadMessage} />
               </div>
             ))}
           </ListGroup>
