@@ -62,6 +62,7 @@ function Post({ post, profileImage, deletePost }) {
 
   useEffect(()=>{
       const reg = new RegExp('@\w*', 'i')
+      
   }, [comment])
 
   const likeHandler = async () => {
