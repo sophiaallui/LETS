@@ -46,20 +46,6 @@ const getUser = username => {
   return users.find(user => user.username === username)
 };
 
-const addRoomInfo = (roomId, username) => {
-  const foundIdx = users.findIndex(user => user.username === username && user.roomId !== roomId);
-  foundIndex !== -1 ? users[foundIdx].roomId = roomId : null;
-}
-
-const getUserInfoByRoomId = (roomId) => {
-  return users.filter(user => user.roomId === roomId);
-}
-
-const removeRoomInfo = (roomId, username) => {
-  const foundIdx = users.findIndex(user => user.username === username && user.roomId === roomId);
-  foundIndex !== -1 ? users[foundIdx].roomId = null : null;
-}
-
 io.on("connection", socket => {
   console.log("a user connected.");
   
@@ -106,9 +92,9 @@ io.on("connection", socket => {
   socket.on("typing", ({ senderUsername, roomId }) => {
     console.log(`${senderUsername} is typing`);
     io.to(roomId).emit("getTyping", true)
-  })
+  });
 
   socket.on("done-typing", (roomId) => {
     io.to(roomId).emit("done-typing", false)
-  })
+  });
 });
