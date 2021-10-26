@@ -50,25 +50,6 @@ const RightBar = ({ user }) => {
     getFriends();
   }, [user]);
 
-  const handleClick = async () => {
-    try {
-      if (friendsUsernames.includes(user?.username)) {
-        await Api.request(
-          `friends/${currentUser?.username}/to/${user?.username}`,
-          {},
-          "DELETE"
-        );
-        setCurrentUser(currentUser.username);
-      } else {
-        await Api.request(
-          `friends/${currentUser?.username}/to/${user?.username}`,
-          {},
-          "POST"
-        );
-        setCurrentUser(currentUser.username);
-      }
-    } catch (e) { }
-  };
 
   const HomeRightBar = () => {
     return (

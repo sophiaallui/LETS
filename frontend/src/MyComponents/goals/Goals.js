@@ -57,6 +57,7 @@ const Goals = ({ isMine, userGoals }) => {
     icon: "ni ni-bell-55",
     autoDismiss: 5,
   };
+
   useEffect(() => {
     setGoals(
       userGoals?.map((g) => {
@@ -67,7 +68,9 @@ const Goals = ({ isMine, userGoals }) => {
     setCheckedIds(goals?.filter((goal) => goal.isComplete).map((g) => g.id));
     const completedArr = goals?.filter((goal) => goal.isComplete);
     setNumCompleted(completedArr?.length);
-  }, [userGoals]);
+  }, [userGoals])
+
+
 
   const addGoal = (newGoal) => {
     console.log("Goals.js newGoal=", newGoal);

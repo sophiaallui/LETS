@@ -1,7 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
 import UserContext from "UserContext";
-// JavaScript library for creating Dropdown Selects
-import Choices from "choices.js";
 // reactstrap components
 import {
   Alert,
@@ -20,49 +18,12 @@ import {
   Col,
 } from "reactstrap";
 
-// Core Components
-import Upload from "components/upload/Upload.js";
-
-
+import ImageUpload from "MyComponents/common/ImageUpload";
+import GeneralTab from "./GeneralTab";
 
 function AccountSettings(props) {
   const { currentUser } = useContext(UserContext);
   const [activeTab, setActiveTab] = React.useState("tab1");
-  React.useEffect(() => {
-    new Choices("#choices-single-default-1", {
-      searchEnabled: false,
-    });
-    new Choices("#choices-single-default-2", {
-      searchEnabled: false,
-    });
-    new Choices("#choices-single-default-3", {
-      searchEnabled: false,
-    });
-    new Choices("#choices-single-default-4", {
-      searchEnabled: false,
-    });
-    new Choices("#choices-single-default-5", {
-      searchEnabled: false,
-    });
-    new Choices("#choices-single-default-6", {
-      searchEnabled: false,
-    });
-    new Choices("#badges", {
-      delimiter: ",",
-      editItems: true,
-      maxItemCount: 5,
-      removeItemButton: true,
-      placeholder: true,
-      placeholderValue: "+ Add",
-    });
-
-    document.body.classList.add("account-settings");
-    window.scrollTo(0, 0);
-    document.body.scrollTop = 0;
-    return function cleanup() {
-      document.body.classList.remove("account-settings");
-    };
-  }, []);
   useEffect(() => {
     if(!navigator.geolocation) {
       setStatus('Geolocation is not supported by your browser');
@@ -80,19 +41,10 @@ function AccountSettings(props) {
   const [lat, setLat] = useState(null);
   const [lng, setLng] = useState(null);
   const [status, setStatus] = useState(null);
-  console.log(lng, lat)
-  const [generalSectionForm, setGeneralSectionForm] = useState({
-    firstName : currentUser.firstName || "",
-    lastName  : currentUser.lastName || "",
-    email : currentUser.email || "",
-    confirmEmail : currentUser.email || "",
-  });
-  
-  const handleGeneralSectionChange = e => {
-    const { name, value } = e.target;
-    setGeneralSectionForm(data => ({ ...data, [name] : value }))
-  }
 
+  console.log(lng, lat)
+
+  
   return (
     <>
       <div className="wrapper">
@@ -126,7 +78,7 @@ function AccountSettings(props) {
               <Col md="3">
                 <div className="section">
                   <section className="text-center">
-                    <Upload
+                    <ImageUpload
                       avatar
                       changeBtnColor="primary"
                       changeBtnClasses="btn-sm btn-round mt-3"
@@ -190,281 +142,7 @@ function AccountSettings(props) {
               <Col className="ml-auto" md="8">
                 <div className="section">
                   <TabContent activeTab={activeTab}>
-                    <TabPane tabId="tab1">
-                      <div>
-                        <header>
-                          <h2 className="text-uppercase">
-                            General information
-                          </h2>
-                        </header>
-                        <hr className="line-primary"></hr>
-                        <br></br>
-                        <Row>
-                          <Col className="align-self-center" md="3">
-                            <label className="labels" htmlFor="#firstName">
-                              First Name
-                            </label>
-                          </Col>
-                          <Col className="align-self-center" md="9">
-                            <FormGroup>
-                              <Input
-                                id="firstName"
-                                name="firstName"
-                                value={generalSectionForm.firstName}
-                                onChange={handleGeneralSectionChange}
-                                required="required"
-                                type="text"
-                              ></Input>
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col className="align-self-center" md="3">
-                            <label className="labels" htmlFor="#lastName">
-                              Last Name
-                            </label>
-                          </Col>
-                          <Col className="align-self-center" md="9">
-                            <FormGroup>
-                              <Input
-                                id="lastName"
-                                name="lastName"
-                                value={generalSectionForm.lastName}
-                                onChange={handleGeneralSectionChange}
-                                required="required"
-                                type="text"
-                              ></Input>
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col className="align-self-center" md="3">
-                            <label className="labels">I’m</label>
-                          </Col>
-                          <Col className="align-self-center" md="4">
-                            <FormGroup>
-                              <Input
-                                data-trigger=""
-                                id="choices-single-default-1"
-                                name="choices-single-default-1"
-                                type="select"
-                              >
-                                <option defaultValue="2">Male</option>
-                                <option defaultValue="3">Female</option>
-                              </Input>
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col className="align-self-center" md="3">
-                            <label className="labels">Birth Date</label>
-                          </Col>
-                          <Col className="align-self-center" md="9">
-                            <Row>
-                              <Col className="align-self-center" md="4">
-                                <FormGroup>
-                                  <Input
-                                    data-trigger=""
-                                    id="choices-single-default-2"
-                                    name="choices-single-default-2"
-                                    type="select"
-                                  >
-                                    <option>January</option>
-                                    <option>February</option>
-                                    <option>March</option>
-                                    <option>April</option>
-                                    <option>May</option>
-                                    <option>June</option>
-                                    <option>July</option>
-                                    <option>August</option>
-                                    <option>September</option>
-                                    <option>October</option>
-                                    <option>November</option>
-                                    <option>December</option>
-                                  </Input>
-                                </FormGroup>
-                              </Col>
-                              <Col md="4">
-                                <FormGroup>
-                                  <Input
-                                    data-trigger=""
-                                    id="choices-single-default-3"
-                                    name="choices-single-default-3"
-                                    type="select"
-                                  >
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
-                                    <option>6</option>
-                                    <option>7</option>
-                                    <option>8</option>
-                                    <option>9</option>
-                                    <option>10</option>
-                                    <option>11</option>
-                                    <option>12</option>
-                                    <option>13</option>
-                                    <option>14</option>
-                                    <option>15</option>
-                                    <option>16</option>
-                                    <option>17</option>
-                                    <option>18</option>
-                                    <option>19</option>
-                                    <option>20</option>
-                                    <option>21</option>
-                                    <option>22</option>
-                                    <option>23</option>
-                                    <option>24</option>
-                                    <option>25</option>
-                                    <option>26</option>
-                                    <option>27</option>
-                                    <option>28</option>
-                                    <option>29</option>
-                                    <option>30</option>
-                                    <option>31</option>
-                                  </Input>
-                                </FormGroup>
-                              </Col>
-                              <Col md="4">
-                                <FormGroup>
-                                  <Input
-                                    data-trigger=""
-                                    id="choices-single-default-4"
-                                    name="choices-single-default-4"
-                                    type="select"
-                                  >
-                                    {Array(100).fill(0).map((ele, index) => (
-                                      <option>{1920 + index}</option>
-                                    ))}
-                                  </Input>
-                                </FormGroup>
-                              </Col>
-                            </Row>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col className="align-self-center" md="3">
-                            <label className="labels" htmlFor="#email">
-                              Email
-                            </label>
-                          </Col>
-                          <Col className="align-self-center" md="9">
-                            <FormGroup>
-                              <Input
-                                id="email"
-                                name="email"
-                                value={generalSectionForm.email}
-                                onChange={handleGeneralSectionChange}
-                                required="required"
-                                type="email"
-                              ></Input>
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col className="align-self-center" md="3">
-                            <label className="labels" htmlFor="#confirmEmail">
-                              Confirm Email
-                            </label>
-                          </Col>
-                          <Col className="align-self-center" md="9">
-                            <FormGroup>
-                              <Input
-                                id="confirmEmail"
-                                name="confirmEmail"
-                                value={generalSectionForm.confirmEmail}
-                                onChange={handleGeneralSectionChange}
-                                required="required"
-                                type="email"
-                              ></Input>
-                            </FormGroup>
-                          </Col>
-                        </Row>
-
-                        <Row>
-                          <Col className="align-self-center" md="3">
-                            <label className="labels" htmlFor="#location">
-                              Your Location
-                            </label>
-                          </Col>
-                          <Col className="align-self-center" md="9">
-                            <FormGroup>
-                              <Input
-                                defaultValue="Sydney, A"
-                                id="location"
-                                name="location"
-                                required="required"
-                                type="text"
-                              ></Input>
-                            </FormGroup>
-                          </Col>
-                        </Row>
-
-                        <Row>
-                          <Col className="align-self-center" md="3">
-                            <label className="labels" htmlFor="#phone">
-                              Phone Number
-                            </label>
-                          </Col>
-                          <Col className="align-self-center" md="4">
-                            <FormGroup>
-                              <Input
-                                defaultValue="+40 745 031 200"
-                                id="phone"
-                                name="phone"
-                                required="required"
-                                type="tel"
-                              ></Input>
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col className="align-self-center" md="3">
-                            <label className="labels">Language</label>
-                          </Col>
-                          <Col className="align-self-center" md="4">
-                            <FormGroup>
-                              <Input
-                                data-trigger=""
-                                id="choices-single-default-5"
-                                name="choices-single-default-5"
-                                type="select"
-                              >
-                                <option>English</option>
-                                <option defaultValue="2">French</option>
-                                <option defaultValue="3">Spanish</option>
-                                <option defaultValue="4">Deutsche</option>
-                                <option defaultValue="4">Russian</option>
-                              </Input>
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col className="align-self-center" md="3">
-                            <label className="labels">My Tags</label>
-                          </Col>
-                          <Col className="align-self-center" md="9">
-                            <input
-                              defaultValue="VueJs,Angular,Laravel,React"
-                              id="badges"
-                              placeholder="+ Add"
-                              type="text"
-                            ></input>
-                          </Col>
-                        </Row>
-                        <Row className="mt-5">
-                          <Col md="6">
-                            <Button color="primary" type="submit">
-                              Save Changes
-                            </Button>
-                            <Button color="primary" outline type="reset">
-                              Cancel
-                            </Button>
-                          </Col>
-                        </Row>
-                      </div>
-                    </TabPane>
+                    <GeneralTab />
                
                     <TabPane tabId="tab3">
                       <div className="g-pos-rel h-100 g-brd-around g-brd-gray-light-v7 g-rounded-4 g-pa-15 g-pa-30--md">
