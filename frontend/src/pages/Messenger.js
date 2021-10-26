@@ -59,35 +59,42 @@ function Messenger() {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hideSearchResults, setHideSearchResults] = useState(false);
+
   const [unreadMessage, setUndreadMessage] = useState(0);
+  const [onlineChatroomMembers, setOnlineChatroomMembers] = useState(null);
+  const [currentOnlineRoomId, setCurrentOnlineRoomId] = useState(null);
   const { currentUser, friendsUsernames } = useContext(UserContext);
 
   const scrollRef = useRef();
   const socket = useRef();
 
-
-  console.debug(friendsUsernames);
   useEffect(() => {
     socket.current = io("ws://localhost:8900");
     socket.current.on("getMessage", (data) => {
       console.log(data);
-      setArrivalMessage({ sentBy: data.senderUsername, text: data.text });
+      setArrivalMessage({ sentBy: data.senderUsername, text: data.text, roomId : data.roomId });
     });
     socket.current.on("getTyping", (bool) => setTyping(bool));
     socket.current.on("done-typing", (bool) => setTyping(bool));
+    socket.current.on("user-joined", (obj) => {
+      setOnlineChatroomMembers(obj.members);
+      setCurrentOnlineRoomId(obj.roomId)
+    })
   }, []);
 
   useEffect(() => {
     arrivalMessage &&
       currentChat?.members.includes(arrivalMessage.sentBy) &&
       setMessages((messages) => [...messages, arrivalMessage]);
-      setUndreadMessage(num => num + 1);
+
+
+    // arrivalMessage && !onlineChatroomMembers.includes(arrivalMessage.sentBy) && setUndreadMessage(num => num + 1)
     console.debug("socket arrivalMessage=", arrivalMessage);
   }, [arrivalMessage, currentChat]);
-
   useEffect(() => {
-    setUndreadMessage(0)
-  }, [currentChat])
+    arrivalMessage && 
+    currentOnlineRoomId !== arrivalMessage?.roomId && setUndreadMessage(num => num + 1) 
+  }, [onlineChatroomMembers, arrivalMessage, currentOnlineRoomId])
 
   useEffect(() => {
     socket && socket.current.emit("addUser", currentUser.username);
@@ -123,11 +130,22 @@ function Messenger() {
       }
     };
     getMessages();
+    setUndreadMessage(0)
+    currentChat?.roomId &&
+    currentOnlineRoomId &&  
+    currentChat.roomId !== 
+    currentOnlineRoomId && 
+    socket.current.emit("leaveRoom", {roomId: currentOnlineRoomId, username : currentUser.username})
+    
+    currentChat?.roomId &&
+    currentChat?.roomId !== currentOnlineRoomId && 
+    socket.current.emit("joinRoom", {roomId : currentChat.roomId, username : currentUser.username})
+ 
   }, [currentChat]);
 
   useEffect(() => {
     message.length === 0 &&
-      socket.current.emit("done-typing", currentUser.username);
+      socket.current.emit("done-typing", currentOnlineRoomId);
   }, [message]);
 
   useEffect(() => {
@@ -137,15 +155,10 @@ function Messenger() {
 
   const handleChange = (e) => {
     setMessage(e.target.value);
-    const roomMembersExceptForMe = currentChat.members.filter(
-      (username) => username !== currentUser.username
-    );
-    for (const user of roomMembersExceptForMe) {
-      socket.current.emit("typing", {
-        senderUsername: currentUser.username,
-        receiverUsername: user,
-      });
-    }
+    socket.current.emit("typing", {
+      senderUsername: currentUser.username,
+      roomId : currentChat?.roomId
+    })
   };
 
   const handleSubmit = async (e) => {
@@ -154,16 +167,11 @@ function Messenger() {
       text: message,
       roomId: currentChat?.roomId,
     };
-    const roomMembersExceptForMe = currentChat.members.filter(
-      (username) => username !== currentUser.username
-    );
-    for (const user of roomMembersExceptForMe) {
-      socket.current.emit("sendMessage", {
-        senderUsername: currentUser.username,
-        receiverUsername: user,
-        text: message,
-      });
-    }
+    socket.current.emit("sendMessage", {
+      senderUsername : currentUser.username,
+      roomId : currentChat?.roomId,
+      text : message
+    })
 
     try {
       const message = await Api.sendMessage(messageBody, currentUser.username);
@@ -184,7 +192,9 @@ function Messenger() {
     "MessengerMessage=",
     message,
     "MessengerOnlineUsers=",
-    onlineUsers
+    onlineUsers,
+    "MessengerOnlineChatroomMembers=", onlineChatroomMembers,
+    "currentOnlineRoomId", currentOnlineRoomId
   );
 
   let filteredFriendsList = friendsUsernames
