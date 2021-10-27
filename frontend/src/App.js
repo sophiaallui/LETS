@@ -8,7 +8,7 @@ import Api from "./api/api";
 import jwt from "jsonwebtoken";
 import UserContext from "./UserContext";
 
-import NavBar from "MyComponents/Navbar";
+import NavBar from "MyComponents/navbar/Navbar";
 import Routes from "routes/Routes";
 import useLocalStorage from "./hooks/useLocalStorage";
 import { io } from "socket.io-client";
@@ -22,7 +22,7 @@ function App() {
   const [currentUserProfileImage, setCurrentUserProfileImage] = useState(null);
   const [currentUserCoverPic, setCurrentUserCoverPic] = useState(null);
   const [socket, setSocket] = useState(null);
-  
+
   useEffect(() => {
     setSocket(io("ws://localhost:8900"));
   }, []);
@@ -49,7 +49,7 @@ function App() {
           );
           setCurrentUserProfileImage(currentUser?.profileImage);
           setCurrentUserCoverPic(currentUser?.coverPicture);
-        } 
+        }
         catch (e) {
           console.error("App loadUserInfo: problem loading", e);
           setCurrentUser(null);
@@ -63,14 +63,7 @@ function App() {
   }, [token]);
 
   useEffect(() => {
-    setOnlineFriends(friendsUsernames.filter(f => onlineUsers.map(u => u.username).includes(f)));
-  }, [onlineUsers, friendsUsernames]);
-
-  useEffect(() => {
-    socket && socket.current.on("addUser", currentUser?.username);
-    socket && socket.current.on("getUsers", users => {
-      setOnlineUsers(users)
-    })
+    socket && socket.on("addUser", currentUser?.username);
   }, [currentUser]);
 
   const signup = async (signUpData) => {

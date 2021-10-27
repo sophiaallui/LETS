@@ -25,7 +25,7 @@ router.post("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
       const { sentTo, notificationType, identifier, senderProfileImage } = req.body;
       let type;
       if(notificationType === "message") {
-         type = "message_id"
+         type = "room_id"
       }
       else if(notificationType === "like") {
          type ="post_id"
@@ -38,7 +38,7 @@ router.post("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
             INTO notifications 
             (sent_by, sent_to, ${type}, sender_profile_image, notification_type)
             VALUES
-            ($1, $2, $3, $4) RETURNING *`,
+            ($1, $2, $3, $4, $5) RETURNING *`,
             [username, sentTo, identifier, senderProfileImage ,notificationType]
 
       );
@@ -79,12 +79,9 @@ router.delete("/:username/:id", ensureCorrectUserOrAdmin, async (req, res, next)
       if(!checkOwnershipResults || checkOwnershipResults.sent_to !== username) {
          throw new BadRequestError()
       };
-<<<<<<< HEAD
-=======
       await db.query(
          `DELETE FROM notifications WHERE id = $1`, [id]
       )
->>>>>>> efaab72977d81e3fe698b937d4470c4d35ab53f6
       return res.json({ deleted : id })
    } catch(e) {
       return next(e);

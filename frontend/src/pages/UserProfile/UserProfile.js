@@ -7,12 +7,11 @@ import Sidebar from "MyComponents/sidebar/Sidebar";
 // Core Components
 import Api from "api/api";
 import UserContext from "UserContext";
-import Charts from "MyComponents/Charts";
 import Post from "MyComponents/Post/Post";
 import UserFeed from "../../MyComponents/feed/Feed.js";
 import RightBar from "MyComponents/rightbar/RightBar";
 import Goals from "MyComponents/goals/Goals";
-
+import Calendar from "MyComponents/Calendar";
 import "./userProfile.css";
 
 function UserProfile(props) {
@@ -64,15 +63,7 @@ function UserProfile(props) {
       console.error(e);
     }
   };
-  console.debug(
-    "UserProfile:",
-    "username=",
-    username,
-    "loadedUser=",
-    loadedUser,
-    "posts=",
-    posts,
-  );
+
   return (
     <>
       <div className="profile">
@@ -141,8 +132,8 @@ function UserProfile(props) {
                 )}
               </TabPane>
 
-              <TabPane tabId="Progress" role="tabpanel">
-                <Charts />
+              <TabPane tabId="Events" role="tabpanel">
+                <Calendar />
               </TabPane>
               <TabPane tabId="Feed" role="tabpanel">
                 <UserFeed username={username} />

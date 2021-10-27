@@ -130,7 +130,7 @@ CREATE TABLE notifications (
     sent_to VARCHAR(25) REFERENCES users(username) ON DELETE CASCADE NOT NULL,
     post_id INT REFERENCES posts(id) ON DELETE CASCADE,
     comment_id INT REFERENCES posts_comments(id) ON DELETE CASCADE,
-    message_id INT REFERENCES messages(id) ON DELETE CASCADE,
+    room_id INT REFERENCES rooms(id) ON DELETE CASCADE,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     notification_type noti_type,
     sender_profile_image TEXT DEFAULT NULL,

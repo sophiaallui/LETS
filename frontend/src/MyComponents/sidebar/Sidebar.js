@@ -33,10 +33,10 @@ const Sidebar = ({ currentPage = "profile", setCurrentTab, currentTab }) => {
           className={`sidebarListItem ${
             currentTab === "Progress" ? "active" : ""
           }`}
-          onClick={() => setCurrentTab("Progress")}
+          onClick={() => setCurrentTab("Events")}
         >
           <i className="fas fa-chart-line mr-2" />
-          <span className="sidebarListItemText">Progress</span>
+          <span className="sidebarListItemText">Events</span>
         </li>
         <li
           className={`sidebarListItem ${currentTab === "Feed" ? "active" : ""}`}

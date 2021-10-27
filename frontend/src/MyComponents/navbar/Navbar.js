@@ -35,12 +35,12 @@ function NavbarOrange({ logout }) {
   useEffect(() => {
     const getCurrentUnreadNotifications = async () => {
       try {
-        const notifications = await Api.getUserNotifications(currentUser.username);
+        const notifications = await Api.getUserNotifications(currentUser?.username);
         setNotifications(notifications);
       } catch(e) {}
     }
     getCurrentUnreadNotifications();
-  }, [currentUser.username]);
+  }, [currentUser?.username]);
 
   const toggle = () => {
     toggleCollapseOpen((open) => !open);
@@ -83,12 +83,6 @@ function NavbarOrange({ logout }) {
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink tag={Link} to="/schedules">
-            <i className="ni ni-calendar-grid-58" />
-            My Schedule
-          </NavLink>
-        </NavItem>
-        <NavItem>
           <NavLink tag={Link} to="/friends">
             <i className="fas fa-users"></i>
             Friends
@@ -110,16 +104,8 @@ function NavbarOrange({ logout }) {
               <i className="ni ni-settings-gear-65"></i>
               <span>Edit Profile</span>
             </DropdownItem>
-            <DropdownItem tag={Link} onClick={(e) => e.preventDefault()}>
-              <i className="ni ni-calendar-grid-58"></i>
-              <span>Activity</span>
-            </DropdownItem>
-            <DropdownItem tag={Link} onClick={(e) => e.preventDefault()}>
-              <i className="ni ni-support-16"></i>
-              <span>Support</span>
-            </DropdownItem>
             <DropdownItem divider></DropdownItem>
-            <DropdownItem tag={Link} onClick={logout} >
+            <DropdownItem onClick={logout} >
               <i className="ni ni-user-run"></i>
               <span>Logout</span>
             </DropdownItem>

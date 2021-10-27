@@ -164,7 +164,7 @@ const Goals = ({ isMine, userGoals }) => {
                     <i className="ni ni-fat-add mr-2" />
                     New
                   </Button>
-                  <UncontrolledDropdown caret color="secondary">
+                  <UncontrolledDropdown caret="true" color="secondary">
                     <DropdownToggle size="sm">Actions</DropdownToggle>
                     <DropdownMenu>
                       <DropdownItem onClick={() => setShowModal(true)}>

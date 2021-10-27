@@ -23,14 +23,10 @@ const Online = (user) => {
 };
 
 const RightBar = ({ user }) => {
-  const { currentUser, friendsUsernames, setCurrentUser } = useContext(UserContext);
+  const { currentUser, friendsUsernames} = useContext(UserContext);
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const [friends, setFriends] = useState([]);
 
-
-  console.log("RightBar user=", user);
-  console.log("RightBar friends=", friends);
-  console.log("RightBar friendsUsernames",friendsUsernames);
   useEffect(() => {
     const getFriends = async () => {
       try {
@@ -49,7 +45,6 @@ const RightBar = ({ user }) => {
     };
     getFriends();
   }, [user]);
-
 
   const HomeRightBar = () => {
     return (
