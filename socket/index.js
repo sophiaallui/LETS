@@ -33,9 +33,9 @@ const io = require("socket.io")(8900, config);
 let users = [];
 let roomMembers = {};
 
-const addUser = (username, socketId, roomId) => {
+const addUser = (username, socketId, roomId = null) => {
   !users.some(user => user.username === username) &&
-    users.push({ username, socketId, roomId : null })
+    users.push({ username, socketId, roomId })
 };
 
 const removeUser = (socketId) => {
@@ -47,10 +47,10 @@ const getUser = username => {
 };
 
 io.on("connection", socket => {
-  console.log("a user connected.");
+  io.emit("firstEvent", "hello this is test")    
   
-  // take username and socketId from user
   socket.on("addUser", username => {
+    console.log(`${username} connected`)
     addUser(username, socket.id);
     io.emit("getUsers", users)
   });
@@ -97,4 +97,11 @@ io.on("connection", socket => {
   socket.on("done-typing", (roomId) => {
     io.to(roomId).emit("done-typing", false)
   });
+
+  socket.on("sendNotification", ({ senderName, receiverName, returnedAPIResponse}) => {
+    console.log(senderName, receiverName, returnedAPIResponse)
+    const receiver = getUser(receiverName);
+    if(!receiver) return;
+    io.to(receiver.socketId).emit("getNotification", returnedAPIResponse )
+  })
 });

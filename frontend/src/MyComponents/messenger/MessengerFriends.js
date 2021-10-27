@@ -19,7 +19,6 @@ const OnlineFriends = ({ setCurrentChat, onlineUsers, setConversations }) => {
 
   const { currentUser, friendsUsernames } = useContext(UserContext);
 
-
   useEffect(() => {
     const fetchFriends = async () => {
       try {
@@ -37,32 +36,36 @@ const OnlineFriends = ({ setCurrentChat, onlineUsers, setConversations }) => {
 
   useEffect(() => {
     setOnlineFriends(
-      friendsUsernames.filter((f) => onlineUsers.map(u => u.username).includes(f))
+      friendsUsernames.filter((f) =>
+        onlineUsers.map((u) => u.username).includes(f)
+      )
     );
   }, [onlineUsers, friends, friendsUsernames]);
 
   const handleClick = async (friendUsername) => {
-    if(!friendUsername) return;
+    if (!friendUsername) return;
     try {
-      const foundConversations = await Api.findRoom(currentUser.username, friendUsername);
-      if(Object.keys(foundConversations).length === 0) {
-        const data = { 
-          receiverUsername : friendUsername
-        }
+      const foundConversations = await Api.findRoom(
+        currentUser.username,
+        friendUsername
+      );
+      if (Object.keys(foundConversations).length === 0) {
+        const data = {
+          receiverUsername: friendUsername,
+        };
         const newRoom = await Api.createRoom(currentUser.username, data);
-        console.debug("newRoom=",newRoom)
-        setCurrentChat(newRoom)
-        return;  
+        console.debug("newRoom=", newRoom);
+        setCurrentChat(newRoom);
+        return;
       }
-      console.log("foundConversations=", foundConversations)
+      console.log("foundConversations=", foundConversations);
       setCurrentChat(foundConversations);
+    } catch (e) {
+      console.error(e);
     }
-    catch(e) {
-      console.error(e)
-    }
-  }
+  };
 
-  console.debug("onlineFriends=", onlineFriends, "friends", friends)
+  console.debug("onlineFriends=", onlineFriends, "friends", friends);
   return (
     <Card>
       <CardHeader>
@@ -72,7 +75,11 @@ const OnlineFriends = ({ setCurrentChat, onlineUsers, setConversations }) => {
       <CardBody>
         <ListGroup className="list my--3" flush>
           {friends.map((f) => (
-            <ListGroupItem className="px-0" key={f.username} onClick={() => handleClick(f?.username)}>
+            <ListGroupItem
+              className="px-0"
+              key={f.username}
+              onClick={() => handleClick(f?.username)}
+            >
               <Row className="align-items-center">
                 <Col className="col-auto">
                   <Link

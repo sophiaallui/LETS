@@ -27,7 +27,7 @@ import { regExpLiteral } from '@babel/types';
 
 function Post({ post, profileImage, deletePost }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-  const { currentUser, friendsUsernames, currentUserProfileImage } = useContext(UserContext);
+  const { currentUser, friendsUsernames, currentUserProfileImage, socket } = useContext(UserContext);
 
   const [like, setLike] = useState(post.likes.length);
   const [isLiked, setIsLiked] = useState(false);
@@ -54,7 +54,16 @@ function Post({ post, profileImage, deletePost }) {
         currentUser.username,
         newComm
       );
+      console.log(newComment)
       setComments((prev) => [...prev, newComment]);
+
+      const newNotification = await Api.postNotifications(currentUser.username, {
+        sentTo : post.postedBy,
+        notificationType : "comment",
+        identifier : newComment.id
+      })
+      handleNotification(newNotification);
+
     } catch (e) {
       console.error(e);
     }
@@ -66,12 +75,32 @@ function Post({ post, profileImage, deletePost }) {
   }, [comment])
 
   const likeHandler = async () => {
-    const msg = await Api.likePost(post.id, currentUser.username);
-    console.log(msg)
+    await Api.likePost(post.id, currentUser.username);
+    const newNotification = await Api.postNotifications(currentUser.username, {
+      sentTo : post.postedBy,
+      notificationType : "like",
+      identifier : post.id,
+      senderProfileImage : currentUserProfileImage
+    })
+  
+    handleNotification(newNotification);
+
     setLike(isLiked ? like - 1 : like + 1);
-    setLikes(isLiked ? likes.filter(l => l.username !== currentUser.username) : [...likes, { postId: post.id, username: currentUser.username, profileImage: currentUser.profileImage }]);
+    
+    setLikes(isLiked ? 
+      likes.filter(l => l.username !== currentUser.username) : 
+        [...likes, { postId: post.id, username: currentUser.username, profileImage: currentUser.profileImage }]);
     setIsLiked(!isLiked);
   }
+
+  const handleNotification = (returnedAPIResponse) => {
+    socket.emit("sendNotification", {
+      senderName : currentUser.username,
+      receiverName : post.postedBy,
+      returnedAPIResponse
+    });
+  }
+
   console.log(likes)
   return (
     <>

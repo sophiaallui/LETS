@@ -167,7 +167,20 @@ class Api {
     return res.conversation;
   }
 
+  // NOTIFICATIONS
+  static async getUserNotifications(username) {
+    const res = await this.request(`notifications/${username}`);
+    return res.notifications
+  }
 
+  static async postNotifications(username, data) {
+    const res = await this.request(`notifications/${username}`, data, "POST")
+    return res.notification
+  }
+
+  static async markAsRead(username, id, data = { seenDate : Date.now, isSeen : true}) {
+    const res = await this.request(`notifications/${username}/${id}`, data, "PUT");
+  }
 }
 
 

@@ -7,7 +7,9 @@ const { BadRequestError } = require("../ExpressError");
 // get all notifications for :username order by most recent
 router.get("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
    try {
-      const notifications = await db.query(`SELECT * FROM notifications WHERE sent_to = $1 ORDER BY created_at DESC`, [req.params.username]);
+      const notifications = await db.query(`
+      SELECT * FROM notifications WHERE sent_to = $1 AND is_seen = FALSE ORDER BY created_at DESC
+      `, [req.params.username]);
       return res.json({ notifications : notifications.rows })
    } catch(e) {
       return next(e);
@@ -16,17 +18,28 @@ router.get("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
 
 // Post /notifications/:username
 // post a notification 
+// ('friend_request', 'message', 'comment', 'like');
 router.post("/:username", ensureCorrectUserOrAdmin, async (req, res, next) => {
    try {
       const { username } = req.params;
-      const { sentTo, notificationType } = req.body;
+      const { sentTo, notificationType, identifier, senderProfileImage } = req.body;
+      let type;
+      if(notificationType === "message") {
+         type = "message_id"
+      }
+      else if(notificationType === "like") {
+         type ="post_id"
+      }
+      else if(notificationType === "comment") {
+         type = "comment_id"
+      }
       const newNoti = await db.query(
          `INSERT 
             INTO notifications 
-            (sent_by, sent_to, notification_type)
-            VALUES 
-            ($1, $2, $3) RETURNING *`,
-            [username, sentTo, notificationType]
+            (sent_by, sent_to, ${type}, sender_profile_image, notification_type)
+            VALUES
+            ($1, $2, $3, $4) RETURNING *`,
+            [username, sentTo, identifier, senderProfileImage ,notificationType]
 
       );
       if(!newNoti.rows.length) {
@@ -58,12 +71,20 @@ router.put("/:username/:id", ensureCorrectUserOrAdmin, async (req, res, next) =>
    }
 })
 
-router.delete("/:username/:id", ensureCorrectUserOrAdmin, async (req, res, next) = >{
+router.delete("/:username/:id", ensureCorrectUserOrAdmin, async (req, res, next) => {
    try {
       const { username, id } = req.params;
-      
+      const checkOwnership = await db.query(`SELECT sent_to FROM notifications WHERE id = $1`, [id]);
+      const checkOwnershipResults = checkOwnership.rows[0];
+      if(!checkOwnershipResults || checkOwnershipResults.sent_to !== username) {
+         throw new BadRequestError()
+      };
+      await db.query(
+         `DELETE FROM notifications WHERE id = $1`, [id]
+      )
+      return res.json({ deleted : id })
    } catch(e) {
-
+      return next(e);
    }
 })
 

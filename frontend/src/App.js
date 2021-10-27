@@ -9,9 +9,9 @@ import jwt from "jsonwebtoken";
 import UserContext from "./UserContext";
 
 import NavBar from "MyComponents/Navbar";
-import Routes from "routes/Routes"
+import Routes from "routes/Routes";
 import useLocalStorage from "./hooks/useLocalStorage";
-
+import { io } from "socket.io-client";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -22,6 +22,8 @@ function App() {
   const [currentUserProfileImage, setCurrentUserProfileImage] = useState(null);
   const [currentUserCoverPic, setCurrentUserCoverPic] = useState(null);
 
+  const [socket, setSocket] = useState(null);
+
   console.debug(
     "App",
     "infoLoaded=",
@@ -30,8 +32,18 @@ function App() {
     token,
     "currentUser",
     currentUser,
-    "friendsUsernames=", friendsUsernames
+    "friendsUsernames=",
+    friendsUsernames
   );
+
+  useEffect(() => {
+    setSocket(io("ws://localhost:8900"));
+  }, []);
+
+  useEffect(() => {
+    socket && socket.emit("addUser", currentUser?.username);
+    console.log(socket);
+  }, [currentUser]);
 
   useEffect(() => {
     console.debug("App useEffect loadUserInfo", "token=", token);
@@ -42,13 +54,18 @@ function App() {
           const { username } = jwt.decode(token);
           // put the token on the Api class so we can use it to call the Api.d
           Api.token = token;
-          setLocalStorageToken(token)
+          setLocalStorageToken(token);
           let currentUser = await Api.getCurrentUser(username);
           setCurrentUser(currentUser);
-          setFriendsUsernames(currentUser.friends.map(u => u.user_from === currentUser.username ? u.user_to : u.user_from))
+          setFriendsUsernames(
+            currentUser.friends.map((u) =>
+              u.user_from === currentUser.username ? u.user_to : u.user_from
+            )
+          );
           setCurrentUserProfileImage(currentUser?.profileImage);
           setCurrentUserCoverPic(currentUser?.coverPicture);
-        } catch (e) {
+        } 
+        catch (e) {
           console.error("App loadUserInfo: problem loading", e);
           setCurrentUser(null);
         }
@@ -91,34 +108,42 @@ function App() {
   const addEvent = async (username, event) => {
     try {
       const event = await Api.createCalendarEvent(username, event);
-      setCurrentUser(user => {
+      setCurrentUser((user) => {
         return {
           ...user,
-          events: [...user.events, event]
-        }
-      })
+          events: [...user.events, event],
+        };
+      });
     } catch (e) {
       console.error(e);
-      return { success: false, e }
+      return { success: false, e };
     }
-  }
+  };
 
-  if (!infoLoaded) return <Spinner className="text-primary" />
+  if (!infoLoaded) return <Spinner className="text-primary" />;
   return (
     <Router>
-      <UserContext.Provider value={{
-        currentUser,
-        setCurrentUser,
-        friendsUsernames,
-        setFriendsUsernames,
-        currentUserProfileImage,
-        setCurrentUserProfileImage,
-        currentUserCoverPic,
-        setCurrentUserCoverPic
-      }}>
+      <UserContext.Provider
+        value={{
+          currentUser,
+          setCurrentUser,
+          friendsUsernames,
+          setFriendsUsernames,
+          currentUserProfileImage,
+          setCurrentUserProfileImage,
+          currentUserCoverPic,
+          setCurrentUserCoverPic,
+          socket,
+        }}
+      >
         <div>
-          <NavBar logout={logout} />
-          <Routes login={login} signup={signup} events={currentUser?.events} addEvent={addEvent} />
+          <NavBar logout={logout} socket={socket} />
+          <Routes
+            login={login}
+            signup={signup}
+            events={currentUser?.events}
+            addEvent={addEvent}
+          />
         </div>
       </UserContext.Provider>
     </Router>
