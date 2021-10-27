@@ -123,8 +123,6 @@ CREATE TABLE image_files (
 
 CREATE TYPE noti_type AS ENUM ('friend_request', 'message', 'comment', 'like');
 
-
-
 CREATE TABLE notifications (
     id SERIAL PRIMARY KEY, 
     is_seen BOOLEAN NOT NULL DEFAULT FALSE,

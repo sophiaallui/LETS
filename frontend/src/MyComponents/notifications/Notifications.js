@@ -8,6 +8,7 @@ import {
   ListGroup,
   ListGroupItem,
   Col,
+  Badge
 } from "reactstrap";
 import { format } from "timeago.js";
 // {
@@ -48,8 +49,9 @@ const Notifications = ({ notifications, handleReadAll, handleReadOne }) => {
     }
     return (
       <ListGroupItem
+        key={id}
         className="list-group-item-action"
-        onClick={(e) => e.preventDefault()}
+        onClick={() => handleReadOne(id)}
       >
         <Row className="align-items-center">
           <Col className="col-auto">
@@ -81,8 +83,10 @@ const Notifications = ({ notifications, handleReadAll, handleReadOne }) => {
 
   return (
     <UncontrolledDropdown nav>
-      <DropdownToggle className="nav-link" color="">
-        <i className="ni ni-bell-55" />
+      <DropdownToggle className="nav-link" color="transparent" role="button" size="sm">
+        <i className="ni ni-bell-55" style={{ color : "white" }} />
+        <span style={{ color : "white" }}>Notifications</span>
+        <Badge size="sm">{notifications.length}</Badge>
       </DropdownToggle>
       <DropdownMenu className="dropdown-menu-xl py-0 overflow-hidden" right>
         <div className="px-3 py-3">

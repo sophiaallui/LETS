@@ -21,21 +21,8 @@ function App() {
   const [friendsUsernames, setFriendsUsernames] = useState([]);
   const [currentUserProfileImage, setCurrentUserProfileImage] = useState(null);
   const [currentUserCoverPic, setCurrentUserCoverPic] = useState(null);
-
   const [socket, setSocket] = useState(null);
-
-  console.debug(
-    "App",
-    "infoLoaded=",
-    infoLoaded,
-    "token=",
-    token,
-    "currentUser",
-    currentUser,
-    "friendsUsernames=",
-    friendsUsernames
-  );
-
+  
   useEffect(() => {
     setSocket(io("ws://localhost:8900"));
   }, []);

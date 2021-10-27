@@ -13,6 +13,7 @@ import {
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
+
 } from "reactstrap";
 import AuthContext from "UserContext";
 import Search from "MyComponents/search/Search";
@@ -44,7 +45,6 @@ function NavbarOrange({ logout }) {
   const toggle = () => {
     toggleCollapseOpen((open) => !open);
   };
-
 
   const handleReadAll = async () => {
     try {
@@ -96,7 +96,7 @@ function NavbarOrange({ logout }) {
         </NavItem>
 
         <UncontrolledDropdown>
-          <DropdownToggle color="transparent" role="button">
+          <DropdownToggle color="transparent" role="button" size="sm">
             <span style={{ color: "white" }}>
               <i className="ni ni-single-02" /> {currentUser.username}
             </span>
@@ -119,7 +119,7 @@ function NavbarOrange({ logout }) {
               <span>Support</span>
             </DropdownItem>
             <DropdownItem divider></DropdownItem>
-            <DropdownItem tag={Link} onClick={logout}>
+            <DropdownItem tag={Link} onClick={logout} >
               <i className="ni ni-user-run"></i>
               <span>Logout</span>
             </DropdownItem>
