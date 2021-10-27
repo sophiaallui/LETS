@@ -24,6 +24,7 @@ const postCommentRoutes = require("./routes/postsCommentRoutes");
 const postRoutes = require("./routes/postRoutes");
 const goalRoutes = require("./routes/goalRoutes");
 const calendarRoutes = require("./routes/calendarEventRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 // ROUTES for chat + rooms
 const roomRoutes = require("./routes/roomRoutes");
@@ -47,7 +48,7 @@ app.use("/comments", postCommentRoutes);
 app.use("/posts", postRoutes);
 app.use("/goals", goalRoutes);
 app.use("/calendar-events", calendarRoutes);
-
+app.use("/notifications", notificationRoutes);
 app.use("/room", roomRoutes);
 
 const storage = multer.diskStorage({

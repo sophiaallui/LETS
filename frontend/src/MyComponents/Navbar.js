@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 // reactstrap components
 import {
@@ -12,18 +12,58 @@ import {
   DropdownItem,
   UncontrolledDropdown,
   DropdownToggle,
-  DropdownMenu
+  DropdownMenu,
+
 } from "reactstrap";
 import AuthContext from "UserContext";
 import Search from "MyComponents/search/Search";
-import './navBarDesign.css'
+import Api from "api/api";
+import Notifications from "MyComponents/notifications/Notifications";
+import "./navBarDesign.css";
 
 function NavbarOrange({ logout }) {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, socket } = useContext(AuthContext);
   const [collapseOpen, toggleCollapseOpen] = React.useState(false);
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    socket.on("getNotification", (data) => {
+      setNotifications(prev => [...prev, data]);
+    });
+  }, []);
+
+  useEffect(() => {
+    const getCurrentUnreadNotifications = async () => {
+      try {
+        const notifications = await Api.getUserNotifications(currentUser.username);
+        setNotifications(notifications);
+      } catch(e) {}
+    }
+    getCurrentUnreadNotifications();
+  }, [currentUser.username]);
+
   const toggle = () => {
     toggleCollapseOpen((open) => !open);
   };
+
+  const handleReadAll = async () => {
+    try {
+      await Promise.all(notifications.map((n) => Api.markAsRead(n.id)));
+      setNotifications([]);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleReadOne = async (id) => {
+    try {
+      await Api.markAsRead(currentUser.username, id);
+      setNotifications(notifications.filter((n) => n.id !== id));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  console.debug("notifications=",notifications)
   const loggedInNav = () => {
     return (
       <Nav className="ml-lg-auto" navbar>
@@ -56,10 +96,9 @@ function NavbarOrange({ logout }) {
         </NavItem>
 
         <UncontrolledDropdown>
-          <DropdownToggle color="transparent" role="button">
+          <DropdownToggle color="transparent" role="button" size="sm">
             <span style={{ color: "white" }}>
-              <i className="ni ni-single-02" />{" "}
-              {currentUser.username}
+              <i className="ni ni-single-02" /> {currentUser.username}
             </span>
           </DropdownToggle>
           <DropdownMenu>
@@ -80,12 +119,17 @@ function NavbarOrange({ logout }) {
               <span>Support</span>
             </DropdownItem>
             <DropdownItem divider></DropdownItem>
-            <DropdownItem tag={Link} onClick={logout}>
+            <DropdownItem tag={Link} onClick={logout} >
               <i className="ni ni-user-run"></i>
               <span>Logout</span>
             </DropdownItem>
           </DropdownMenu>
         </UncontrolledDropdown>
+        <Notifications
+          notifications={notifications}
+          handleReadAll={handleReadAll}
+          handleReadOne={handleReadOne}
+        />
       </Nav>
     );
   };
@@ -105,7 +149,7 @@ function NavbarOrange({ logout }) {
   );
   return (
     <>
-      <Navbar  expand="lg">
+      <Navbar expand="lg">
         <Container>
           <NavbarBrand tag={Link} to="/">
             GAINS
