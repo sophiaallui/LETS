@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import "./App.css";
 
@@ -11,7 +11,7 @@ import UserContext from "./UserContext";
 import NavBar from "MyComponents/Navbar";
 import Routes from "routes/Routes"
 import useLocalStorage from "./hooks/useLocalStorage";
-
+import { io } from "socket.io-client";
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -21,6 +21,10 @@ function App() {
   const [friendsUsernames, setFriendsUsernames] = useState([]);
   const [currentUserProfileImage, setCurrentUserProfileImage] = useState(null);
   const [currentUserCoverPic, setCurrentUserCoverPic] = useState(null);
+
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [onlineFriends, setOnlineFriends] = useState([]);
+  const socket = useRef();
 
   console.debug(
     "App",
@@ -32,15 +36,16 @@ function App() {
     currentUser,
     "friendsUsernames=", friendsUsernames
   );
-
+  useEffect(() => {
+    socket.current = io("ws://localhost:8900");
+  }, []);
+  
   useEffect(() => {
     console.debug("App useEffect loadUserInfo", "token=", token);
-
     const getCurrentUser = async () => {
       if (token) {
         try {
           const { username } = jwt.decode(token);
-          // put the token on the Api class so we can use it to call the Api.d
           Api.token = token;
           setLocalStorageToken(token)
           let currentUser = await Api.getCurrentUser(username);
@@ -59,6 +64,17 @@ function App() {
     setInfoLoaded(false);
     getCurrentUser();
   }, [token]);
+
+  useEffect(() => {
+    setOnlineFriends(friendsUsernames.filter(f => onlineUsers.map(u => u.username).includes(f)));
+  }, [onlineUsers, friendsUsernames]);
+
+  useEffect(() => {
+    socket && socket.current.on("addUser", currentUser?.username);
+    socket && socket.current.on("getUsers", users => {
+      setOnlineUsers(users)
+    })
+  }, [currentUser]);
 
   const signup = async (signUpData) => {
     try {
@@ -114,7 +130,8 @@ function App() {
         currentUserProfileImage,
         setCurrentUserProfileImage,
         currentUserCoverPic,
-        setCurrentUserCoverPic
+        setCurrentUserCoverPic,
+        onlineFriends
       }}>
         <div>
           <NavBar logout={logout} />

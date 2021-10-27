@@ -29,7 +29,6 @@ function UserProfile(props) {
 
   useEffect(() => {
     setIsMyProfile(username === currentUser?.username);
-
   }, [username]);
 
   useEffect(() => {
@@ -43,7 +42,7 @@ function UserProfile(props) {
     };
     const getPostsFullDetails = async () => {
       try {
-        const posts = await Api.getPostsDetailsByUsername(username);
+        const posts = await Api.getPostsDetailsByUsername(currentUser.username);
         setPosts(posts);
       } catch (e) {
         console.error(e);
@@ -51,7 +50,7 @@ function UserProfile(props) {
     };
     getLoadedUser();
     getPostsFullDetails();
-  }, [username, posts?.length]);
+  }, [currentUser, posts?.length]);
 
   const handleSideBarClick = (tab) => {
     setCurrentTab(tab);
@@ -114,10 +113,10 @@ function UserProfile(props) {
           <div className="profileRightBottom">
             <TabContent id="myTabContent" activeTab={currentTab}>
               <TabPane tabId="Goals" role="tabpanel">
-                {loadedUser?.goals?.length === 0 && (
+                {currentUser?.goals?.length === 0 && (
                     <h2>No goals</h2>                   
                 )}
-                <Goals isMine={isMyProfile} userGoals={loadedUser?.goals} />
+                <Goals isMine={isMyProfile} userGoals={currentUser?.goals} />
               </TabPane>
 
               <TabPane tabId="Posts" role="tabpanel">
@@ -129,8 +128,8 @@ function UserProfile(props) {
                   <>
                     {posts?.map((p) => (
                       <Post
-                        profileImage={loadedUser?.profileImage}
-                        loadedUser={loadedUser}
+                        profileImage={currentUser.profileImage}
+                        loadedUser={currentUser}
                         type="Posts"
                         post={p}
                         key={p.id}

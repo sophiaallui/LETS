@@ -56,14 +56,13 @@ function Messenger() {
   const [typing, setTyping] = useState(null);
   const [searchFriendText, setSearchFriendText] = useState("");
   const [arrivalMessage, setArrivalMessage] = useState(null);
-  const [onlineUsers, setOnlineUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hideSearchResults, setHideSearchResults] = useState(false);
 
   const [unreadMessage, setUndreadMessage] = useState(0);
   const [onlineChatroomMembers, setOnlineChatroomMembers] = useState(null);
   const [currentOnlineRoomId, setCurrentOnlineRoomId] = useState(null);
-  const { currentUser, friendsUsernames } = useContext(UserContext);
+  const { currentUser, friendsUsernames, onlineUsers } = useContext(UserContext);
 
   const scrollRef = useRef();
   const socket = useRef();
@@ -86,15 +85,12 @@ function Messenger() {
     arrivalMessage &&
       currentChat?.members.includes(arrivalMessage.sentBy) &&
       setMessages((messages) => [...messages, arrivalMessage]);
-
-
-    // arrivalMessage && !onlineChatroomMembers.includes(arrivalMessage.sentBy) && setUndreadMessage(num => num + 1)
-    console.debug("socket arrivalMessage=", arrivalMessage);
   }, [arrivalMessage, currentChat]);
+
   useEffect(() => {
     arrivalMessage && 
     currentOnlineRoomId !== arrivalMessage?.roomId && setUndreadMessage(num => num + 1) 
-  }, [onlineChatroomMembers, arrivalMessage, currentOnlineRoomId])
+  }, [arrivalMessage, currentOnlineRoomId])
 
   useEffect(() => {
     const getConversations = async () => {
@@ -107,17 +103,7 @@ function Messenger() {
       }
     };
     getConversations();
-    socket && socket.current.emit("addUser", currentUser.username);
-    socket &&
-      socket.current.on("getUsers", (users) => {
-        console.log(users);
-        setOnlineUsers(users); // [{ username, socketId }, { username, socketId }]
-      });
   }, [currentUser.username]);
-
-  // useEffect(() => {
-
-  // }, [currentUser.username]);
 
   useEffect(() => {
     const getMessages = async () => {
@@ -132,15 +118,18 @@ function Messenger() {
     };
     getMessages();
     setUndreadMessage(0)
-    currentChat?.roomId &&
-    currentOnlineRoomId &&  
-    currentChat.roomId !== 
-    currentOnlineRoomId && 
-    socket.current.emit("leaveRoom", {roomId: currentOnlineRoomId, username : currentUser.username})
+
+    // If currentChat.roomId BOTH currentOnlineRoomId exists, and they're not the same leave that room in socket.
+    // should be triggered everytime currentChat changes/
+    currentChat?.roomId && currentOnlineRoomId &&  
+      currentChat.roomId !== currentOnlineRoomId && 
+        socket.current.emit("leaveRoom", {roomId: currentOnlineRoomId, username : currentUser.username}) 
     
-    currentChat?.roomId &&
-    currentChat?.roomId !== currentOnlineRoomId && 
-    socket.current.emit("joinRoom", {roomId : currentChat.roomId, username : currentUser.username})
+    // If ONLY currentChat.roomId exists and currentChat.roomId doesn't exist or isn't the same same as currentOnlineRoomId
+    // join that new room.
+    currentChat?.roomId && 
+      currentChat?.roomId !== currentOnlineRoomId && 
+        socket.current.emit("joinRoom", {roomId : currentChat.roomId, username : currentUser.username})
  
   }, [currentChat]);
 
@@ -190,10 +179,6 @@ function Messenger() {
     currentChat,
     "MessengerMessages=",
     messages,
-    "MessengerMessage=",
-    message,
-    "MessengerOnlineUsers=",
-    onlineUsers,
     "MessengerOnlineChatroomMembers=", onlineChatroomMembers,
     "currentOnlineRoomId", currentOnlineRoomId
   );
@@ -325,7 +310,6 @@ function Messenger() {
         </Col>
         <Col lg="3">
           <OnlineFriends
-            onlineUsers={onlineUsers}
             setCurrentChat={setCurrentChat}
           />
         </Col>

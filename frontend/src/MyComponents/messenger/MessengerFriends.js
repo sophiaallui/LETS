@@ -13,12 +13,10 @@ import {
 import UserContext from "UserContext";
 import { Link } from "react-router-dom";
 
-const OnlineFriends = ({ setCurrentChat, onlineUsers, setConversations }) => {
+const OnlineFriends = ({ setCurrentChat, setConversations }) => {
   const [friends, setFriends] = useState([]);
-  const [onlineFriends, setOnlineFriends] = useState([]);
-
-  const { currentUser, friendsUsernames } = useContext(UserContext);
-
+  const { currentUser, friendsUsernames, onlineFriends } = useContext(UserContext);
+  const PF = process.env.REACT_APP_PUBLIC_URL;
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -35,12 +33,6 @@ const OnlineFriends = ({ setCurrentChat, onlineUsers, setConversations }) => {
     fetchFriends();
   }, [friendsUsernames]);
 
-  useEffect(() => {
-    setOnlineFriends(
-      friendsUsernames.filter((f) => onlineUsers.map(u => u.username).includes(f))
-    );
-  }, [onlineUsers, friends, friendsUsernames]);
-
   const handleClick = async (friendUsername) => {
     if(!friendUsername) return;
     try {
@@ -53,7 +45,7 @@ const OnlineFriends = ({ setCurrentChat, onlineUsers, setConversations }) => {
         console.debug("newRoom=",newRoom)
         setCurrentChat(newRoom)
         return;  
-      }
+      } 
       console.log("foundConversations=", foundConversations)
       setCurrentChat(foundConversations);
     }
@@ -81,7 +73,11 @@ const OnlineFriends = ({ setCurrentChat, onlineUsers, setConversations }) => {
                   >
                     <img
                       alt="..."
-                      src={require("assets/img/placeholder.jpg")}
+                      src={
+                        f.profileImage ? 
+                        PF + f.profileImage :
+                        require("assets/img/placeholder.jpg")
+                      }
                     />
                   </Link>
                 </Col>

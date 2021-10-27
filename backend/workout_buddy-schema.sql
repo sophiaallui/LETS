@@ -150,6 +150,3 @@ $$;
 CREATE TRIGGER del_old_notifications 
   AFTER UPDATE ON notifications FOR EACH ROW EXECUTE PROCEDURE Del();
 
--- jae comments on charles post what should be stored? the actual post or the comment? or both ? 
--- select * from notifications where sent_to = currentUser.username and is_seen = false
--- => [{ id, is_seen, sent_by, }]

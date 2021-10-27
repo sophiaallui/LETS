@@ -58,12 +58,17 @@ router.put("/:username/:id", ensureCorrectUserOrAdmin, async (req, res, next) =>
    }
 })
 
-router.delete("/:username/:id", ensureCorrectUserOrAdmin, async (req, res, next) = >{
+router.delete("/:username/:id", ensureCorrectUserOrAdmin, async (req, res, next) => {
    try {
       const { username, id } = req.params;
-      
+      const checkOwnership = await db.query(`SELECT sent_to FROM notifications WHERE id = $1`, [id]);
+      const checkOwnershipResults = checkOwnership.rows[0];
+      if(!checkOwnershipResults || checkOwnershipResults.sent_to !== username) {
+         throw new BadRequestError()
+      };
+      return res.json({ deleted : id })
    } catch(e) {
-
+      return next(e);
    }
 })
 
